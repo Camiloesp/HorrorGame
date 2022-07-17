@@ -7,6 +7,7 @@
 #include "HGCharacter.generated.h"
 
 class UCameraComponent;
+class UMainHUD;
 
 UCLASS()
 class HORRORGAME_API AHGCharacter : public ACharacter
@@ -38,14 +39,39 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	float TurnRate;
 
+	/* Distance to interact with interactables */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	float DistanceToInteract;
+
+	/* Widget for the player. Contains Corsshair. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UMainHUD* MainHUDRef;
+	/* Class reference to the playerHUD */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UUserWidget> PlayerHUDClass;
+
 protected:
 
 	/* look around */
 	void LookUp(float Value);
 	void LookRight(float Value);
 
+	/* Movement */
 	void MoveForward(float Value);
 	void MoveRight(float Value);
+
+	/* Action button pressed */
+	void ActionButtonPressed();
+
+	/**
+	* Tracing a line from center of camera to the world.
+	* @param Length Length of the line trace.
+	* @return Returns the hit actor by the line trace.
+	*/
+	AActor* LineTrace(float Length);
+
+	/* called in BeginPlay, to initialize widgets and variables. */
+	void Initialize();
 
 public:
 

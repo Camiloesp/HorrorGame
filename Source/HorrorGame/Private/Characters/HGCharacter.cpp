@@ -4,6 +4,10 @@
 #include "Characters/HGCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Interfaces/Interaction.h"
+#include "Widgets/MainHUD.h"
+
+//#include "Engine/World.h"
 
 // Sets default values
 AHGCharacter::AHGCharacter()
@@ -20,7 +24,6 @@ AHGCharacter::AHGCharacter()
 	GetCharacterMovement()->MaxWalkSpeed = 400.f;
 	GetCharacterMovement()->JumpZVelocity = 400.f;
 	
-	TurnRate = 0.4;
 }
 
 // Called when the game starts or when spawned
@@ -28,6 +31,7 @@ void AHGCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	Initialize();
 }
 
 // Called every frame
@@ -51,6 +55,8 @@ void AHGCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	/* BIND ACTIONS */
 	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Released, this, &ACharacter::StopJumping);
+
+	PlayerInputComponent->BindAction(TEXT("Action"), EInputEvent::IE_Pressed, this, &AHGCharacter::ActionButtonPressed);
 }
 
 void AHGCharacter::LookUp(float Value)
@@ -73,3 +79,40 @@ void AHGCharacter::MoveRight(float Value)
 	AddMovementInput(GetActorRightVector(), Value);
 }
 
+void AHGCharacter::ActionButtonPressed()
+{
+	// Interacts with the actor, if is a child of the IInteraction.
+	IInteraction* HitActor = Cast<IInteraction>(LineTrace(DistanceToInteract));
+	if (HitActor)
+	{
+		HitActor->Interact();
+	}
+}
+
+AActor* AHGCharacter::LineTrace(float Length)
+{
+	FHitResult OutHitResult;
+	const FVector Start = FollowCamera->GetComponentLocation(); // Linetrace starts from the camera location in world space.
+	const FVector End = (FollowCamera->GetForwardVector() * Length) + (FollowCamera->GetComponentLocation()); // Linetrace ends Length units in front of player.
+	 
+	GetWorld()->LineTraceSingleByChannel(OutHitResult, Start, End, ECollisionChannel::ECC_Visibility);
+
+	return OutHitResult.GetActor();
+}
+
+void AHGCharacter::Initialize()
+{
+	// Variables Initialization
+	TurnRate = 0.4;
+	DistanceToInteract = 350.f;
+
+	//Create widget, and add it to viewport.
+	if (PlayerHUDClass)
+	{
+		MainHUDRef = CreateWidget<UMainHUD>(GetWorld(), PlayerHUDClass);
+		if (MainHUDRef)
+		{
+			MainHUDRef->AddToViewport();
+		}
+	}
+}
