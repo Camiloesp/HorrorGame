@@ -7,7 +7,6 @@
 #include "HGCharacter.generated.h"
 
 class UCameraComponent;
-class USpotLightComponent;
 class UMainHUD;
 class IGrabInterface;
 
@@ -36,10 +35,6 @@ private:
 	/* main camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FollowCamera;
-
-	/* Flashlight */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	USpotLightComponent* Flashlight;
 
 	/* Rate speed when we turn using the mouse */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))

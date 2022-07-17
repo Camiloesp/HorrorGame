@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "Interaction.generated.h"
+#include "GrabInterface.generated.h"
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
-class UInteraction : public UInterface
+class UGrabInterface : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -18,7 +18,7 @@ class AHGCharacter;
 /**
  * 
  */
-class HORRORGAME_API IInteraction
+class HORRORGAME_API IGrabInterface
 {
 	GENERATED_BODY()
 
@@ -26,8 +26,11 @@ class HORRORGAME_API IInteraction
 public:
 
 	UFUNCTION()
-	virtual void Interact() = 0; // = 0 tells the compiler to not look for the definition of this function in the .cpp
+	virtual void GrabObject() = 0; // = 0 tells the compiler to not look for the definition of this function in the .cpp
+
+	UFUNCTION()
+	virtual void ReleaseObject() = 0;
 
 	/* Player who is interacting with the interactable. */
-	AHGCharacter* InteractingPlayer;
+	AHGCharacter* GrabberPlayer;
 };

@@ -4,7 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Interactables/InteractableBase.h"
+#include "Components/TimelineComponent.h"
 #include "Door.generated.h"
+
+
+//class UTimelineComponent;
+//class FTimeline;
 
 /**
  * 
@@ -37,7 +42,35 @@ private:
 	UStaticMeshComponent* Door;
 
 protected:
+
+	/* opening the door time line and variables */
+
+	/* Timeline for opening the door */
+	FTimeline Timeline;
+	/* Keeps track of where we are in our timeline */
+	UPROPERTY(EditAnywhere)
+	UCurveFloat* CurveFloat;
+	/* if the door is closed (start of timeline) then this will be false. */
+	bool bIsDoorClosed;
+	/* The max rotation this door will open */
+	UPROPERTY(EditAnywhere)
+	float DoorRotateAngle;
+	/* 
+	*	This function needs to be binded, therefore the UFUNCTION.
+	*	Opens the door.
+	* @param Value New value to rotate the door. Will be affected by DoorRotateAngle.
+	*/
+	UFUNCTION()
+	void OpenDoor(float Value);
+
+	bool bDoorOnSameSide;
+	void SetDoorOnSameSide();
+
 public:
+
+	/* If true, this door will open towards the player 90 degrees or -90 degrees is opening from the back. If false, it will open in one direction only. */
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite)
+	bool bTwoSidedDoor;
 
 	virtual void Interact() override;
 

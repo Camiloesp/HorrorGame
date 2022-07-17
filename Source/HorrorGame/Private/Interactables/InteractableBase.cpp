@@ -30,5 +30,8 @@ void AInteractableBase::Tick(float DeltaTime)
 void AInteractableBase::Interact()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Interacting..."));
+
+	// Super::Interact() should be called at the end of each interactable to remove reference of the player that is interacting.
+	InteractingPlayer = nullptr;
 }
 

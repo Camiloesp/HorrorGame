@@ -3,7 +3,6 @@
 
 #include "Characters/HGCharacter.h"
 #include "Camera/CameraComponent.h"
-#include "Components/SpotLightComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Interfaces/Interaction.h"
 #include "Interfaces/GrabInterface.h"
@@ -21,12 +20,6 @@ AHGCharacter::AHGCharacter()
 	FollowCamera->SetupAttachment(RootComponent);
 	FollowCamera->SetRelativeLocation(FVector(0.f, 0.f, 60.f));
 	FollowCamera->bUsePawnControlRotation = true;
-
-	USpotLightComponent* Flashlight;
-
-	Flashlight = CreateDefaultSubobject<USpotLightComponent>(TEXT("Flashlight"));
-	Flashlight->SetupAttachment(FollowCamera);
-	//Flashlight transform to 0.f
 
 
 	GetCharacterMovement()->MaxWalkSpeed = 400.f;
