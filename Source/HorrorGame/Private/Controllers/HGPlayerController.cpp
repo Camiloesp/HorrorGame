@@ -3,3 +3,12 @@
 
 #include "Controllers/HGPlayerController.h"
 
+AHGPlayerController::AHGPlayerController()
+{
+	InventorySlots = 8;
+}
+
+void AHGPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+}

@@ -4,26 +4,24 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "MainHUD.generated.h"
+#include "InventoryMenu.generated.h"
 
 class UInventoryGrid;
 /**
  * 
  */
 UCLASS()
-class HORRORGAME_API UMainHUD : public UUserWidget
+class HORRORGAME_API UInventoryMenu : public UUserWidget
 {
 	GENERATED_BODY()
 	
-
 public:
 
-	virtual void NativeConstruct() override;
+private:
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), meta = (BindWidget))
+	UInventoryGrid* InventoryGrid;
 
 protected:
-
-private:
-	
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), meta = (BindWidget))
-	UInventoryGrid* InventoryGrid;
+public:
 };

@@ -12,6 +12,8 @@ class UCameraComponent;
 class USpotLightComponent;
 class UMainHUD;
 class IGrabInterface;
+class UInventoryMenu;
+class AHGPlayerController;
 //class UHeadBobWalk;
 //class UHeadBobRun;
 
@@ -76,6 +78,20 @@ private:
 	TSubclassOf<UCameraShakeBase> WalkCameraShakeClass;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UCameraShakeBase> RunCameraShakeClass;
+
+	/*  */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	bool bIsPaused;
+
+	/* Class reference to the playerHUD */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UUserWidget> PlayerInventoryClass;
+	/* Widget for the player. Contains Corsshair. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UInventoryMenu* InventoryMenuRef;
+
+	AHGPlayerController* ControllerRef;
+
 protected:
 
 	/* look around */
@@ -114,6 +130,11 @@ protected:
 	void CrouchButtonReleased();
 
 	void HeadBob();
+
+	void InventoryButtonPressed();
+
+	void ToggleInventory();
+	void HandleInventoryVisibilityAndInput();
 
 public:
 

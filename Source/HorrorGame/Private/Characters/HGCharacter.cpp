@@ -9,9 +9,12 @@
 #include "Interfaces/Interaction.h"
 #include "Interfaces/GrabInterface.h"
 #include "Widgets/MainHUD.h"
+#include "Widgets/Inventory/InventoryMenu.h"
 #include "Components/Movement.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Controllers/HGPlayerController.h"
 
+#include "Blueprint/WidgetBlueprintLibrary.h"
 
 // Sets default values
 AHGCharacter::AHGCharacter()
@@ -41,8 +44,10 @@ AHGCharacter::AHGCharacter()
 	GetCharacterMovement()->MaxWalkSpeed = 400.f;
 	GetCharacterMovement()->JumpZVelocity = 400.f;
 
-
-	
+	// Variables Initialization
+	TurnRate = 0.4;
+	DistanceToInteract = 350.f;
+	bIsPaused = false;
 }
 
 // Called when the game starts or when spawned
@@ -86,6 +91,8 @@ void AHGCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 	PlayerInputComponent->BindAction(TEXT("Crouch"), EInputEvent::IE_Pressed, this, &AHGCharacter::CrouchButtonPressed);
 	PlayerInputComponent->BindAction(TEXT("Crouch"), EInputEvent::IE_Released, this, &AHGCharacter::CrouchButtonReleased);
+	
+	PlayerInputComponent->BindAction(TEXT("InventoryToggle"), EInputEvent::IE_Pressed, this, &AHGCharacter::InventoryButtonPressed);
 }
 
 void AHGCharacter::LookUp(float Value)
@@ -155,11 +162,11 @@ AActor* AHGCharacter::LineTrace(float Length)
 
 void AHGCharacter::Initialize()
 {
-	// Variables Initialization
-	TurnRate = 0.4;
-	DistanceToInteract = 350.f;
+	// Get reference to our controller
+	ControllerRef = Cast<AHGPlayerController>(GetController());
 
-	//Create widget, and add it to viewport.
+
+	//Create HUD widget, and add it to viewport.
 	if (PlayerHUDClass)
 	{
 		MainHUDRef = CreateWidget<UMainHUD>(GetWorld(), PlayerHUDClass);
@@ -169,6 +176,19 @@ void AHGCharacter::Initialize()
 		}
 	}
 
+	//Create inventory widget, and add it to viewport.
+	if (PlayerInventoryClass)
+	{
+		InventoryMenuRef = CreateWidget<UInventoryMenu>(GetWorld(), PlayerInventoryClass);
+		if (InventoryMenuRef)
+		{
+			InventoryMenuRef->SetVisibility(ESlateVisibility::Collapsed);
+			InventoryMenuRef->AddToViewport();
+		}
+	}
+
+
+	// Initialize our custom movement component
 	HGMovementComp->Initialize(this);
 	
 }
@@ -230,6 +250,42 @@ void AHGCharacter::HeadBob()
 			{
 				MyController->ClientPlayCameraShake(WalkCameraShakeClass, Scale);
 			}
+		}
+	}
+}
+
+void AHGCharacter::InventoryButtonPressed()
+{
+	ToggleInventory();
+}
+
+void AHGCharacter::ToggleInventory()
+{
+	if (!ControllerRef) return;
+	bIsPaused = InventoryMenuRef->IsVisible();
+
+	if (bIsPaused)
+	{
+		bIsPaused = false;
+		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+		GetController()->SetIgnoreLookInput(false);
+		ControllerRef->bShowMouseCursor = false;
+		if (InventoryMenuRef)
+		{
+			InventoryMenuRef->SetVisibility(ESlateVisibility::Collapsed);
+			UWidgetBlueprintLibrary::SetInputMode_GameOnly(ControllerRef);
+		}
+	}
+	else
+	{
+		bIsPaused = true;
+		GetCharacterMovement()->DisableMovement();
+		GetController()->SetIgnoreLookInput(true);
+		ControllerRef->bShowMouseCursor = true;
+		if (InventoryMenuRef)
+		{
+			InventoryMenuRef->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+			UWidgetBlueprintLibrary::SetInputMode_GameAndUIEx(ControllerRef, InventoryMenuRef);
 		}
 	}
 }
