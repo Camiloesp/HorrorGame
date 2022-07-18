@@ -4,12 +4,13 @@
 #include "Characters/HGCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "Components/SpotLightComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Interfaces/Interaction.h"
 #include "Interfaces/GrabInterface.h"
 #include "Widgets/MainHUD.h"
+#include "Components/Movement.h"
 
-//#include "Engine/World.h"
 
 // Sets default values
 AHGCharacter::AHGCharacter()
@@ -22,15 +23,24 @@ AHGCharacter::AHGCharacter()
 	FollowCamera->SetRelativeLocation(FVector(0.f, 0.f, 60.f));
 	FollowCamera->bUsePawnControlRotation = true;
 
-	USpotLightComponent* Flashlight;
+	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+	SpringArm->SetupAttachment(FollowCamera);
+	SpringArm->TargetArmLength = 10.f;
+	SpringArm->SocketOffset = FVector(0.f, 0.f, -30.f);
+	SpringArm->bEnableCameraRotationLag = true;
+	SpringArm->CameraRotationLagSpeed = 10.f;
 
 	Flashlight = CreateDefaultSubobject<USpotLightComponent>(TEXT("Flashlight"));
-	Flashlight->SetupAttachment(FollowCamera);
+	Flashlight->SetupAttachment(SpringArm);
+	Flashlight->AttenuationRadius = 1200.f;
 	//Flashlight transform to 0.f
 
+	HGMovementComp = CreateDefaultSubobject<UMovement>(TEXT("MovementComp"));
 
 	GetCharacterMovement()->MaxWalkSpeed = 400.f;
 	GetCharacterMovement()->JumpZVelocity = 400.f;
+
+
 	
 }
 
@@ -46,7 +56,6 @@ void AHGCharacter::BeginPlay()
 void AHGCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
@@ -68,6 +77,14 @@ void AHGCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 	PlayerInputComponent->BindAction(TEXT("LeftMouseButton"), EInputEvent::IE_Pressed, this, &AHGCharacter::LeftMouseButtonPressed);
 	PlayerInputComponent->BindAction(TEXT("LeftMouseButton"), EInputEvent::IE_Released, this, &AHGCharacter::LeftMouseButtonReleased);
+
+	PlayerInputComponent->BindAction(TEXT("FlashlightToggle"), EInputEvent::IE_Pressed, this, &AHGCharacter::ToggleFlashlight);
+
+	PlayerInputComponent->BindAction(TEXT("Sprint"), EInputEvent::IE_Pressed, this, &AHGCharacter::Sprint);
+	PlayerInputComponent->BindAction(TEXT("Sprint"), EInputEvent::IE_Released, this, &AHGCharacter::StopSprint);
+
+	PlayerInputComponent->BindAction(TEXT("Crouch"), EInputEvent::IE_Pressed, this, &AHGCharacter::CrouchButtonPressed);
+	PlayerInputComponent->BindAction(TEXT("Crouch"), EInputEvent::IE_Released, this, &AHGCharacter::CrouchButtonReleased);
 }
 
 void AHGCharacter::LookUp(float Value)
@@ -148,4 +165,40 @@ void AHGCharacter::Initialize()
 			MainHUDRef->AddToViewport();
 		}
 	}
+
+	HGMovementComp->Initialize(this);
+	
 }
+
+void AHGCharacter::ToggleFlashlight()
+{
+	bool bIsFlashlightOn = !( Flashlight->IsVisible() );
+	Flashlight->SetVisibility(bIsFlashlightOn);
+}
+
+void AHGCharacter::Sprint()
+{
+	HGMovementComp->StartSprint();
+}
+
+void AHGCharacter::StopSprint()
+{
+	HGMovementComp->StopSprint();
+}
+
+void AHGCharacter::CrouchButtonPressed()
+{
+	HGMovementComp->StartCrouch();
+}
+
+void AHGCharacter::CrouchButtonReleased()
+{
+	HGMovementComp->EndCrouch();
+}
+
+/*
+void AHGCharacter::ShortenPlayerCapsule()
+{
+}
+*/
+

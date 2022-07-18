@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "HGCharacter.generated.h"
 
+class UMovement;
+class USpringArmComponent;
 class UCameraComponent;
 class USpotLightComponent;
 class UMainHUD;
@@ -32,6 +34,9 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
+	/* Camera boom */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	USpringArmComponent* SpringArm;
 
 	/* main camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -40,6 +45,10 @@ private:
 	/* Flashlight */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	USpotLightComponent* Flashlight;
+
+	/* Our First person movement component: Handles sprint */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UMovement* HGMovementComp;
 
 	/* Rate speed when we turn using the mouse */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -87,6 +96,22 @@ protected:
 	/* called in BeginPlay, to initialize widgets and variables. */
 	void Initialize();
 
+	/* Toggles flashlight between on and off. */
+	void ToggleFlashlight();
+
+	void Sprint();
+	void StopSprint();
+
+	void CrouchButtonPressed();
+	void CrouchButtonReleased();
+
 public:
+
+	/* Called when crouching. */
+	UFUNCTION(BlueprintImplementableEvent)
+	void ShortenPlayerCapsule();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void LengthenPlayerCapsule();
 
 };
