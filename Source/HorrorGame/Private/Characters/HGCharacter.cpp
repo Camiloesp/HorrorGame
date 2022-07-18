@@ -262,13 +262,12 @@ void AHGCharacter::InventoryButtonPressed()
 void AHGCharacter::ToggleInventory()
 {
 	if (!ControllerRef) return;
-	bIsPaused = InventoryMenuRef->IsVisible();
 
 	if (bIsPaused)
 	{
 		bIsPaused = false;
 		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
-		GetController()->SetIgnoreLookInput(false);
+		ControllerRef->ResetIgnoreLookInput();
 		ControllerRef->bShowMouseCursor = false;
 		if (InventoryMenuRef)
 		{
@@ -280,7 +279,7 @@ void AHGCharacter::ToggleInventory()
 	{
 		bIsPaused = true;
 		GetCharacterMovement()->DisableMovement();
-		GetController()->SetIgnoreLookInput(true);
+		ControllerRef->SetIgnoreLookInput(true);
 		ControllerRef->bShowMouseCursor = true;
 		if (InventoryMenuRef)
 		{
