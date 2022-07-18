@@ -83,4 +83,7 @@ public:
 
 	void StartCrouch();
 	void EndCrouch();
+
+	FORCEINLINE float GetWalkSpeed() const { return WalkSpeed; }
+	FORCEINLINE float GetSprintSpeed() const { return SprintSpeed; }
 };

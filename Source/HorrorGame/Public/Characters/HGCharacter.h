@@ -12,6 +12,9 @@ class UCameraComponent;
 class USpotLightComponent;
 class UMainHUD;
 class IGrabInterface;
+//class UHeadBobWalk;
+//class UHeadBobRun;
+
 
 UCLASS()
 class HORRORGAME_API AHGCharacter : public ACharacter
@@ -68,6 +71,11 @@ private:
 	/* Current grabbed actor */
 	IGrabInterface* GrabbedActor;
 
+	/* Camera shake according our movement speed */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UCameraShakeBase> WalkCameraShakeClass;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UCameraShakeBase> RunCameraShakeClass;
 protected:
 
 	/* look around */
@@ -104,6 +112,8 @@ protected:
 
 	void CrouchButtonPressed();
 	void CrouchButtonReleased();
+
+	void HeadBob();
 
 public:
 

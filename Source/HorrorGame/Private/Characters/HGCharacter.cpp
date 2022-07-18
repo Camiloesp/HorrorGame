@@ -10,6 +10,7 @@
 #include "Interfaces/GrabInterface.h"
 #include "Widgets/MainHUD.h"
 #include "Components/Movement.h"
+#include "Kismet/KismetMathLibrary.h"
 
 
 // Sets default values
@@ -100,11 +101,13 @@ void AHGCharacter::LookRight(float Value)
 void AHGCharacter::MoveForward(float Value)
 {
 	AddMovementInput(GetActorForwardVector(), Value);
+	HeadBob();
 }
 
 void AHGCharacter::MoveRight(float Value)
 {
 	AddMovementInput(GetActorRightVector(), Value);
+	HeadBob();
 }
 
 void AHGCharacter::ActionButtonPressed()
@@ -194,6 +197,41 @@ void AHGCharacter::CrouchButtonPressed()
 void AHGCharacter::CrouchButtonReleased()
 {
 	HGMovementComp->EndCrouch();
+}
+
+void AHGCharacter::HeadBob()
+{
+	// If our velocity is greater than our walk speed (sprint), and if we are NOT falling.
+	float PlayerVelocity = GetVelocity().Length();
+
+	if ( (PlayerVelocity >= HGMovementComp->GetWalkSpeed()) && !(GetCharacterMovement()->IsFalling()) )
+	{
+		APlayerController* MyController = Cast<APlayerController>(GetController());
+
+		/* Weird but it's a self note for myself AND to make it more readable */
+		float Value = PlayerVelocity;
+		float InRangeA = 0.f;
+		float InRangeB = GetCharacterMovement()->MaxWalkSpeed;
+		float OutRangeA = 0.f;
+		float OutRangeB = 1.f;
+		float Scale = UKismetMathLibrary::MapRangeClamped(Value, InRangeA, InRangeB, OutRangeA, OutRangeB);
+
+		// If our velocity is greater than our sprint speed, and if we are NOT falling.
+		if (PlayerVelocity >= HGMovementComp->GetSprintSpeed() && !(GetCharacterMovement()->IsFalling()))
+		{
+			if (MyController)
+			{
+				MyController->ClientPlayCameraShake(RunCameraShakeClass, Scale);
+			}
+		}
+		else
+		{
+			if (MyController)
+			{
+				MyController->ClientPlayCameraShake(WalkCameraShakeClass, Scale);
+			}
+		}
+	}
 }
 
 /*
