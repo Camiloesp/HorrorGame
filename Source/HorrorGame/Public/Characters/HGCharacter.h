@@ -14,6 +14,7 @@ class UMainHUD;
 class IGrabInterface;
 class UInventoryMenu;
 class AHGPlayerController;
+class UInventoryComponent;
 //class UHeadBobWalk;
 //class UHeadBobRun;
 
@@ -50,6 +51,10 @@ private:
 	/* Flashlight */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	USpotLightComponent* Flashlight;
+
+	/* Our personal inventory */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UInventoryComponent* Inventory;
 
 	/* Our First person movement component: Handles sprint */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -145,4 +150,5 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void LengthenPlayerCapsule();
 
+	FORCEINLINE UInventoryComponent* GetInventory() const { return Inventory; }
 };

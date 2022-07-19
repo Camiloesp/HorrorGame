@@ -13,6 +13,7 @@
 #include "Components/Movement.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Controllers/HGPlayerController.h"
+#include "Components/InventoryComponent.h"
 
 #include "Blueprint/WidgetBlueprintLibrary.h"
 
@@ -40,6 +41,7 @@ AHGCharacter::AHGCharacter()
 	//Flashlight transform to 0.f
 
 	HGMovementComp = CreateDefaultSubobject<UMovement>(TEXT("MovementComp"));
+	Inventory = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory"));
 
 	GetCharacterMovement()->MaxWalkSpeed = 400.f;
 	GetCharacterMovement()->JumpZVelocity = 400.f;

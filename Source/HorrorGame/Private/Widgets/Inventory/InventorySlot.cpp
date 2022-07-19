@@ -10,3 +10,9 @@ UInventorySlot::UInventorySlot(const FObjectInitializer& ObjectInitializer) :Sup
 {
 
 }
+
+void UInventorySlot::NativeConstruct()
+{
+	Index = 0;
+	Amount = 0;
+}
