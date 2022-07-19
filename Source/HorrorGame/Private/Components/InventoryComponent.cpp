@@ -58,11 +58,11 @@ void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	// ...
 }
 
-bool UInventoryComponent::AddItem(AInventoryItemMaster* Item, int Amount)
+bool UInventoryComponent::AddItem(TSubclassOf<AInventoryItemMaster> Item, int Amount)
 {
-	AInventoryItemMaster* LocalItem = Item;
+	AInventoryItemMaster* LocalItem = Cast<AInventoryItemMaster>(Item.Get()); // Item
 	int LocalAmount = Amount;
-	int LocalMaxStackAmount = Item->ItemData.MaxStackAmount;
+	int LocalMaxStackAmount = LocalItem->ItemData.MaxStackAmount;  //Item->ItemData.MaxStackAmount;
 
 	// Check for empty slot and return the index
 	int NewIndex = 0;

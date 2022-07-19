@@ -45,8 +45,8 @@ public:
 	* @param Item Item being added
 	* @param Amount Stack amount
 	* @return True if item was added, false otherwise
-	*/
-	bool AddItem(AInventoryItemMaster* Item, int Amount);
+	*/ // AInventoryItemMaster* Item
+	bool AddItem(TSubclassOf<AInventoryItemMaster> Item, int Amount);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<FInventoryItems> InventorySlots;

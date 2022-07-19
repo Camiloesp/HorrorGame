@@ -10,7 +10,7 @@ struct FInventoryItems
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	//TSubclassOf<class AInventoryItemMaster> Item;
 	class AInventoryItemMaster* Item;
 

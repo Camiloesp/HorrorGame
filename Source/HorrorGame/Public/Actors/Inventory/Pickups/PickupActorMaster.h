@@ -39,7 +39,7 @@ private:
 
 	/* Item class */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	AInventoryItemMaster* Item;
+	TSubclassOf<AInventoryItemMaster> Item;
 	/* How much this specific actor is holding */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	int Amount;
@@ -47,6 +47,7 @@ private:
 protected:
 public:
 
+	UFUNCTION()
 	void Pickup(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 };
