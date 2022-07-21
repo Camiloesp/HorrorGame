@@ -14,16 +14,4 @@ class HORRORGAME_API APickup_FlashlightBattery : public APickupActorMaster
 {
 	GENERATED_BODY()
 	
-public:
-	// Sets default values for this actor's properties
-	APickup_FlashlightBattery();
-
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
 };

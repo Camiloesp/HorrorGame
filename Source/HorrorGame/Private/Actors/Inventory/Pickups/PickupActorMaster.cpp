@@ -41,22 +41,28 @@ void APickupActorMaster::Tick(float DeltaTime)
 
 void APickupActorMaster::Pickup(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	UE_LOG(LogTemp, Warning, TEXT("APickupActorMaster - Pickup overlapped."));
+
 	if (OtherActor)
 	{
 		//Get player picking this up
 		AHGCharacter* PickerCharacter = Cast<AHGCharacter>(OtherActor);
 		if (PickerCharacter)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("APickupActorMaster - PickerCharacter is valid"));
 			UInventoryComponent* PickerInventory = PickerCharacter->GetInventory();
 			if (PickerInventory)
 			{
+				UE_LOG(LogTemp, Warning, TEXT("APickupActorMaster - Character inventory is valid"));
 				if ( PickerInventory->AddItem(Item, Amount) )
 				{
+					UE_LOG(LogTemp, Warning, TEXT("APickupActorMaster - Item added... destroying"));
 					Destroy();
 				}
 				else
 				{
 					// didnt have the room to pick up actor. Leave actor in the world
+					UE_LOG(LogTemp, Warning, TEXT("APickupActorMaster - Item NOT added."));
 				}
 			}
 		}

@@ -76,8 +76,6 @@ bool UInventoryComponent::AddItem(TSubclassOf<AInventoryItemMaster> Item, int Am
 	int LocalAmount = Amount;
 	int LocalMaxStackAmount = LocalItem->ItemData.MaxStackAmount;  //Item->ItemData.MaxStackAmount;
 
-	UE_LOG(LogTemp, Warning, TEXT("UInventoryComponent - AddItem, LocalAmount: %d, LocalMaxStackAmount: %d"), LocalAmount, LocalMaxStackAmount);
-
 	// Check for empty slot and return the index
 	int NewIndex = 0;
 	if (CheckForEmptySlot(NewIndex))
@@ -88,7 +86,6 @@ bool UInventoryComponent::AddItem(TSubclassOf<AInventoryItemMaster> Item, int Am
 		ItemToAdd.Amount = LocalAmount;
 
 		InventorySlots.Insert(ItemToAdd, NewIndex);
-
 		return true;
 	}
 	else
@@ -114,7 +111,7 @@ bool UInventoryComponent::CheckForEmptySlot(int& EmptySlotIndex)
 
 			//UE_LOG(LogTemp, Warning, TEXT("UInventoryComponent - FInventoryItems CurrentItem, %s"), *(CurrentItem.Item->GetFName().ToString()));
 		}
-		else // Slot is empty, so there is enough space for a new item!
+		else
 		{
 			bSuccess = true;
 			EmptySlotIndex = i;

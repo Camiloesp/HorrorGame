@@ -16,7 +16,7 @@ UInventoryGrid::UInventoryGrid(const FObjectInitializer& ObjectInitializer) :Sup
 
 bool UInventoryGrid::Initialize()
 {
-	Super::Initialize();
+	bool bInit = Super::Initialize();
 
 	// Starting variables
 	SlotsPerRow = 4;
@@ -31,11 +31,11 @@ bool UInventoryGrid::Initialize()
 		if (OwnerPlayerRefController)
 		{
 			InventorySlots = OwnerPlayerRefController->GetInventorySlots();
+			// TODO: Set SlotsPerRow part of the controller.
 		}
 	}
 
-	// Make sure the array is empty before re-adding slots
-	SlotsArray.Empty();
+	// Create inventory slots.
 	for (int i = 0; i <= (InventorySlots - 1); i++)
 	{
 		UInventorySlot* InvSlot = CreateWidget<UInventorySlot>(this, InventorySlotsClass);
@@ -54,13 +54,11 @@ bool UInventoryGrid::Initialize()
 				float Reminder = 0.f;
 				UKismetMathLibrary::FMod(Dividend, Divisor, Reminder);
 				int NewColumn = UKismetMathLibrary::FTrunc(Reminder);
-
-
 				// Adds children to grid with its corresponding row and column
 				InventoryGridPanel->AddChildToUniformGrid(InvSlot, NewRow, NewColumn);
 			}
 		}
 	}
 
-	return true;
+	return bInit;
 }

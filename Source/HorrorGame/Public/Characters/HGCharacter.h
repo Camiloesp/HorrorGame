@@ -151,4 +151,5 @@ public:
 	void LengthenPlayerCapsule();
 
 	FORCEINLINE UInventoryComponent* GetInventory() const { return Inventory; }
+
 };

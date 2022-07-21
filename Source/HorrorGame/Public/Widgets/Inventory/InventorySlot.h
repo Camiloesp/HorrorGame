@@ -24,6 +24,8 @@ public:
 	
 	virtual void NativeConstruct() override;
 
+	virtual bool Initialize() override;
+
 private:
 
 	/* Button to select the current item being held in this Slot */

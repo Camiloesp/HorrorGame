@@ -17,6 +17,8 @@ class HORRORGAME_API UInventoryMenu : public UUserWidget
 	
 public:
 
+	virtual bool Initialize() override;
+
 private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), meta = (BindWidget))

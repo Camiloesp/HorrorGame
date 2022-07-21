@@ -13,6 +13,14 @@ UInventorySlot::UInventorySlot(const FObjectInitializer& ObjectInitializer) :Sup
 
 void UInventorySlot::NativeConstruct()
 {
+}
+
+bool UInventorySlot::Initialize()
+{
+	bool bInit = Super::Initialize();
+
 	Index = 0;
 	Amount = 0;
+
+	return bInit;
 }
