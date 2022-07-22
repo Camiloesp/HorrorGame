@@ -243,14 +243,14 @@ void AHGCharacter::HeadBob()
 		{
 			if (MyController)
 			{
-				MyController->ClientPlayCameraShake(RunCameraShakeClass, Scale);
+				MyController->ClientStartCameraShake(RunCameraShakeClass, Scale);
 			}
 		}
 		else
 		{
 			if (MyController)
 			{
-				MyController->ClientPlayCameraShake(WalkCameraShakeClass, Scale);
+				MyController->ClientStartCameraShake(WalkCameraShakeClass, Scale);
 			}
 		}
 	}

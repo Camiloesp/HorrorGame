@@ -39,14 +39,14 @@ private:
 
 protected:
 
-	/* Item class */
+public:
+
+	/* Item class reference for the pickup that will be "placed" in the world */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AInventoryItemMaster> Item;
 	/* How much this specific actor is holding */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	int Amount;
-
-public:
 
 	UFUNCTION()
 	void Pickup(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
