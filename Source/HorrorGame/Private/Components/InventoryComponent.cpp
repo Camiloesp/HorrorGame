@@ -84,7 +84,7 @@ bool UInventoryComponent::AddItem(TSubclassOf<AInventoryItemMaster> Item, int Am
 	{
 		UE_LOG(LogTemp, Warning, TEXT("UInventoryComponent - Free slots found slots"));
 		FInventoryItems ItemToAdd;
-		//ItemToAdd.Item = LocalItem; //ItemToAdd.Item = LocalItem->GetClass();
+		ItemToAdd.Item = LocalItem->GetClass(); //AInventoryItemMaster* PickedUpItem = ItemToAdd.Item.GetDefaultObject();   //ItemToAdd.Item = LocalItem; //ItemToAdd.Item = LocalItem->GetClass();
 		ItemToAdd.Amount = LocalAmount;
 
 		InventorySlots.Insert(ItemToAdd, NewIndex);
