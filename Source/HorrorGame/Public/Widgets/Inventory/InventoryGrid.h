@@ -9,6 +9,7 @@
 
 class UInventorySlot;
 class UUniformGridPanel;
+class AHGCharacter;
 /**
  * 
  */
@@ -36,7 +37,7 @@ private:
 	TSubclassOf<UUserWidget> InventorySlotsClass;
 
 	/* Player that owns this widget */
-	ACharacter* OwnerPlayerRef;
+	AHGCharacter* OwnerPlayerRef;
 
 	TArray<UInventorySlot*> SlotsArray;
 
@@ -46,6 +47,7 @@ protected:
 public:
 	/* GETTERS */
 	FORCEINLINE int GetSlotsPerRow() const { return SlotsPerRow; }
+	FORCEINLINE TArray<UInventorySlot*> GetSlotsArray() const { return SlotsArray; }
 
 	/* SETTERS */
 	FORCEINLINE void SetSlotsPerRow(int NewSlotsPerRow) { SlotsPerRow = NewSlotsPerRow; }

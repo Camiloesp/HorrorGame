@@ -29,6 +29,13 @@ public:
 private:
 
 
+	/*
+	* Updates inventory widget at a specific slot.
+	* @param IndexSlot Index for the inventory widget to be updated.
+	*/
+	void UpdateInventorySlot(int IndexSlot);
+
+
 protected:
 
 	/* 
@@ -46,7 +53,15 @@ public:
 	* @param Amount Stack amount
 	* @return True if item was added, false otherwise
 	*/ // AInventoryItemMaster* Item
-	bool AddItem(TSubclassOf<AInventoryItemMaster> Item, int Amount);
+	bool AddItem(TSubclassOf<AInventoryItemMaster> NewItem, int Amount);
+
+	/*
+	* Get item data based on an inventory index slot
+	* @param Index Inventory index slot to look for the item data.
+	* @param OutItem Returns the Item stored at Index.
+	* @param OutAmount Returns the amount stored at Index.
+	*/
+	void GetItemDataAtIndex(int Index, TSubclassOf<AInventoryItemMaster>& OutItem, int& OutAmount);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<FInventoryItems> InventorySlots;

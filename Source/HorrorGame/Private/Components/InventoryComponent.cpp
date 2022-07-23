@@ -7,7 +7,10 @@
 #include "Controllers/HGPlayerController.h"
 #include "GameFramework/Character.h"
 #include "Actors/Inventory/InventoryItemMaster.h"
-//#include "Characters/HGCharacter.h"
+#include "Characters/HGCharacter.h"
+#include "Widgets/Inventory/InventoryMenu.h"
+#include "Widgets/Inventory/InventoryGrid.h"
+#include "Widgets/Inventory/InventorySlot.h"
 
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
@@ -70,11 +73,28 @@ void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	// ...
 }
 
-bool UInventoryComponent::AddItem(TSubclassOf<AInventoryItemMaster> Item, int Amount)
+void UInventoryComponent::UpdateInventorySlot(int IndexSlot)
 {
-	AInventoryItemMaster* LocalItem = Cast<AInventoryItemMaster>(Item.GetDefaultObject()); // Item
+	AHGCharacter* PlayerOwner = Cast<AHGCharacter>(GetOwner());
+	if (PlayerOwner)
+	{
+		// Get inventory slots
+		TArray<UInventorySlot*> InventoryGridSlots = PlayerOwner->GetInventoryMenu()->GetInventoryGrid()->GetSlotsArray();
+
+		// Get inventory slot at IndexSlot and update it.
+		UInventorySlot* InventorySlotToUpdate = InventoryGridSlots[IndexSlot];
+		if (InventorySlotToUpdate)
+		{
+			InventorySlotToUpdate->UpdateSlot();
+		}
+	}
+}
+
+bool UInventoryComponent::AddItem(TSubclassOf<AInventoryItemMaster> NewItem, int Amount)
+{
+	AInventoryItemMaster* LocalItem = Cast<AInventoryItemMaster>(NewItem.GetDefaultObject()); // NewItem
 	int LocalAmount = Amount;
-	int LocalMaxStackAmount = LocalItem->ItemData.MaxStackAmount;  //Item->ItemData.MaxStackAmount;
+	int LocalMaxStackAmount = LocalItem->ItemData.MaxStackAmount;  //NewItem->ItemData.MaxStackAmount;
 
 	UE_LOG(LogTemp, Warning, TEXT("UInventoryComponent - AddItem, LocalAmount: %d, LocalMaxStackAmount: %d"), LocalAmount, LocalMaxStackAmount);
 
@@ -88,6 +108,9 @@ bool UInventoryComponent::AddItem(TSubclassOf<AInventoryItemMaster> Item, int Am
 		ItemToAdd.Amount = LocalAmount;
 
 		InventorySlots.Insert(ItemToAdd, NewIndex);
+
+		// Updates inventory widget
+		UpdateInventorySlot(NewIndex);
 
 		return true;
 	}
@@ -126,5 +149,13 @@ bool UInventoryComponent::CheckForEmptySlot(int& EmptySlotIndex)
 	FString Log = (bSuccess ? TEXT("True") : TEXT("False"));
 	UE_LOG(LogTemp, Warning, TEXT("UInventoryComponent - bSuccess in CheckForEmptySlot = %s"), *Log);
 	return bSuccess;
+}
+
+void UInventoryComponent::GetItemDataAtIndex(int Index, TSubclassOf<AInventoryItemMaster>& OutItem, int& OutAmount)
+{
+	// Sets the out parameters to be the InventorySlots element at Index
+	FInventoryItems InventoryItemInfo = InventorySlots[Index];
+	OutItem = InventoryItemInfo.Item;
+	OutAmount = InventoryItemInfo.Amount;
 }
 

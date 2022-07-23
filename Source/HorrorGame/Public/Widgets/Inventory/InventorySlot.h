@@ -10,6 +10,7 @@
 
 class UButton;
 class UImage;
+class AHGCharacter;
 
 /**
  *
@@ -48,6 +49,7 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), meta = (BindWidget))
 	int Amount;
 
+	AHGCharacter* PlayerOwnerRef;
 
 protected:
 public:
@@ -58,5 +60,8 @@ public:
 
 	/* SETTERS */
 	FORCEINLINE void SetIndex(int NewIndex) { Index = NewIndex; }
+	FORCEINLINE void SetPlayerOwnerRef(AHGCharacter* NewPlayerOwnerRef) { PlayerOwnerRef = NewPlayerOwnerRef; }
+
+	void UpdateSlot();
 
 };

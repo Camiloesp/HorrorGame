@@ -3,8 +3,8 @@
 
 #include "Widgets/Inventory/InventoryGrid.h"
 #include "Controllers/HGPlayerController.h"
-//#include "Characters/HGCharacter.h"
-#include "GameFramework/Character.h"
+#include "Characters/HGCharacter.h"
+//#include "GameFramework/Character.h"
 #include "Widgets/Inventory/InventorySlot.h"
 #include "Components/UniformGridPanel.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -24,14 +24,14 @@ bool UInventoryGrid::Initialize()
 
 	// Set reference to the player who owns this widget, and get number of inventory slots from its controller.
 	int InventorySlots = 0;
-	OwnerPlayerRef = Cast<ACharacter>(GetOwningPlayerPawn());
+	OwnerPlayerRef = Cast<AHGCharacter>(GetOwningPlayerPawn());
 	if (OwnerPlayerRef)
 	{
 		AHGPlayerController* OwnerPlayerRefController = Cast<AHGPlayerController>(OwnerPlayerRef->GetController());
 		if (OwnerPlayerRefController)
 		{
 			InventorySlots = OwnerPlayerRefController->GetInventorySlots();
-			// TODO: Set SlotsPerRow part of the controller.
+			// TODO: Set SlotsPerRow part of the controller to be more dynamic.
 		}
 	}
 
@@ -56,6 +56,13 @@ bool UInventoryGrid::Initialize()
 				int NewColumn = UKismetMathLibrary::FTrunc(Reminder);
 				// Adds children to grid with its corresponding row and column
 				InventoryGridPanel->AddChildToUniformGrid(InvSlot, NewRow, NewColumn);
+			}
+
+			//Sets reference to the player owner 
+			OwnerPlayerRef = Cast<AHGCharacter>(GetOwningPlayerPawn());
+			if (OwnerPlayerRef)
+			{
+				InvSlot->SetPlayerOwnerRef(OwnerPlayerRef);
 			}
 		}
 	}

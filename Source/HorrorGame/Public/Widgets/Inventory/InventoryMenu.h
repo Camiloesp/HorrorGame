@@ -26,4 +26,6 @@ private:
 
 protected:
 public:
+
+	FORCEINLINE UInventoryGrid* GetInventoryGrid() const { return InventoryGrid; }
 };
