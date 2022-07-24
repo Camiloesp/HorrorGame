@@ -54,10 +54,19 @@ void APickupActorMaster::Pickup(UPrimitiveComponent* OverlappedComponent, AActor
 			if (PickerInventory)
 			{
 				UE_LOG(LogTemp, Warning, TEXT("APickupActorMaster - Character inventory is valid"));
-				if ( PickerInventory->AddItem(Item, Amount) )
+				int RemainderItems = 0; // ?
+				if ( PickerInventory->AddItem(Item, Amount, RemainderItems) )
 				{
-					UE_LOG(LogTemp, Warning, TEXT("APickupActorMaster - Item added... destroying"));
-					Destroy();
+					// If we have some amount left after pickup
+					if (RemainderItems > 0)
+					{
+						Amount = RemainderItems;
+					}
+					else
+					{
+						UE_LOG(LogTemp, Warning, TEXT("APickupActorMaster - Item added... destroying"));
+						Destroy();
+					}
 				}
 				else
 				{

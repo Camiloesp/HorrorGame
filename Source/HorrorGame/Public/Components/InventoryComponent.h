@@ -45,15 +45,24 @@ protected:
 	*/
 	bool CheckForEmptySlot(int& EmptySlotIndex);
 
+	/*
+	* Check for a slot that has room for the same item, if it's allowed to stack.
+	* @param NewItem Item class to look for in the inventory to see if we can stack it.
+	* @param OutIndex Returns an index for the InventorySlots where we can stack NewItem
+	* @return True if found an inventory slot where we can stack our NewItem
+	*/
+	bool CheckForFreeSlot(TSubclassOf<AInventoryItemMaster>& NewItem, int& OutIndex);
+
 public:
 
 	/*
 	* Adds item to inventory
-	* @param Item Item being added
+	* @param NewItem Item being added
 	* @param Amount Stack amount
+	* @param Remainder Return output in case we can pickup some of the items, but not all of them.
 	* @return True if item was added, false otherwise
 	*/ // AInventoryItemMaster* Item
-	bool AddItem(TSubclassOf<AInventoryItemMaster> NewItem, int Amount);
+	bool AddItem(TSubclassOf<AInventoryItemMaster> NewItem, int Amount, int& Remainder);
 
 	/*
 	* Get item data based on an inventory index slot

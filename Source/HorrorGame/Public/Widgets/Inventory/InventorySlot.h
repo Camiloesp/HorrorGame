@@ -11,6 +11,7 @@
 class UButton;
 class UImage;
 class AHGCharacter;
+class UTextBlock;
 
 /**
  *
@@ -48,6 +49,10 @@ private:
 	/* Amount of items we have in the slot */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), meta = (BindWidget))
 	int Amount;
+
+	/* Amount of items we have in the slot to text */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), meta = (BindWidget))
+	UTextBlock* AmountText;
 
 	AHGCharacter* PlayerOwnerRef;
 
