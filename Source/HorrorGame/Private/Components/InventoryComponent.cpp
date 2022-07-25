@@ -92,16 +92,18 @@ void UInventoryComponent::UpdateInventorySlot(int IndexSlot)
 
 bool UInventoryComponent::AddItem(TSubclassOf<AInventoryItemMaster> NewItem, int Amount, int& Remainder)
 {
-	AInventoryItemMaster* LocalItem = Cast<AInventoryItemMaster>(NewItem.GetDefaultObject()); // NewItem
+	UE_LOG(LogTemp, Warning, TEXT("UInventoryComponent - ************AddItem START ***********"));
+	// Set local variables
+	AInventoryItemMaster* LocalItem = Cast<AInventoryItemMaster>(NewItem.GetDefaultObject());
 	int LocalAmount = Amount;
-	int LocalMaxStackAmount = LocalItem->ItemData.MaxStackAmount;  //NewItem->ItemData.MaxStackAmount;
+	int LocalMaxStackAmount = LocalItem->ItemData.MaxStackAmount;
 
 	UE_LOG(LogTemp, Warning, TEXT("UInventoryComponent - AddItem, LocalAmount: %d, LocalMaxStackAmount: %d"), LocalAmount, LocalMaxStackAmount);
 
 	// Allow inventory item stacking if MaxStackAmout is > 1
 	if (LocalMaxStackAmount > 1)
 	{
-		// Check for empty slot to stack in and return the index
+		// CheckForFreeSlot will be true if it found the same item in the inventory, with the Amount being less than MaxStackAmount
 		int NewIndex = 0;
 		if (CheckForFreeSlot(NewItem, NewIndex))
 		{
@@ -109,22 +111,28 @@ bool UInventoryComponent::AddItem(TSubclassOf<AInventoryItemMaster> NewItem, int
 
 			int CurrentAmountInSlot = 0;
 			GetItemDataAtIndex(NewIndex, NewItem, CurrentAmountInSlot);
+			UE_LOG(LogTemp, Error, TEXT("UInventoryComponent - AddItem, GetItemDataAtIndex, Current slot amount: %d"), CurrentAmountInSlot);
 
-			CurrentAmountInSlot += LocalAmount;
-
-			if (CurrentAmountInSlot > LocalMaxStackAmount)
+			if ((CurrentAmountInSlot + LocalAmount) > LocalMaxStackAmount)
 			{
-				LocalAmount = CurrentAmountInSlot - LocalMaxStackAmount;
+				UE_LOG(LogTemp, Warning, TEXT("UInventoryComponent - AddItem CurrentAmountInSlot + LocalAmount) > LocalMaxStackAmount ****TRUE****"));
+				LocalAmount = (CurrentAmountInSlot + LocalAmount) - LocalMaxStackAmount;
+				UE_LOG(LogTemp, Error, TEXT("UInventoryComponent - AddItem, New Local amount to be inserted: %d"), LocalAmount);
 
 				// Add pickup to inventory
 				FInventoryItems ItemToAdd;
 				ItemToAdd.Item = LocalItem->GetClass();
 				ItemToAdd.Amount = LocalMaxStackAmount;
 				InventorySlots.Insert(ItemToAdd, NewIndex);
+				UE_LOG(LogTemp, Error, TEXT("UInventoryComponent - AddItem, Inserting %d items to slot %d"), ItemToAdd.Amount, NewIndex);
 
+
+				UE_LOG(LogTemp, Error, TEXT("UInventoryComponent - AddItem, New CurrentAmountInSlot: %d"), CurrentAmountInSlot);
+				// update inventory widget amount text
 				UpdateInventorySlot(NewIndex);
-
+			
 				int NewRemainder = 0;
+				UE_LOG(LogTemp, Warning, TEXT("UInventoryComponent - AddItem line 132 with amount: %d"), LocalAmount);
 				AddItem(NewItem, LocalAmount, NewRemainder);
 
 				Remainder = NewRemainder;
@@ -132,11 +140,13 @@ bool UInventoryComponent::AddItem(TSubclassOf<AInventoryItemMaster> NewItem, int
 			}
 			else
 			{
+				UE_LOG(LogTemp, Warning, TEXT("UInventoryComponent - AddItem CurrentAmountInSlot + LocalAmount) > LocalMaxStackAmount ****FALSE****"));
 				// Add pickup to inventory
 				FInventoryItems ItemToAdd;
 				ItemToAdd.Item = LocalItem->GetClass();
-				ItemToAdd.Amount = CurrentAmountInSlot;
+				ItemToAdd.Amount = CurrentAmountInSlot + LocalAmount;
 				InventorySlots.Insert(ItemToAdd, NewIndex);
+				UE_LOG(LogTemp, Error, TEXT("UInventoryComponent - AddItem, Inserting %d items to slot %d"), ItemToAdd.Amount, NewIndex);
 
 				UpdateInventorySlot(NewIndex);
 
@@ -164,7 +174,8 @@ bool UInventoryComponent::AddItem(TSubclassOf<AInventoryItemMaster> NewItem, int
 
 					// If there are still things leftover to add, recursively call this function.
 					int NewRemainder = 0;
-					AddItem(NewItem, (LocalAmount - LocalMaxStackAmount), NewRemainder);
+					UE_LOG(LogTemp, Warning, TEXT("UInventoryComponent - AddItem line 171 with amount: %d"), LocalAmount-LocalMaxStackAmount);
+					AddItem(NewItem, (LocalAmount - LocalMaxStackAmount), NewRemainder); //camilo AddItem(LocalItem, (LocalAmount - LocalMaxStackAmount), NewRemainder);
 
 					Remainder = NewRemainder;
 					return true;
@@ -193,7 +204,6 @@ bool UInventoryComponent::AddItem(TSubclassOf<AInventoryItemMaster> NewItem, int
 	}
 	else
 	{
-
 		// Check for empty slot and return the index
 		int NewIndex = 0;
 		if (CheckForEmptySlot(NewIndex))
@@ -209,9 +219,11 @@ bool UInventoryComponent::AddItem(TSubclassOf<AInventoryItemMaster> NewItem, int
 			UpdateInventorySlot(NewIndex);
 
 			LocalAmount--;
+
 			if (LocalAmount > 0)
 			{
 				int NewRemainder = 0;
+				UE_LOG(LogTemp, Warning, TEXT("UInventoryComponent - AddItem line 218 with amount: %d"), LocalAmount);
 				AddItem(NewItem, LocalAmount, NewRemainder);
 
 				Remainder = NewRemainder;
@@ -264,20 +276,20 @@ bool UInventoryComponent::CheckForEmptySlot(int& EmptySlotIndex)
 
 bool UInventoryComponent::CheckForFreeSlot(TSubclassOf<AInventoryItemMaster>& NewItem, int& OutIndex)
 {
-	//if (!NewItem) return false;
-	AInventoryItemMaster* PickedUpItem = NewItem.GetDefaultObject();
-	//if (PickedUpItem) return false;
+	//AInventoryItemMaster* PickedUpItem = NewItem.GetDefaultObject();
+	AInventoryItemMaster* PickedUpItem = Cast<AInventoryItemMaster>(NewItem.GetDefaultObject());
 
 	// Success on finding a free slot
 	bool bSuccess = false;
 
-	for (int i = 0; i < InventorySlots.Num(); i++)
+	for (int i = 0; i<InventorySlots.Num(); i++)
 	{
 		// Search in our inventory slot the NewItem and see if it has room in it.
 		FInventoryItems CurrentItem = InventorySlots[i];
-		// if current item is equal to the NewItem being picked up **AND**
-		if ( (CurrentItem.Item == NewItem) && (CurrentItem.Amount < PickedUpItem->ItemData.MaxStackAmount) )
+		// if current item is equal to the NewItem being picked up **AND** if it has room (i.e can be stacked)
+		if ( (CurrentItem.Item == NewItem) && (CurrentItem.Amount < PickedUpItem->ItemData.MaxStackAmount))
 		{
+			UE_LOG(LogTemp, Warning, TEXT("UInventoryComponent - CheckForFreeSlot is true because CurrentItem.Amount = %d, PickedUpItem.ItemData.MaxStackAmount = %d "), CurrentItem.Amount, PickedUpItem->ItemData.MaxStackAmount);
 			bSuccess = true;
 			OutIndex = i;
 			break;

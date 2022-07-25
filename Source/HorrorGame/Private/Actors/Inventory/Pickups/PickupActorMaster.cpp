@@ -41,20 +41,18 @@ void APickupActorMaster::Tick(float DeltaTime)
 
 void APickupActorMaster::Pickup(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("APickupActorMaster - Pickup overlapped."));
-
 	if (OtherActor)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("=========================================================================="));
 		//Get player picking this up
 		AHGCharacter* PickerCharacter = Cast<AHGCharacter>(OtherActor);
 		if (PickerCharacter)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("APickupActorMaster - PickerCharacter is valid"));
 			UInventoryComponent* PickerInventory = PickerCharacter->GetInventory();
+			// if it has an inventory component.
 			if (PickerInventory)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("APickupActorMaster - Character inventory is valid"));
-				int RemainderItems = 0; // ?
+				int RemainderItems = 0;
 				if ( PickerInventory->AddItem(Item, Amount, RemainderItems) )
 				{
 					// If we have some amount left after pickup
@@ -64,7 +62,6 @@ void APickupActorMaster::Pickup(UPrimitiveComponent* OverlappedComponent, AActor
 					}
 					else
 					{
-						UE_LOG(LogTemp, Warning, TEXT("APickupActorMaster - Item added... destroying"));
 						Destroy();
 					}
 				}
@@ -75,6 +72,8 @@ void APickupActorMaster::Pickup(UPrimitiveComponent* OverlappedComponent, AActor
 				}
 			}
 		}
+
+		UE_LOG(LogTemp, Warning, TEXT("=========================================================================="));
 	}
 }
 
