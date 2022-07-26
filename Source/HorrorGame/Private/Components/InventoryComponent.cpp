@@ -2,7 +2,6 @@
 
 
 #include "Components/InventoryComponent.h"
-#include "Kismet/KismetArrayLibrary.h"
 //#include "Kismet/GameplayStatics.h"
 #include "Controllers/HGPlayerController.h"
 #include "GameFramework/Character.h"
@@ -20,6 +19,7 @@ UInventoryComponent::UInventoryComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	// ...
+	
 }
 
 
@@ -37,29 +37,7 @@ void UInventoryComponent::BeginPlay()
 		AHGPlayerController* OwnerController = Cast<AHGPlayerController>(CharOwner->GetController());
 		if (OwnerController)
 		{
-
-
-
-			//UKismetArrayLibrary::Array_Resize(InventorySlots, OwnerController->GetInventorySlots());
-
-			
-			//FArrayProperty* ArrayProperty = CastField<FArrayProperty>(InventorySlots);
-			//UKismetArrayLibrary::GenericArray_Resize(&InventorySlots, ArrayProperty, OwnerController->GetInventorySlots());
-
-			// Adds empty InventoryItems slots
-			/*
-			for (int i = 0; i<=OwnerController->GetInventorySlots(); i++)
-			{
-				FInventoryItems NewSlot;
-				InventorySlots.Add(NewSlot);
-			}
-			*/
-			UE_LOG(LogTemp, Error, TEXT("UInventoryComponent - Setting InventorySlots to be: %d"), OwnerController->GetInventorySlots());
-			UE_LOG(LogTemp, Error, TEXT("UInventoryComponent - InventorySlots before: %d"), InventorySlots.Num());
 			InventorySlots.SetNum(OwnerController->GetInventorySlots());
-
-			UE_LOG(LogTemp, Error, TEXT("UInventoryComponent - InventorySlots after: %d"), InventorySlots.Num());
-
 		}
 	}
 }
@@ -92,47 +70,36 @@ void UInventoryComponent::UpdateInventorySlot(int IndexSlot)
 
 bool UInventoryComponent::AddItem(TSubclassOf<AInventoryItemMaster> NewItem, int Amount, int& Remainder)
 {
-	UE_LOG(LogTemp, Warning, TEXT("UInventoryComponent - ************AddItem START ***********"));
 	// Set local variables
 	AInventoryItemMaster* LocalItem = Cast<AInventoryItemMaster>(NewItem.GetDefaultObject());
 	int LocalAmount = Amount;
 	int LocalMaxStackAmount = LocalItem->ItemData.MaxStackAmount;
 
-	UE_LOG(LogTemp, Warning, TEXT("UInventoryComponent - AddItem, LocalAmount: %d, LocalMaxStackAmount: %d"), LocalAmount, LocalMaxStackAmount);
-
 	// Allow inventory item stacking if MaxStackAmout is > 1
 	if (LocalMaxStackAmount > 1)
 	{
-		// CheckForFreeSlot will be true if it found the same item in the inventory, with the Amount being less than MaxStackAmount
+		// CheckForFreeSlot will be true if it found the same item in the inventory, with the Amount being less than MaxStackAmount. (TO BE ABLE TO STACK.)
 		int NewIndex = 0;
 		if (CheckForFreeSlot(NewItem, NewIndex))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("UInventoryComponent - AddItem: STACKING ITEMS"));
-
 			int CurrentAmountInSlot = 0;
 			GetItemDataAtIndex(NewIndex, NewItem, CurrentAmountInSlot);
-			UE_LOG(LogTemp, Error, TEXT("UInventoryComponent - AddItem, GetItemDataAtIndex, Current slot amount: %d"), CurrentAmountInSlot);
 
 			if ((CurrentAmountInSlot + LocalAmount) > LocalMaxStackAmount)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("UInventoryComponent - AddItem CurrentAmountInSlot + LocalAmount) > LocalMaxStackAmount ****TRUE****"));
 				LocalAmount = (CurrentAmountInSlot + LocalAmount) - LocalMaxStackAmount;
-				UE_LOG(LogTemp, Error, TEXT("UInventoryComponent - AddItem, New Local amount to be inserted: %d"), LocalAmount);
 
 				// Add pickup to inventory
 				FInventoryItems ItemToAdd;
-				ItemToAdd.Item = LocalItem->GetClass();
+				ItemToAdd.Item = NewItem; //ItemToAdd.Item = LocalItem->GetClass();
 				ItemToAdd.Amount = LocalMaxStackAmount;
-				InventorySlots.Insert(ItemToAdd, NewIndex);
-				UE_LOG(LogTemp, Error, TEXT("UInventoryComponent - AddItem, Inserting %d items to slot %d"), ItemToAdd.Amount, NewIndex);
+				InventorySlots[NewIndex] = ItemToAdd; //InventorySlots.Insert(ItemToAdd, NewIndex);
 
-
-				UE_LOG(LogTemp, Error, TEXT("UInventoryComponent - AddItem, New CurrentAmountInSlot: %d"), CurrentAmountInSlot);
 				// update inventory widget amount text
 				UpdateInventorySlot(NewIndex);
-			
+
+				// Add or try adding the leftover Amount in a new slot
 				int NewRemainder = 0;
-				UE_LOG(LogTemp, Warning, TEXT("UInventoryComponent - AddItem line 132 with amount: %d"), LocalAmount);
 				AddItem(NewItem, LocalAmount, NewRemainder);
 
 				Remainder = NewRemainder;
@@ -140,13 +107,12 @@ bool UInventoryComponent::AddItem(TSubclassOf<AInventoryItemMaster> NewItem, int
 			}
 			else
 			{
-				UE_LOG(LogTemp, Warning, TEXT("UInventoryComponent - AddItem CurrentAmountInSlot + LocalAmount) > LocalMaxStackAmount ****FALSE****"));
 				// Add pickup to inventory
 				FInventoryItems ItemToAdd;
-				ItemToAdd.Item = LocalItem->GetClass();
+				ItemToAdd.Item = NewItem;//ItemToAdd.Item = LocalItem->GetClass();
 				ItemToAdd.Amount = CurrentAmountInSlot + LocalAmount;
-				InventorySlots.Insert(ItemToAdd, NewIndex);
-				UE_LOG(LogTemp, Error, TEXT("UInventoryComponent - AddItem, Inserting %d items to slot %d"), ItemToAdd.Amount, NewIndex);
+				//InventorySlots.Insert(ItemToAdd, NewIndex);
+				InventorySlots[NewIndex] = ItemToAdd;
 
 				UpdateInventorySlot(NewIndex);
 
@@ -156,8 +122,6 @@ bool UInventoryComponent::AddItem(TSubclassOf<AInventoryItemMaster> NewItem, int
 		}
 		else // Not able to stack
 		{
-			UE_LOG(LogTemp, Warning, TEXT("UInventoryComponent - AddItem: NOT STACKING ITEMS"));
-
 			// check for an empty slot
 			if (CheckForEmptySlot(NewIndex))
 			{
@@ -166,16 +130,15 @@ bool UInventoryComponent::AddItem(TSubclassOf<AInventoryItemMaster> NewItem, int
 				{
 					// Add pickup to inventory
 					FInventoryItems ItemToAdd;
-					ItemToAdd.Item = LocalItem->GetClass();
+					ItemToAdd.Item = NewItem;
 					ItemToAdd.Amount = LocalMaxStackAmount;
-					InventorySlots.Insert(ItemToAdd, NewIndex);
+					InventorySlots[NewIndex] = ItemToAdd;
 
 					UpdateInventorySlot(NewIndex);
 
 					// If there are still things leftover to add, recursively call this function.
 					int NewRemainder = 0;
-					UE_LOG(LogTemp, Warning, TEXT("UInventoryComponent - AddItem line 171 with amount: %d"), LocalAmount-LocalMaxStackAmount);
-					AddItem(NewItem, (LocalAmount - LocalMaxStackAmount), NewRemainder); //camilo AddItem(LocalItem, (LocalAmount - LocalMaxStackAmount), NewRemainder);
+					AddItem(NewItem, (LocalAmount - LocalMaxStackAmount), NewRemainder);
 
 					Remainder = NewRemainder;
 					return true;
@@ -184,9 +147,10 @@ bool UInventoryComponent::AddItem(TSubclassOf<AInventoryItemMaster> NewItem, int
 				{
 					// Add pickup to inventory
 					FInventoryItems ItemToAdd;
-					ItemToAdd.Item = LocalItem->GetClass();
+					ItemToAdd.Item = NewItem; //ItemToAdd.Item = LocalItem->GetClass();
 					ItemToAdd.Amount = LocalAmount;
-					InventorySlots.Insert(ItemToAdd, NewIndex);
+					//InventorySlots.Insert(ItemToAdd, NewIndex);
+					InventorySlots[NewIndex] = ItemToAdd;
 
 					UpdateInventorySlot(NewIndex);
 
@@ -208,12 +172,12 @@ bool UInventoryComponent::AddItem(TSubclassOf<AInventoryItemMaster> NewItem, int
 		int NewIndex = 0;
 		if (CheckForEmptySlot(NewIndex))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("UInventoryComponent - Free slots found slots"));
 			FInventoryItems ItemToAdd;
-			ItemToAdd.Item = LocalItem->GetClass(); //AInventoryItemMaster* PickedUpItem = ItemToAdd.Item.GetDefaultObject();   //ItemToAdd.Item = LocalItem; //ItemToAdd.Item = LocalItem->GetClass();
+			ItemToAdd.Item = NewItem;
 			ItemToAdd.Amount = 1;//LocalAmount;
 
-			InventorySlots.Insert(ItemToAdd, NewIndex);
+			//InventorySlots.Insert(ItemToAdd, NewIndex);
+			InventorySlots[NewIndex] = ItemToAdd;
 
 			// Updates inventory widget
 			UpdateInventorySlot(NewIndex);
@@ -223,7 +187,6 @@ bool UInventoryComponent::AddItem(TSubclassOf<AInventoryItemMaster> NewItem, int
 			if (LocalAmount > 0)
 			{
 				int NewRemainder = 0;
-				UE_LOG(LogTemp, Warning, TEXT("UInventoryComponent - AddItem line 218 with amount: %d"), LocalAmount);
 				AddItem(NewItem, LocalAmount, NewRemainder);
 
 				Remainder = NewRemainder;
@@ -237,7 +200,6 @@ bool UInventoryComponent::AddItem(TSubclassOf<AInventoryItemMaster> NewItem, int
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("UInventoryComponent - No free slots"));
 			Remainder = LocalAmount;
 			return false;
 		}
@@ -255,28 +217,21 @@ bool UInventoryComponent::CheckForEmptySlot(int& EmptySlotIndex)
 		// If CurrentItem.Item is valid, Slot already has an item.
 		if (CurrentItem.Item != nullptr)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("UInventoryComponent - CheckForEmptySlot loop, i = %d NO LUCK"), i);
 			bSuccess = false;
-
-			//UE_LOG(LogTemp, Warning, TEXT("UInventoryComponent - FInventoryItems CurrentItem, %s"), *(CurrentItem.Item->GetFName().ToString()));
 		}
 		else // Slot is empty, so there is enough space for a new item!
 		{
 			bSuccess = true;
 			EmptySlotIndex = i;
-			UE_LOG(LogTemp, Warning, TEXT("UInventoryComponent - CheckForEmptySlot loop, i = %d FOUND SLOT, BREAKING"), i);
 			break;
 		}
 	}
 
-	FString Log = (bSuccess ? TEXT("True") : TEXT("False"));
-	UE_LOG(LogTemp, Warning, TEXT("UInventoryComponent - bSuccess in CheckForEmptySlot = %s"), *Log);
 	return bSuccess;
 }
 
 bool UInventoryComponent::CheckForFreeSlot(TSubclassOf<AInventoryItemMaster>& NewItem, int& OutIndex)
 {
-	//AInventoryItemMaster* PickedUpItem = NewItem.GetDefaultObject();
 	AInventoryItemMaster* PickedUpItem = Cast<AInventoryItemMaster>(NewItem.GetDefaultObject());
 
 	// Success on finding a free slot
@@ -289,7 +244,6 @@ bool UInventoryComponent::CheckForFreeSlot(TSubclassOf<AInventoryItemMaster>& Ne
 		// if current item is equal to the NewItem being picked up **AND** if it has room (i.e can be stacked)
 		if ( (CurrentItem.Item == NewItem) && (CurrentItem.Amount < PickedUpItem->ItemData.MaxStackAmount))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("UInventoryComponent - CheckForFreeSlot is true because CurrentItem.Amount = %d, PickedUpItem.ItemData.MaxStackAmount = %d "), CurrentItem.Amount, PickedUpItem->ItemData.MaxStackAmount);
 			bSuccess = true;
 			OutIndex = i;
 			break;

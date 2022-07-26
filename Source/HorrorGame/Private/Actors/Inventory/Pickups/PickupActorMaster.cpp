@@ -43,7 +43,6 @@ void APickupActorMaster::Pickup(UPrimitiveComponent* OverlappedComponent, AActor
 {
 	if (OtherActor)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("=========================================================================="));
 		//Get player picking this up
 		AHGCharacter* PickerCharacter = Cast<AHGCharacter>(OtherActor);
 		if (PickerCharacter)
@@ -72,8 +71,6 @@ void APickupActorMaster::Pickup(UPrimitiveComponent* OverlappedComponent, AActor
 				}
 			}
 		}
-
-		UE_LOG(LogTemp, Warning, TEXT("=========================================================================="));
 	}
 }
 
