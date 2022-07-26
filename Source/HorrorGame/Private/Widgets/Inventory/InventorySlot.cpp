@@ -45,6 +45,22 @@ void UInventorySlot::UpdateSlot()
 			int ItemAmount;
 			PlayerOwnerInventory->GetItemDataAtIndex(Index, OutInvItem, ItemAmount);
 
+			// Disabling empty inventory slots.
+			if (OutInvItem)
+			{
+				SlotButton->SetIsEnabled(true);
+			}
+			else
+			{
+				SlotButton->SetIsEnabled(false);
+				if (EmptyIcon)
+				{
+					SlotImage->SetBrushFromTexture(EmptyIcon, true);
+				}
+				AmountText->SetVisibility(ESlateVisibility::Hidden);
+			}
+
+
 			AInventoryItemMaster* InvItem = OutInvItem.GetDefaultObject();
 			if (InvItem)
 			{
@@ -53,7 +69,8 @@ void UInventorySlot::UpdateSlot()
 			}
 
 			// Sets the amount text in the widget slot.
-			FText ItemAmountText = UKismetTextLibrary::Conv_Int64ToText(ItemAmount, false, true);
+			//FText ItemAmountText = UKismetTextLibrary::Conv_Int64ToText(ItemAmount, false, true);
+			FText ItemAmountText = FText::FromString(FString::FromInt(ItemAmount));
 			AmountText->SetText(ItemAmountText);
 
 			// If we have MORE THAN 1, show text

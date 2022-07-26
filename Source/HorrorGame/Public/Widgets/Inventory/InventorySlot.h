@@ -12,6 +12,7 @@ class UButton;
 class UImage;
 class AHGCharacter;
 class UTextBlock;
+class UTexture2D;
 
 /**
  *
@@ -37,6 +38,10 @@ private:
 	/* Slot image for the item */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), meta = (BindWidget))
 	UImage* SlotImage;
+
+	/* Icon when button is disabled. (i.e. there is no item in the slot) */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UTexture2D* EmptyIcon;
 
 	/* Index for this slot, in the array slot */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), meta = (BindWidget))

@@ -64,6 +64,8 @@ bool UInventoryGrid::Initialize()
 			{
 				InvSlot->SetPlayerOwnerRef(OwnerPlayerRef);
 			}
+
+			InvSlot->UpdateSlot();
 		}
 	}
 
