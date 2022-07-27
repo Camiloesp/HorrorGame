@@ -15,5 +15,5 @@ struct FInventoryItems
 	//class AInventoryItemMaster* Item;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	int Amount;
+	int Amount = 0;
 };

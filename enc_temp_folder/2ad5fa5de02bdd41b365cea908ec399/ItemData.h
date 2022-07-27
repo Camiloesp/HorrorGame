@@ -17,5 +17,5 @@ struct FItemData
 	class UTexture2D* Icon;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	int MaxStackAmount = 0;
+	int MaxStackAmount;
 };

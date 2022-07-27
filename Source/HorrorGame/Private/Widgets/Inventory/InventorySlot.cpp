@@ -42,8 +42,7 @@ void UInventorySlot::UpdateSlot()
 		{
 			// Out parameters to get idem data from the player inventory component
 			TSubclassOf<AInventoryItemMaster> OutInvItem;
-			int ItemAmount;
-			PlayerOwnerInventory->GetItemDataAtIndex(Index, OutInvItem, ItemAmount);
+			PlayerOwnerInventory->GetItemDataAtIndex(Index, OutInvItem, Amount);
 
 			// Disabling empty inventory slots.
 			if (OutInvItem)
@@ -69,12 +68,12 @@ void UInventorySlot::UpdateSlot()
 			}
 
 			// Sets the amount text in the widget slot.
-			//FText ItemAmountText = UKismetTextLibrary::Conv_Int64ToText(ItemAmount, false, true);
-			FText ItemAmountText = FText::FromString(FString::FromInt(ItemAmount));
+			FText ItemAmountText = UKismetTextLibrary::Conv_Int64ToText(Amount, false, true);
+			//FText ItemAmountText = FText::FromString(FString::FromInt(Amount));
 			AmountText->SetText(ItemAmountText);
 
 			// If we have MORE THAN 1, show text
-			ESlateVisibility NewVisibility = (ItemAmount > 1) ? ESlateVisibility::Visible : ESlateVisibility::Hidden;
+			ESlateVisibility NewVisibility = (Amount > 1) ? ESlateVisibility::Visible : ESlateVisibility::Hidden;
 			AmountText->SetVisibility(NewVisibility);
 			
 		}

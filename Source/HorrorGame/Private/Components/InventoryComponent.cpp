@@ -263,5 +263,23 @@ void UInventoryComponent::GetItemDataAtIndex(int Index, TSubclassOf<AInventoryIt
 	FInventoryItems InventoryItemInfo = InventorySlots[Index];
 	OutItem = InventoryItemInfo.Item;
 	OutAmount = InventoryItemInfo.Amount;
+	/* 
+	* Sets OutAmount to 0 if the InventoryItemInfo.Item hasn't been initialized.
+	* If the InventoryItemInfo.Item is not initialized, this check will prevent
+	* the OutAmount to be a random/weird number loaded from memory and simply return 0.
+	* This helps with the bug where we start with an empty inventory but displays a long amount like '1634002'
+	*/
+	/*
+	if (OutItem.GetDefaultObject())
+	{
+		OutAmount = InventoryItemInfo.Amount;
+	}
+	else
+	{
+		OutAmount = 0;
+	}
+	*/
+
+	UE_LOG(LogTemp, Error, TEXT("GetItemDataAtIndex: %d, and the amount in this index is: %d"), Index, OutAmount);
 }
 
