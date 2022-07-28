@@ -11,6 +11,7 @@
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Kismet/KismetTextLibrary.h"
+#include "Widgets/Inventory/InventoryMenu.h"
 
 UInventorySlot::UInventorySlot(const FObjectInitializer& ObjectInitializer) :Super(ObjectInitializer)
 {
@@ -29,6 +30,8 @@ bool UInventorySlot::Initialize()
 	Amount = 0;
 
 	AmountText->SetVisibility(ESlateVisibility::Hidden);
+
+	SlotButton->OnReleased.AddDynamic(this, &UInventorySlot::SlotButtonPressed);
 
 	return bInit;
 }
@@ -76,6 +79,23 @@ void UInventorySlot::UpdateSlot()
 			ESlateVisibility NewVisibility = (Amount > 1) ? ESlateVisibility::Visible : ESlateVisibility::Hidden;
 			AmountText->SetVisibility(NewVisibility);
 			
+		}
+	}
+}
+
+void UInventorySlot::SlotButtonPressed()
+{
+	if (InventoryMenuReference)
+	{
+		InventoryMenuReference->OpenDropDownMenu(this);
+	}
+	else
+	{
+		if (PlayerOwnerRef)
+		{
+			// If we have no reference to the InventoryMenuReference, try to get it and call this function again
+			InventoryMenuReference = PlayerOwnerRef->GetInventoryMenu();
+			SlotButtonPressed();
 		}
 	}
 }

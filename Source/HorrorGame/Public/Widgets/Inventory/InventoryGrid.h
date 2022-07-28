@@ -10,6 +10,7 @@
 class UInventorySlot;
 class UUniformGridPanel;
 class AHGCharacter;
+class UInventoryMenu;
 /**
  * 
  */
@@ -43,12 +44,18 @@ private:
 
 	int SlotsPerRow;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UInventoryMenu* InventoryMenuReference;
+
 protected:
 public:
 	/* GETTERS */
 	FORCEINLINE int GetSlotsPerRow() const { return SlotsPerRow; }
 	FORCEINLINE TArray<UInventorySlot*> GetSlotsArray() const { return SlotsArray; }
+	FORCEINLINE UInventoryMenu* GetInventoryMenuReference() const { return InventoryMenuReference; }
+	FORCEINLINE UUniformGridPanel* GetInventoryGridPanel() const { return InventoryGridPanel; }
 
 	/* SETTERS */
 	FORCEINLINE void SetSlotsPerRow(int NewSlotsPerRow) { SlotsPerRow = NewSlotsPerRow; }
+	FORCEINLINE void SetInventoryMenuReference(UInventoryMenu* NewInventoryMenuReference) { InventoryMenuReference = NewInventoryMenuReference; }
 };

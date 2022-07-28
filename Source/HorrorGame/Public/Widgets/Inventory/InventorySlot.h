@@ -13,6 +13,7 @@ class UImage;
 class AHGCharacter;
 class UTextBlock;
 class UTexture2D;
+class UInventoryMenu;
 
 /**
  *
@@ -61,16 +62,26 @@ private:
 
 	AHGCharacter* PlayerOwnerRef;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UInventoryMenu* InventoryMenuReference;
+
+
 protected:
+
+	UFUNCTION()
+	void SlotButtonPressed();
+
 public:
 
 	/* GETTERS */
 	FORCEINLINE int GetIndex() const { return Index; }
+	FORCEINLINE UInventoryMenu* GetInventoryMenuReference() const { return InventoryMenuReference; }
 
 
 	/* SETTERS */
 	FORCEINLINE void SetIndex(int NewIndex) { Index = NewIndex; }
 	FORCEINLINE void SetPlayerOwnerRef(AHGCharacter* NewPlayerOwnerRef) { PlayerOwnerRef = NewPlayerOwnerRef; }
+	FORCEINLINE void SetInventoryMenuReference(UInventoryMenu* NewInventoryMenuReference) { InventoryMenuReference = NewInventoryMenuReference; }
 
 	void UpdateSlot();
 

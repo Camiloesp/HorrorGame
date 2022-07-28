@@ -7,6 +7,8 @@
 #include "InventoryMenu.generated.h"
 
 class UInventoryGrid;
+class UInventorySlot;
+class UInventoryDropDown;
 /**
  * 
  */
@@ -21,11 +23,23 @@ public:
 
 private:
 
+	/* Grid that holds inventory slots */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), meta = (BindWidget))
 	UInventoryGrid* InventoryGrid;
 
+	/* Dropdown that is displayed when we select a slot */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), meta = (BindWidget))
+	UInventoryDropDown* DropDownMenu;
+
 protected:
+
 public:
+
+	/*
+	* Opens slot menu options
+	* @param Slot Slot that will open the dropdown menu
+	*/
+	void OpenDropDownMenu(UInventorySlot* SlotRef);
 
 	FORCEINLINE UInventoryGrid* GetInventoryGrid() const { return InventoryGrid; }
 };

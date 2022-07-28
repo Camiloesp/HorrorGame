@@ -65,6 +65,13 @@ bool UInventoryGrid::Initialize()
 				InvSlot->SetPlayerOwnerRef(OwnerPlayerRef);
 			}
 
+			// Sets reference to the InventoryMenu
+			if (!InventoryMenuReference)
+			{
+				InvSlot->SetInventoryMenuReference(InventoryMenuReference);
+			}
+
+			// Initialize slot, (i.e. amount text.)
 			InvSlot->UpdateSlot();
 		}
 	}
