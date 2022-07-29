@@ -9,6 +9,7 @@
 class UInventoryGrid;
 class UInventorySlot;
 class UInventoryDropDown;
+class UButton;
 /**
  * 
  */
@@ -31,7 +32,16 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), meta = (BindWidget))
 	UInventoryDropDown* DropDownMenu;
 
+	/* Button that acts as a background, that will close the inventory dropdown. (i.e. if the dropdown menu is open and we click away(giant button acting as a background), it closes) */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), meta = (BindWidget))
+	UButton* CloseDropDownMenuButton;
+
 protected:
+
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
+	UFUNCTION()
+	void CloseDropDownMenu();
 
 public:
 
