@@ -8,6 +8,7 @@
 #include "InventoryComponent.generated.h"
 
 class AInventoryItemMaster;
+class UInventoryMenu;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class HORRORGAME_API UInventoryComponent : public UActorComponent
@@ -35,6 +36,7 @@ private:
 	*/
 	void UpdateInventorySlot(int IndexSlot);
 
+	UInventoryMenu* InventoryMenuRef;
 
 protected:
 
@@ -56,6 +58,18 @@ protected:
 public:
 
 	/*
+	* Uses the item at a index in our inventory.
+	* @param SlotIndex Index for the item in the SlotArray we want to use.
+	*/
+	void UseItem(int SlotIndex);
+
+	/*
+	* Removes the item at a index in our inventory.
+	* @param SlotIndex Index for the item in the SlotArray we want to remove.
+	*/
+	void RemoveItem(int SlotIndex);
+
+	/*
 	* Adds item to inventory
 	* @param NewItem Item being added
 	* @param Amount Stack amount
@@ -74,4 +88,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<FInventoryItems> InventorySlots;
+
+	//UInventoryMenu* InventoryMenuRef;
+	FORCEINLINE UInventoryMenu* GetInventoryMenuRef() const { return InventoryMenuRef; }
+
+	FORCEINLINE void SetInventoryMenuRef(UInventoryMenu* NewInventoryMenuRef) { InventoryMenuRef = NewInventoryMenuRef; }
 };

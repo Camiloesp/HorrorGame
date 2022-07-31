@@ -11,7 +11,7 @@
 #include "Components/UniformGridPanel.h"
 
 #include "Components/Button.h"
-
+#include "Characters/HGCharacter.h"
 
 bool UInventoryMenu::Initialize()
 {
@@ -23,7 +23,14 @@ bool UInventoryMenu::Initialize()
 		InventoryGrid->SetInventoryMenuReference(this);
 	}
 
+
+	if (DropDownMenu && Cast<AHGCharacter>(GetOwningPlayerPawn()) )
+	{
+		DropDownMenu->SetPlayerOwnerRef(Cast<AHGCharacter>(GetOwningPlayerPawn()));
+	}
+
 	CloseDropDownMenuButton->OnPressed.AddDynamic(this, &UInventoryMenu::CloseDropDownMenu);
+
 
 	return bInit;
 }
@@ -70,6 +77,9 @@ void UInventoryMenu::OpenDropDownMenu(UInventorySlot* SlotRef)
 			// Sets DropDown menu location.
 			FVector2D NewRenderTranslation = FVector2D(SlotColumn, SlotRow);
 			DropDownMenu->SetRenderTranslation(NewRenderTranslation);
+
+			// Updates the dropdown menu options.
+			DropDownMenu->UpdateMenu(SlotRef);
 			DropDownMenu->SetVisibility(ESlateVisibility::SelfHitTestInvisible); // non clickable when hidden
 		}
 

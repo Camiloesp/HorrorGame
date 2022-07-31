@@ -186,6 +186,12 @@ void AHGCharacter::Initialize()
 		{
 			InventoryMenuRef->SetVisibility(ESlateVisibility::Collapsed);
 			InventoryMenuRef->AddToViewport();
+
+
+			if (Inventory)
+			{
+				Inventory->SetInventoryMenuRef(InventoryMenuRef);
+			}
 		}
 	}
 

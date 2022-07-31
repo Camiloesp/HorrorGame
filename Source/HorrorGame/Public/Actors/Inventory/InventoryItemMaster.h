@@ -33,4 +33,6 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item Data")
 	FItemData ItemData;
+
+	virtual void UseItem();
 };

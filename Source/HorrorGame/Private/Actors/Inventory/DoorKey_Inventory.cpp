@@ -11,6 +11,7 @@ ADoorKey_Inventory::ADoorKey_Inventory()
 	ItemData.ItemName = FName(TEXT("Door Key"));
 	// ItemData.Icon will be assigned in the BP version of this actor.
 	ItemData.MaxStackAmount = 1;
+	ItemData.bCanBeUsed = false;
 }
 
 void ADoorKey_Inventory::BeginPlay()
@@ -21,4 +22,9 @@ void ADoorKey_Inventory::BeginPlay()
 void ADoorKey_Inventory::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void ADoorKey_Inventory::UseItem()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Using Key"));
 }

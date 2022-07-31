@@ -25,3 +25,7 @@ void AInventoryItemMaster::Tick(float DeltaTime)
 
 }
 
+void AInventoryItemMaster::UseItem()
+{
+}
+

@@ -18,4 +18,7 @@ struct FItemData
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int MaxStackAmount = 0;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool bCanBeUsed = true;
 };

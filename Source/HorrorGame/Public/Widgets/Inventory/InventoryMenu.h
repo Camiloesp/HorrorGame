@@ -40,10 +40,10 @@ protected:
 
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
+public:
+
 	UFUNCTION()
 	void CloseDropDownMenu();
-
-public:
 
 	/*
 	* Opens slot menu options

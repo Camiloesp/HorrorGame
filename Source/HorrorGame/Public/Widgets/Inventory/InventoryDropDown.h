@@ -9,6 +9,8 @@
 
 class UButton;
 class USizeBox;
+class AHGCharacter;
+class UInventorySlot;
 /**
  * 
  */
@@ -19,6 +21,9 @@ class HORRORGAME_API UInventoryDropDown : public UUserWidget
 	
 
 public:
+
+	virtual bool Initialize() override;
+
 protected:
 	
 private:
@@ -43,6 +48,25 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), meta = (BindWidget))
 	USizeBox* DropSection;
 
+	AHGCharacter* PlayerOwnerRef;
+
+	/* Slot index the dropdown menu is accessing */
+	int SlotIndex = 0;
+
 protected:
+
+	UFUNCTION()
+	void UseButtonReleased();
+
 public:
+
+	/*
+	* Determines if we need to remove the 'use' 'examine' or 'drop' from the menu
+	* @param CurrentSlot Slot reference needed to know how the dropdownmenu will look.
+	*/
+	void UpdateMenu(UInventorySlot* CurrentSlot);
+
+	FORCEINLINE AHGCharacter* GetPlayerOwnerRef() const { return PlayerOwnerRef; }
+
+	FORCEINLINE void SetPlayerOwnerRef(AHGCharacter* NewPlayerOwnerRef) { PlayerOwnerRef = NewPlayerOwnerRef; }
 };

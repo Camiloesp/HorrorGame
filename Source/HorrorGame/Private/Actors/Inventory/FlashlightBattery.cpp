@@ -29,3 +29,9 @@ void AFlashlightBattery::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
+
+void AFlashlightBattery::UseItem()
+{
+	// Super::UseItem();
+	UE_LOG(LogTemp, Warning, TEXT("Using battery"));
+}

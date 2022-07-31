@@ -31,13 +31,17 @@ void UInventoryComponent::BeginPlay()
 	// ...
 	
 	/* IF the owner is a player */
-	ACharacter* CharOwner = Cast<ACharacter>(GetOwner());
+	AHGCharacter* CharOwner = Cast<AHGCharacter>(GetOwner());
 	if (CharOwner)
 	{
 		AHGPlayerController* OwnerController = Cast<AHGPlayerController>(CharOwner->GetController());
 		if (OwnerController)
 		{
+			// Sets inventory number of slots to be the owner controller inventory slot number 
 			InventorySlots.SetNum(OwnerController->GetInventorySlots());
+
+			//Get menu reference.
+			//InventoryMenuRef = CharOwner->GetInventoryMenu();
 		}
 	}
 }
@@ -257,28 +261,68 @@ bool UInventoryComponent::CheckForFreeSlot(TSubclassOf<AInventoryItemMaster>& Ne
 	return bSuccess;
 }
 
+void UInventoryComponent::UseItem(int SlotIndex)
+{
+	// Get data of the item we want to use at a specific index.
+	TSubclassOf<AInventoryItemMaster> ItemClassRef;
+	int ItemRefAmount = 0;
+	GetItemDataAtIndex(SlotIndex, ItemClassRef, ItemRefAmount);
+
+	if (ItemRefAmount > 0)
+	{
+		// Use item
+		AInventoryItemMaster* ItemRef = ItemClassRef.GetDefaultObject();
+		if (ItemRef)
+		{
+			ItemRef->UseItem();
+		}
+		else
+		{
+			ItemRef = GetWorld()->SpawnActor<AInventoryItemMaster>(ItemClassRef);
+			if (ItemRef)
+			{
+				ItemRef->UseItem();
+			}
+		}
+		// Remove item after use.
+		RemoveItem(SlotIndex);
+
+		// Close dropdown menu after use.
+		InventoryMenuRef->CloseDropDownMenu();
+	}
+}
+
+void UInventoryComponent::RemoveItem(int SlotIndex)
+{
+	// Get data of the item we want to remove at a specific index.
+	TSubclassOf<AInventoryItemMaster> ItemClassRef;
+	int ItemRefAmount = 0;
+	GetItemDataAtIndex(SlotIndex, ItemClassRef, ItemRefAmount);
+
+	// Determines if we should empty the inventory slot or just reduce the item amount.
+	FInventoryItems ItemToAdd;
+	if (ItemRefAmount > 1)
+	{
+		// Empty inventory slot when we remove the last item.
+		ItemToAdd.Item = ItemClassRef;
+		ItemToAdd.Amount = ItemRefAmount - 1;
+	}
+	else
+	{
+		// Empty inventory slot when we remove the last item.
+		ItemToAdd.Item = nullptr;
+		ItemToAdd.Amount = 0;
+	}
+	InventorySlots[SlotIndex] = ItemToAdd;
+	UpdateInventorySlot(SlotIndex);
+}
+
 void UInventoryComponent::GetItemDataAtIndex(int Index, TSubclassOf<AInventoryItemMaster>& OutItem, int& OutAmount)
 {
 	// Sets the out parameters to be the InventorySlots element at Index
 	FInventoryItems InventoryItemInfo = InventorySlots[Index];
 	OutItem = InventoryItemInfo.Item;
 	OutAmount = InventoryItemInfo.Amount;
-	/* 
-	* Sets OutAmount to 0 if the InventoryItemInfo.Item hasn't been initialized.
-	* If the InventoryItemInfo.Item is not initialized, this check will prevent
-	* the OutAmount to be a random/weird number loaded from memory and simply return 0.
-	* This helps with the bug where we start with an empty inventory but displays a long amount like '1634002'
-	*/
-	/*
-	if (OutItem.GetDefaultObject())
-	{
-		OutAmount = InventoryItemInfo.Amount;
-	}
-	else
-	{
-		OutAmount = 0;
-	}
-	*/
 
 	UE_LOG(LogTemp, Error, TEXT("GetItemDataAtIndex: %d, and the amount in this index is: %d"), Index, OutAmount);
 }
