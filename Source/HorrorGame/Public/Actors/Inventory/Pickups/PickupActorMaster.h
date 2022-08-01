@@ -4,13 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Interfaces/Interaction.h"
 #include "PickupActorMaster.generated.h"
 
 class USphereComponent;
 class AInventoryItemMaster;
+class UWidgetComponent;
+class AHGCharacter;
 
 UCLASS()
-class HORRORGAME_API APickupActorMaster : public AActor
+class HORRORGAME_API APickupActorMaster : public AActor, public IInteraction
 {
 	GENERATED_BODY()
 	
@@ -37,7 +40,22 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	USphereComponent* SphereCollision;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UWidgetComponent* PromptWidget;
+
+	bool bUpdateActor;
+
+	AHGCharacter* PickerCharacter;
+
+	/* Distance to allow player to pickup  */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	float PickUpDistance;
+
+	/* Distance between the pickup mesh and the pickup widget */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	float WidgetDistanceAboveMesh;
 protected:
+
 
 public:
 
@@ -49,7 +67,14 @@ public:
 	int Amount;
 
 	UFUNCTION()
-	void Pickup(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	void ShowPromptWidget(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION()
+	void HidePromptWidget(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	virtual void Interact() override;
 
 	FORCEINLINE UStaticMeshComponent* GetMesh() const { return Mesh; }
+	FORCEINLINE float GetPickUpDistance() const { return PickUpDistance; }
+
+	FORCEINLINE void SetPickUpDistance(float NewPickUpDistance) { PickUpDistance = NewPickUpDistance; }
 };
