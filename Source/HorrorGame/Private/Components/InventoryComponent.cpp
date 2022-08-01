@@ -7,6 +7,8 @@
 #include "GameFramework/Character.h"
 #include "Actors/Inventory/InventoryItemMaster.h"
 #include "Characters/HGCharacter.h"
+#include "Camera/CameraComponent.h"
+#include "Actors/Inventory/Pickups/PickupActorMaster.h"
 #include "Widgets/Inventory/InventoryMenu.h"
 #include "Widgets/Inventory/InventoryGrid.h"
 #include "Widgets/Inventory/InventorySlot.h"
@@ -31,10 +33,10 @@ void UInventoryComponent::BeginPlay()
 	// ...
 	
 	/* IF the owner is a player */
-	AHGCharacter* CharOwner = Cast<AHGCharacter>(GetOwner());
-	if (CharOwner)
+	PlayerRef = Cast<AHGCharacter>(GetOwner());
+	if (PlayerRef)
 	{
-		AHGPlayerController* OwnerController = Cast<AHGPlayerController>(CharOwner->GetController());
+		AHGPlayerController* OwnerController = Cast<AHGPlayerController>(PlayerRef->GetController());
 		if (OwnerController)
 		{
 			// Sets inventory number of slots to be the owner controller inventory slot number 
@@ -315,6 +317,61 @@ void UInventoryComponent::RemoveItem(int SlotIndex)
 	}
 	InventorySlots[SlotIndex] = ItemToAdd;
 	UpdateInventorySlot(SlotIndex);
+}
+
+void UInventoryComponent::DropItem(int SlotIndex)
+{
+	if (!PlayerRef) return;
+
+	// Get data of the item we want to drop
+	TSubclassOf<AInventoryItemMaster> ItemClassRef;
+	int LocalAmount = 0;
+	GetItemDataAtIndex(SlotIndex, ItemClassRef, LocalAmount);
+
+	if (LocalAmount > 0)
+	{
+		// Remove item stack from inventory
+		for (int i = 0; i < LocalAmount; i++)
+		{
+			RemoveItem(SlotIndex);
+		}
+
+		// Close dropdown menu after removing items
+		if (InventoryMenuRef)
+		{
+			InventoryMenuRef->CloseDropDownMenu();
+		}
+
+		// Linetrace where we want the object to drop
+		FHitResult HitResult;
+		const FVector Start = PlayerRef->GetFollowCamera()->GetComponentLocation();
+		const FVector End = PlayerRef->GetActorForwardVector() * 200 + Start; // 200 is how far we want to drop it.
+		GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECollisionChannel::ECC_Visibility);
+		
+		// Set the location where to spawn the item dropped.
+		const FVector SpawnLocation = (HitResult.bBlockingHit) ? HitResult.Location : HitResult.TraceEnd;
+		FTransform SpawnTransform = FTransform();
+		SpawnTransform.SetLocation(SpawnLocation);
+
+		// Drop, Spawn, actor.
+		AInventoryItemMaster* ItemToDrop = ItemClassRef.GetDefaultObject();
+		APickupActorMaster* ItemSpawned = nullptr;
+		if (ItemToDrop)
+		{
+			ItemSpawned = GetWorld()->SpawnActor<APickupActorMaster>(ItemToDrop->ItemData.PickupActor, SpawnTransform);
+
+			// Set the dropped item Amount to be the same amount that was in the inventory
+			if (ItemSpawned)
+			{
+				ItemSpawned->Amount = LocalAmount;
+				ItemSpawned->GetMesh()->SetSimulatePhysics(true);
+			}
+		}
+	}
+	else
+	{
+
+	}
 }
 
 void UInventoryComponent::GetItemDataAtIndex(int Index, TSubclassOf<AInventoryItemMaster>& OutItem, int& OutAmount)

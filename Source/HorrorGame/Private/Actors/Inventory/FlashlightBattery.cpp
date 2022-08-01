@@ -14,6 +14,7 @@ AFlashlightBattery::AFlashlightBattery()
 	ItemData.ItemName = FName(TEXT("Flashlight Battery"));
 	// ItemData.Icon will be assigned in the BP version of this actor.
 	ItemData.MaxStackAmount = 8;
+	// ItemData.PickupActor will be assigned in the BP version of this actor.
 }
 
 // Called when the game starts or when spawned

@@ -57,7 +57,8 @@ protected:
 
 	UFUNCTION()
 	void UseButtonReleased();
-
+	UFUNCTION()
+	void DropButtonReleased();
 public:
 
 	/*

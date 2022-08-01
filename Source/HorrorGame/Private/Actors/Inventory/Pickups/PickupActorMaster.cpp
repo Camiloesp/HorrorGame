@@ -17,9 +17,10 @@ APickupActorMaster::APickupActorMaster()
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Pickup Mesh"));
 	Mesh->SetupAttachment(RootComponent);
+	Mesh->SetSimulatePhysics(true);
 
 	SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere Collision"));
-	SphereCollision->SetupAttachment(RootComponent);
+	SphereCollision->SetupAttachment(Mesh);
 	SphereCollision->SetSphereRadius(100.f);
 
 }

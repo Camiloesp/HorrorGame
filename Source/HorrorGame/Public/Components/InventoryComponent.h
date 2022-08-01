@@ -9,6 +9,7 @@
 
 class AInventoryItemMaster;
 class UInventoryMenu;
+class AHGCharacter;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class HORRORGAME_API UInventoryComponent : public UActorComponent
@@ -38,6 +39,7 @@ private:
 
 	UInventoryMenu* InventoryMenuRef;
 
+	AHGCharacter* PlayerRef;
 protected:
 
 	/* 
@@ -59,15 +61,21 @@ public:
 
 	/*
 	* Uses the item at a index in our inventory.
-	* @param SlotIndex Index for the item in the SlotArray we want to use.
+	* @param SlotIndex Index for the item in the Slot Array we want to use.
 	*/
 	void UseItem(int SlotIndex);
 
 	/*
 	* Removes the item at a index in our inventory.
-	* @param SlotIndex Index for the item in the SlotArray we want to remove.
+	* @param SlotIndex Index for the item in the Slot Array we want to remove.
 	*/
 	void RemoveItem(int SlotIndex);
+
+	/*
+	* Drops an intem from our inventory into the world.
+	* @param SlotIndex Index for the item in the Slot array we want to drop.
+	*/
+	void DropItem(int SlotIndex);
 
 	/*
 	* Adds item to inventory

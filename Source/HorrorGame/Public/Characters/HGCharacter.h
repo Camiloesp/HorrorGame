@@ -152,5 +152,6 @@ public:
 
 	FORCEINLINE UInventoryComponent* GetInventory() const { return Inventory; }
 	FORCEINLINE UInventoryMenu* GetInventoryMenu() const { return InventoryMenuRef; }
+	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
 };

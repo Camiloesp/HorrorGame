@@ -20,5 +20,11 @@ struct FItemData
 	int MaxStackAmount = 0;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<class APickupActorMaster> PickupActor;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool bCanBeUsed = true;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool bCanBeDropped = true;
 };
