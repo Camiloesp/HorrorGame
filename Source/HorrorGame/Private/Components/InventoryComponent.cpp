@@ -12,6 +12,9 @@
 #include "Widgets/Inventory/InventoryMenu.h"
 #include "Widgets/Inventory/InventoryGrid.h"
 #include "Widgets/Inventory/InventorySlot.h"
+#include "Widgets/Inventory/ExaminationWidget.h"
+#include "Kismet/GameplayStatics.h"
+#include "Actors/Inventory/Examination.h"
 
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
@@ -41,11 +44,16 @@ void UInventoryComponent::BeginPlay()
 		{
 			// Sets inventory number of slots to be the owner controller inventory slot number 
 			InventorySlots.SetNum(OwnerController->GetInventorySlots());
-
-			//Get menu reference.
-			//InventoryMenuRef = CharOwner->GetInventoryMenu();
 		}
 	}
+
+	// Create Widget ands sets reference to ExaminationWidget
+	ExaminationWidget = CreateWidget<UExaminationWidget>(GetWorld(), ExaminationWidgetClass);
+
+	// Gets the examination actor in the level (only one, except the camera). GetAllActorsOfClass is an EXPENSIVE OPERATION, TRY TO USE LESS THIS CLASS.
+	TArray<AActor*> OutActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ExaminationActorClass, OutActors);
+	ExaminationActor = Cast<AExamination>(OutActors[0]);
 }
 
 

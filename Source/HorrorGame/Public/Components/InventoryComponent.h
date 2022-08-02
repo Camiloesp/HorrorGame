@@ -10,6 +10,8 @@
 class AInventoryItemMaster;
 class UInventoryMenu;
 class AHGCharacter;
+class UExaminationWidget;
+class AExamination;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class HORRORGAME_API UInventoryComponent : public UActorComponent
@@ -30,6 +32,8 @@ public:
 
 private:
 
+	UExaminationWidget* ExaminationWidget;
+	AExamination* ExaminationActor;
 
 	/*
 	* Updates inventory widget at a specific slot.
@@ -96,6 +100,14 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<FInventoryItems> InventorySlots;
+
+	/* WBP_ reference */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<UExaminationWidget> ExaminationWidgetClass;
+
+	/* BP_ reference to AExamination actor */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<AExamination> ExaminationActorClass;
 
 	//UInventoryMenu* InventoryMenuRef;
 	FORCEINLINE UInventoryMenu* GetInventoryMenuRef() const { return InventoryMenuRef; }
