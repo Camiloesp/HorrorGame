@@ -27,7 +27,13 @@ struct FItemData
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool bCanBeUsed = true;
-
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool bCanBeExamined = true;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool bCanBeDropped = true;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	class UStaticMesh* ExaminationMesh;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float ExaminationMeshOffset = 0.f;
 };

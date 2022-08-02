@@ -17,6 +17,8 @@ AFlashlightBattery::AFlashlightBattery()
 	ItemData.Description = FText::FromString(TEXT("Add it to your flashlight to replenish your battery life."));
 	ItemData.MaxStackAmount = 8;
 	// ItemData.PickupActor will be assigned in the BP version of this actor.
+	// ItemData.ExaminationMesh will be assigned in the BP version of this actor.
+	ItemData.ExaminationMeshOffset;
 }
 
 // Called when the game starts or when spawned
