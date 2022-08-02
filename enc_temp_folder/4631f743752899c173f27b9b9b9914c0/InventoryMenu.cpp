@@ -102,6 +102,14 @@ void UInventoryMenu::ShowItemInfo(FItemData ItemData)
 	DescriptionText = ItemData.Description;
 	// Binding happens in WBP_InventoryMenu
 
+
+	UE_LOG(LogTemp, Warning, TEXT("UInventoryMenu - ****************************************************"));
+	UE_LOG(LogTemp, Warning, TEXT("UInventoryMenu - ItemNameText: %s"), *ItemNameText.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("UInventoryMenu - DescriptionText: %s"), *DescriptionText.ToString());
+
+	UE_LOG(LogTemp, Warning, TEXT("UInventoryMenu - ****************************************************"));
+
+
 	ItemInfoVerticalBox->SetVisibility(ESlateVisibility::HitTestInvisible);
 }
 

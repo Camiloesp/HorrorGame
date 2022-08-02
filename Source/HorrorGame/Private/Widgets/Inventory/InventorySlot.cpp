@@ -32,6 +32,8 @@ bool UInventorySlot::Initialize()
 	AmountText->SetVisibility(ESlateVisibility::Hidden);
 
 	SlotButton->OnReleased.AddDynamic(this, &UInventorySlot::SlotButtonPressed);
+	SlotButton->OnHovered.AddDynamic(this, &UInventorySlot::SlotButtonHovered);
+	SlotButton->OnUnhovered.AddDynamic(this, &UInventorySlot::SlotButtonUnHovered);
 
 	return bInit;
 }
@@ -98,4 +100,40 @@ void UInventorySlot::SlotButtonPressed()
 			SlotButtonPressed();
 		}
 	}
+}
+
+void UInventorySlot::SlotButtonHovered()
+{
+	if (!PlayerOwnerRef) return;
+	if (!InventoryMenuReference)
+	{
+		InventoryMenuReference = PlayerOwnerRef->GetInventoryMenu();
+	}
+	FItemData DataToDisplay;
+
+	// Get data of the item we want to display it
+	TSubclassOf<AInventoryItemMaster> ItemClassRef;
+	int ItemRefAmount = 0;
+	PlayerOwnerRef->GetInventory()->GetItemDataAtIndex(Index, ItemClassRef, ItemRefAmount);
+
+	// make sure inventory item is valid and we can get data from that item
+	AInventoryItemMaster* ItemRef = Cast<AInventoryItemMaster>(ItemClassRef.GetDefaultObject());
+	if (ItemRef)
+	{
+		DataToDisplay = ItemRef->ItemData;
+	}
+	else
+	{
+		return;
+	}
+
+	// display data.
+	InventoryMenuReference->ShowItemInfo(DataToDisplay);
+}
+
+void UInventorySlot::SlotButtonUnHovered()
+{
+	if (!InventoryMenuReference && !PlayerOwnerRef) return;
+
+	InventoryMenuReference->HideItemInfo();
 }

@@ -16,6 +16,7 @@
 #include "Components/InventoryComponent.h"
 
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "Actors/Inventory/Pickups/PickupActorMaster.h"
 
 // Sets default values
 AHGCharacter::AHGCharacter()
@@ -121,8 +122,9 @@ void AHGCharacter::MoveRight(float Value)
 
 void AHGCharacter::ActionButtonPressed()
 {
+	AActor* Actionee = LineTrace(DistanceToInteract);
 	// Interacts with the actor, if is a child of the IInteraction.
-	IInteraction* InteractingActor = Cast<IInteraction>(LineTrace(DistanceToInteract));
+	IInteraction* InteractingActor = Cast<IInteraction>(Actionee);
 	if (InteractingActor)
 	{
 		// Sets reference to the player interacting with the interactable and then executing Interaction logic.

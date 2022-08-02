@@ -4,12 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "ItemData.h"
 #include "InventoryMenu.generated.h"
 
 class UInventoryGrid;
 class UInventorySlot;
 class UInventoryDropDown;
 class UButton;
+class UVerticalBox;
 /**
  * 
  */
@@ -36,6 +38,16 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), meta = (BindWidget))
 	UButton* CloseDropDownMenuButton;
 
+	/* Name of the selected item */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), meta = (BindWidget))
+	FText ItemNameText = FText();
+	/* Description of the selected item */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))//, meta = (BindWidget))
+	FText DescriptionText = FText();
+	/* Box that holds item name and description */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))//, meta = (BindWidget))
+	UVerticalBox* ItemInfoVerticalBox;
+
 protected:
 
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
@@ -50,6 +62,13 @@ public:
 	* @param Slot Slot that will open the dropdown menu
 	*/
 	void OpenDropDownMenu(UInventorySlot* SlotRef);
+
+	/* 
+	* Show item info from the selected inventory slot
+	* @param ItemData Information to be displayed in the ItemInfoVerticalBox
+	*/
+	void ShowItemInfo(FItemData ItemData);
+	void HideItemInfo();
 
 	FORCEINLINE UInventoryGrid* GetInventoryGrid() const { return InventoryGrid; }
 };

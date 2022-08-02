@@ -144,7 +144,7 @@ void APickupActorMaster::HidePromptWidget(UPrimitiveComponent* OverlappedCompone
 	}
 }
 
-void APickupActorMaster::Interact()
+void APickupActorMaster::PickUp()
 {
 	if (PickerCharacter)
 	{
@@ -172,4 +172,9 @@ void APickupActorMaster::Interact()
 			}
 		}
 	}
+}
+
+void APickupActorMaster::Interact()
+{
+	PickUp();
 }

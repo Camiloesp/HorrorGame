@@ -10,6 +10,7 @@ ADoorKey_Inventory::ADoorKey_Inventory()
 
 	ItemData.ItemName = FName(TEXT("Door Key"));
 	// ItemData.Icon will be assigned in the BP version of this actor.
+	ItemData.Description = FText::FromString(TEXT("Use this to open a locked door."));
 	ItemData.MaxStackAmount = 1;
 	ItemData.bCanBeUsed = false;
 }

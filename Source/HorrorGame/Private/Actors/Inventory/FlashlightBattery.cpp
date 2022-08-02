@@ -4,6 +4,7 @@
 #include "Actors/Inventory/FlashlightBattery.h"
 #include "ItemData.h" // ?
 
+
 // Sets default values
 AFlashlightBattery::AFlashlightBattery()
 {
@@ -13,6 +14,7 @@ AFlashlightBattery::AFlashlightBattery()
 
 	ItemData.ItemName = FName(TEXT("Flashlight Battery"));
 	// ItemData.Icon will be assigned in the BP version of this actor.
+	ItemData.Description = FText::FromString(TEXT("Add it to your flashlight to replenish your battery life."));
 	ItemData.MaxStackAmount = 8;
 	// ItemData.PickupActor will be assigned in the BP version of this actor.
 }

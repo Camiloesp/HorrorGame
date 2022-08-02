@@ -71,6 +71,8 @@ public:
 	UFUNCTION()
 	void HidePromptWidget(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
+	// Pick this item up.
+	void PickUp();
 	virtual void Interact() override;
 
 	FORCEINLINE UStaticMeshComponent* GetMesh() const { return Mesh; }

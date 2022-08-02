@@ -70,6 +70,10 @@ protected:
 
 	UFUNCTION()
 	void SlotButtonPressed();
+	UFUNCTION()
+	void SlotButtonHovered();
+	UFUNCTION()
+	void SlotButtonUnHovered();
 
 public:
 
