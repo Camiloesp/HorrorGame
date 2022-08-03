@@ -64,6 +64,12 @@ protected:
 public:
 
 	/*
+	* Creates an examination widget when inspecting.
+	* @param Index Index for the item in the Slot Array we want examine.
+	*/
+	void CreateExaminationWidget(int Index);
+
+	/*
 	* Uses the item at a index in our inventory.
 	* @param SlotIndex Index for the item in the Slot Array we want to use.
 	*/
@@ -109,8 +115,10 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<AExamination> ExaminationActorClass;
 
-	//UInventoryMenu* InventoryMenuRef;
+	//AExamination* ExaminationActor;
 	FORCEINLINE UInventoryMenu* GetInventoryMenuRef() const { return InventoryMenuRef; }
+	FORCEINLINE AExamination* GetExaminationActor() const { return ExaminationActor; }
 
 	FORCEINLINE void SetInventoryMenuRef(UInventoryMenu* NewInventoryMenuRef) { InventoryMenuRef = NewInventoryMenuRef; }
+	FORCEINLINE void SetExaminationActor(AExamination* NewExaminationActor) { ExaminationActor = NewExaminationActor; }
 };

@@ -8,6 +8,8 @@
 
 class UTextBlock;
 class UImage;
+class UInventoryComponent;
+class AHGCharacter;
 /**
  * 
  */
@@ -16,6 +18,11 @@ class HORRORGAME_API UExaminationWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
+
+public:
+
+	virtual bool Initialize() override;
+
 private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), meta = (BindWidget))
@@ -27,6 +34,28 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), meta = (BindWidget))
 	UImage* DragDetection;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UInventoryComponent* InventoryCompRef;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	AHGCharacter* OwnerCharacter;
 protected:
+
+
 public:
+
+	/*
+	* Updates Name and description
+	* @param Index Index to the element from our inventory we want to inspect.
+	*/
+	void UpdateWidget(int Index);
+
+	UFUNCTION()
+	void CloseExamination();
+
+	FORCEINLINE void SetInventoryCompRef(UInventoryComponent* NewInventoryCompRef) { InventoryCompRef = NewInventoryCompRef; }
+	FORCEINLINE void SetOwnerCharacter(AHGCharacter* NewOwnerCharacter) { OwnerCharacter = NewOwnerCharacter; }
+
+	FORCEINLINE UInventoryComponent* GetInventoryCompRef() const { return InventoryCompRef; }
+	FORCEINLINE AHGCharacter* GetOwnerCharacter() const { return OwnerCharacter; }
 };

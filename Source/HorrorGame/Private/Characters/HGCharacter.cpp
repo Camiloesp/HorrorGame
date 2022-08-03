@@ -17,6 +17,7 @@
 
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Actors/Inventory/Pickups/PickupActorMaster.h"
+#include "Widgets/Inventory/ExaminationWidget.h"
 
 // Sets default values
 AHGCharacter::AHGCharacter()
@@ -50,7 +51,7 @@ AHGCharacter::AHGCharacter()
 	// Variables Initialization
 	TurnRate = 0.4;
 	DistanceToInteract = 350.f;
-	bIsPaused = false;
+	bIsInventoryOpen = false;
 }
 
 // Called when the game starts or when spawned
@@ -96,6 +97,8 @@ void AHGCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	PlayerInputComponent->BindAction(TEXT("Crouch"), EInputEvent::IE_Released, this, &AHGCharacter::CrouchButtonReleased);
 	
 	PlayerInputComponent->BindAction(TEXT("InventoryToggle"), EInputEvent::IE_Pressed, this, &AHGCharacter::InventoryButtonPressed);
+
+	PlayerInputComponent->BindAction(TEXT("Return"), EInputEvent::IE_Pressed, this, &AHGCharacter::ReturnButtonPressed);
 }
 
 void AHGCharacter::LookUp(float Value)
@@ -151,6 +154,11 @@ void AHGCharacter::LeftMouseButtonReleased()
 		GrabbedActor->GrabberPlayer = nullptr;
 		GrabbedActor = nullptr;
 	}
+}
+
+void AHGCharacter::ReturnButtonPressed()
+{
+	OnReturnButtonPressed.Broadcast();
 }
 
 AActor* AHGCharacter::LineTrace(float Length)
@@ -273,9 +281,10 @@ void AHGCharacter::ToggleInventory()
 {
 	if (!ControllerRef) return;
 
-	if (bIsPaused)
+
+	if (bIsInventoryOpen)
 	{
-		bIsPaused = false;
+		bIsInventoryOpen = false;
 		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 		ControllerRef->ResetIgnoreLookInput();
 		ControllerRef->bShowMouseCursor = false;
@@ -287,10 +296,17 @@ void AHGCharacter::ToggleInventory()
 	}
 	else
 	{
-		bIsPaused = true;
+		bIsInventoryOpen = true;
 		GetCharacterMovement()->DisableMovement();
 		ControllerRef->SetIgnoreLookInput(true);
 		ControllerRef->bShowMouseCursor = true;
+
+		// remove examine widget if open
+		if (ExaminationWidget && ExaminationWidget->IsInViewport())
+		{
+			ExaminationWidget->RemoveFromParent();
+		}
+
 		if (InventoryMenuRef)
 		{
 			InventoryMenuRef->SetVisibility(ESlateVisibility::SelfHitTestInvisible);

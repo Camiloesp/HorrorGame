@@ -14,6 +14,7 @@ bool UInventoryDropDown::Initialize()
 	bool bInit = Super::Initialize();
 
 	UseButton->OnReleased.AddDynamic(this, &UInventoryDropDown::UseButtonReleased);
+	ExamineButton->OnReleased.AddDynamic(this, &UInventoryDropDown::ExamineButtonReleased);
 	DropButton->OnReleased.AddDynamic(this, &UInventoryDropDown::DropButtonReleased);
 
 	return bInit;
@@ -24,6 +25,13 @@ void UInventoryDropDown::UseButtonReleased()
 	if (!PlayerOwnerRef && PlayerOwnerRef->GetInventory()) return;
 
 	PlayerOwnerRef->GetInventory()->UseItem(SlotIndex);
+}
+
+void UInventoryDropDown::ExamineButtonReleased()
+{
+	if (!PlayerOwnerRef && PlayerOwnerRef->GetInventory()) return;
+
+	PlayerOwnerRef->GetInventory()->CreateExaminationWidget(SlotIndex);
 }
 
 void UInventoryDropDown::DropButtonReleased()

@@ -31,4 +31,8 @@ private:
 protected:
 public:
 
+	FORCEINLINE UStaticMeshComponent* GetMeshComponent() const { return Mesh; }
+
+	FORCEINLINE void SetMeshComponent(UStaticMeshComponent* NewMesh) { Mesh = NewMesh; }
+
 };

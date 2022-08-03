@@ -17,7 +17,9 @@ class AHGPlayerController;
 class UInventoryComponent;
 //class UHeadBobWalk;
 //class UHeadBobRun;
+class UExaminationWidget;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPressedReturn);
 
 UCLASS()
 class HORRORGAME_API AHGCharacter : public ACharacter
@@ -84,10 +86,6 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UCameraShakeBase> RunCameraShakeClass;
 
-	/*  */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	bool bIsPaused;
-
 	/* Class reference to the playerHUD */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UUserWidget> PlayerInventoryClass;
@@ -97,6 +95,7 @@ private:
 
 	AHGPlayerController* ControllerRef;
 
+	UExaminationWidget* ExaminationWidget;
 protected:
 
 	/* look around */
@@ -113,6 +112,8 @@ protected:
 	/* Left mouse button pressed/released. (grab) */
 	void LeftMouseButtonPressed();
 	void LeftMouseButtonReleased();
+
+	void ReturnButtonPressed();
 
 
 	/**
@@ -138,10 +139,17 @@ protected:
 
 	void InventoryButtonPressed();
 
-	void ToggleInventory();
 	void HandleInventoryVisibilityAndInput();
 
 public:
+	void ToggleInventory();
+
+	/*  */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	bool bIsInventoryOpen;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FPressedReturn OnReturnButtonPressed;
 
 	/* Called when crouching. */
 	UFUNCTION(BlueprintImplementableEvent)
@@ -150,8 +158,13 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void LengthenPlayerCapsule();
 
+	//UExaminationWidget* ExaminationWidget;
+
 	FORCEINLINE UInventoryComponent* GetInventory() const { return Inventory; }
 	FORCEINLINE UInventoryMenu* GetInventoryMenu() const { return InventoryMenuRef; }
 	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+	FORCEINLINE UExaminationWidget* GetExaminationWidget() const { return ExaminationWidget; }
+
+	FORCEINLINE void SetExaminationWidget(UExaminationWidget* NewExaminationWidget) { ExaminationWidget = NewExaminationWidget; }
 
 };

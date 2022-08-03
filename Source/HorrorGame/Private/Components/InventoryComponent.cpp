@@ -49,6 +49,19 @@ void UInventoryComponent::BeginPlay()
 
 	// Create Widget ands sets reference to ExaminationWidget
 	ExaminationWidget = CreateWidget<UExaminationWidget>(GetWorld(), ExaminationWidgetClass);
+	if (ExaminationWidget)
+	{
+		ExaminationWidget->SetInventoryCompRef(this);
+
+		if (PlayerRef)
+		{
+			// Bind OnReturnButtonPressed delegate here
+			ExaminationWidget->SetOwnerCharacter(PlayerRef);
+			PlayerRef->OnReturnButtonPressed.AddDynamic(ExaminationWidget, &UExaminationWidget::CloseExamination);
+			
+			PlayerRef->SetExaminationWidget(ExaminationWidget);
+		}
+	}
 
 	// Gets the examination actor in the level (only one, except the camera). GetAllActorsOfClass is an EXPENSIVE OPERATION, TRY TO USE LESS THIS CLASS.
 	TArray<AActor*> OutActors;
@@ -269,6 +282,21 @@ bool UInventoryComponent::CheckForFreeSlot(TSubclassOf<AInventoryItemMaster>& Ne
 	}
 
 	return bSuccess;
+}
+
+void UInventoryComponent::CreateExaminationWidget(int Index)
+{
+	if (!ExaminationWidget) return;
+	if (!InventoryMenuRef) return;
+	if (!PlayerRef) return;
+
+	ExaminationWidget->UpdateWidget(Index);
+
+	InventoryMenuRef->SetVisibility(ESlateVisibility::Collapsed);
+
+	ExaminationWidget->AddToViewport(2);
+
+	PlayerRef->bIsInventoryOpen = false;
 }
 
 void UInventoryComponent::UseItem(int SlotIndex)

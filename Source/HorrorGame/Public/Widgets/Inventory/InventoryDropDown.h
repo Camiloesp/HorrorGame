@@ -58,6 +58,8 @@ protected:
 	UFUNCTION()
 	void UseButtonReleased();
 	UFUNCTION()
+	void ExamineButtonReleased();
+	UFUNCTION()
 	void DropButtonReleased();
 public:
 
