@@ -45,7 +45,7 @@ void UExaminationWidget::UpdateWidget(int Index)
 				NewMesh->SetRelativeLocation(NewDistance);
 
 				// Change name and description
-				ItemNameText->SetText(FText::FromName(SlotItemRef->ItemData.ItemName)); // ?
+				ItemNameText->SetText(FText::FromName(SlotItemRef->ItemData.ItemName));
 				ItemDescriptionText->SetText(SlotItemRef->ItemData.Description);
 			}
 		}
