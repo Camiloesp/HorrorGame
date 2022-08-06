@@ -71,4 +71,6 @@ public:
 	void HideItemInfo();
 
 	FORCEINLINE UInventoryGrid* GetInventoryGrid() const { return InventoryGrid; }
+	FORCEINLINE UInventoryDropDown* GetDropDownMenu() const { return DropDownMenu; }
+	
 };

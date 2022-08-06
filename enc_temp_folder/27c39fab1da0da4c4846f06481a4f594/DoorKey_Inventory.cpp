@@ -14,7 +14,6 @@ ADoorKey_Inventory::ADoorKey_Inventory()
 	ItemData.MaxStackAmount = 1;
 	ItemData.bCanBeUsed = false;
 	ItemData.ExaminationMeshRotation = FRotator(-90.f, 0.f, 0.f);
-	ItemData.ExaminationMeshOffset = 10.f;
 }
 
 void ADoorKey_Inventory::BeginPlay()

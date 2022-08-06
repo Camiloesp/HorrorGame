@@ -12,6 +12,7 @@
 #include "Widgets/Inventory/InventoryMenu.h"
 #include "Widgets/Inventory/InventoryGrid.h"
 #include "Widgets/Inventory/InventorySlot.h"
+#include "Widgets/Inventory/InventoryDropDown.h"
 #include "Widgets/Inventory/ExaminationWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "Actors/Inventory/Examination.h"
@@ -293,6 +294,13 @@ void UInventoryComponent::CreateExaminationWidget(int Index)
 	ExaminationWidget->UpdateWidget(Index);
 
 	InventoryMenuRef->SetVisibility(ESlateVisibility::Collapsed);
+
+	// Close dropdown menu
+	UInventoryDropDown* InvDropDown = InventoryMenuRef->GetDropDownMenu();
+	if (InvDropDown)
+	{
+		InventoryMenuRef->CloseDropDownMenu();
+	}
 
 	ExaminationWidget->AddToViewport(2);
 

@@ -87,6 +87,29 @@ void UInventorySlot::UpdateSlot()
 
 void UInventorySlot::SlotButtonPressed()
 {
+	if (!PlayerOwnerRef) return;
+
+	// Get data of the item we want to use at a specific index.
+	TSubclassOf<AInventoryItemMaster> ItemClassRef;
+	int ItemRefAmount = 0;
+	PlayerOwnerRef->GetInventory()->GetItemDataAtIndex(Index, ItemClassRef, ItemRefAmount);
+
+	// Get item data
+	AInventoryItemMaster* ItemRef = ItemClassRef.GetDefaultObject();
+	if (ItemRef)
+	{
+		// If we can't use, examine, and drop then do not open the menu
+		bool bCanBeUsed = ItemRef->ItemData.bCanBeUsed;
+		bool bCanBeExamined = ItemRef->ItemData.bCanBeExamined;
+		bool bCanBeDropped = ItemRef->ItemData.bCanBeDropped;
+		if (!bCanBeUsed && !bCanBeExamined && !bCanBeDropped)
+		{
+			// can't do anything with this item, do not open drop down menu
+			return;
+		}
+	}
+
+
 	if (InventoryMenuReference)
 	{
 		InventoryMenuReference->OpenDropDownMenu(this);

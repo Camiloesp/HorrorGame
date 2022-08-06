@@ -36,4 +36,8 @@ struct FItemData
 	class UStaticMesh* ExaminationMesh;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float ExaminationMeshOffset = 0.f;
+
+	/* Initial rotation when examinating an object */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FRotator ExaminationMeshRotation;
 };

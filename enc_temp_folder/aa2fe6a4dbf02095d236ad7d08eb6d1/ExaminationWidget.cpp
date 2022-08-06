@@ -52,14 +52,18 @@ FReply UExaminationWidget::NativeOnMouseMove(const FGeometry& InGeometry, const 
 {
 	if (!InventoryCompRef) return FReply::Unhandled(); // used to get examination item
 
+	UE_LOG(LogTemp, Warning, TEXT("UExaminationWidget : InventoryCompRef is valid"));
 	if (bRotateMesh)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("UExaminationWidget : bRotateMesh is true"));
 		AExamination* ExaminationActor = InventoryCompRef->GetExaminationActor();
 		if (ExaminationActor)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("UExaminationWidget : ExaminationActor is valid"));
 			APlayerController* OwnerController = Cast<APlayerController>(OwnerCharacter->GetController());
 			if (OwnerController)
 			{
+				UE_LOG(LogTemp, Warning, TEXT("UExaminationWidget : OwnerController is valid"));
 				// new rotation for the examination actor when we move our mouse
 				float LocationX, LocationY;
 				UWidgetLayoutLibrary::GetMousePositionScaledByDPI(OwnerController, LocationX, LocationY);
@@ -67,19 +71,16 @@ FReply UExaminationWidget::NativeOnMouseMove(const FGeometry& InGeometry, const 
 				MouseRotation.X *= -1; //invert it.
 				MouseRotation.Y *= -1; //invert it.
 
-				/* Sensitivity OPTIONAL */
-				float Sensitivity = 0.5f;
-				MouseRotation.X *= Sensitivity; 
-				MouseRotation.Y *= Sensitivity;
-
 				// Sets the new rotation
 				FRotator NewRotation = FRotator(0.f, MouseRotation.X, MouseRotation.Y);
+				UE_LOG(LogTemp, Warning, TEXT("UExaminationWidget : before adding new rotation, rotation is: Yaw=%f, Roll=%f"), NewRotation.Yaw, NewRotation.Roll);
 				ExaminationActor->GetMeshComponent()->AddWorldRotation(NewRotation);
 
 				//reset mouse location
 				float NewLocationX, NewLocationY;
 				UWidgetLayoutLibrary::GetMousePositionScaledByDPI(OwnerController, NewLocationX, NewLocationY);
 				MouseLocation = FVector2D(NewLocationX, NewLocationY);
+				UE_LOG(LogTemp, Warning, TEXT("UExaminationWidget : reset mouse location to: X=%f, Y=%f"), NewLocationX, NewLocationY);
 			}
 		}
 	}

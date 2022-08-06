@@ -39,8 +39,20 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	AHGCharacter* OwnerCharacter;
+
+	bool bRotateMesh;
+
+	/* Cursor position when rotating examination actor */
+	FVector2D MouseLocation;
+
 protected:
 
+	/* detects when our mouse button is down, this function will be called. */
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	/* detects when our mouse button is released, this function will be called */
+	virtual FReply NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	/* detects when our mouse is moving, this function will be called */
+	virtual FReply NativeOnMouseMove(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
 public:
 

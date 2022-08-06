@@ -59,8 +59,16 @@ void UInventoryDropDown::UpdateMenu(UInventorySlot* CurrentSlot)
 		if (ItemRef)
 		{
 			// if item CAN'T be used, hide the 'use' section from the dropdown menu.
-			ESlateVisibility NewVisibility = (ItemRef->ItemData.bCanBeUsed) ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed;
-			UseSection->SetVisibility(NewVisibility);
+			ESlateVisibility NewUsedVisibility = (ItemRef->ItemData.bCanBeUsed) ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed;
+			UseSection->SetVisibility(NewUsedVisibility);
+
+			// if item CAN'T be Examined, hide the 'Examine' section from the dropdown menu.
+			ESlateVisibility NewExamineVisibility = (ItemRef->ItemData.bCanBeExamined) ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed;
+			ExamineSection->SetVisibility(NewExamineVisibility);
+
+			// if item CAN'T be Dropped, hide the 'Drop' section from the dropdown menu.
+			ESlateVisibility NewDropVisibility = (ItemRef->ItemData.bCanBeDropped) ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed;
+			DropSection->SetVisibility(NewDropVisibility);
 		}
 
 	}

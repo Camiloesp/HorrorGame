@@ -19,7 +19,6 @@ AFlashlightBattery::AFlashlightBattery()
 	// ItemData.PickupActor will be assigned in the BP version of this actor.
 	// ItemData.ExaminationMesh will be assigned in the BP version of this actor.
 	ItemData.ExaminationMeshOffset;
-	ItemData.ExaminationMeshOffset = -5.f;
 }
 
 // Called when the game starts or when spawned
