@@ -49,6 +49,9 @@ private:
 
 protected:
 public:
+
+	void AddMoreSlots(int Amount);
+
 	/* GETTERS */
 	FORCEINLINE int GetSlotsPerRow() const { return SlotsPerRow; }
 	FORCEINLINE TArray<UInventorySlot*> GetSlotsArray() const { return SlotsArray; }

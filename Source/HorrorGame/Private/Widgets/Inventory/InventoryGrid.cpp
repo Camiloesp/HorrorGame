@@ -78,3 +78,54 @@ bool UInventoryGrid::Initialize()
 
 	return bInit;
 }
+
+void UInventoryGrid::AddMoreSlots(int Amount)
+{
+	if (!InventoryGridPanel) return;
+
+	// inventory slots
+	int LocalAmountOfSlots = InventoryGridPanel->GetChildrenCount();
+
+	for (int i = 0; i < LocalAmountOfSlots; i++)
+	{
+		UInventorySlot* InvSlot = CreateWidget<UInventorySlot>(this, InventorySlotsClass);
+		if (InvSlot)
+		{
+			// New index after previous slots
+			int NewIndex = LocalAmountOfSlots + i;
+
+			InvSlot->SetIndex(NewIndex);
+			SlotsArray.Add(InvSlot);
+			if (InventoryGridPanel)
+			{
+				// Determine which Row
+				float Trunc = NewIndex / SlotsPerRow;
+				int NewRow = UKismetMathLibrary::FTrunc(Trunc); // Positive nums rund down, negative numbers round up
+				// Determine which Column
+				float Dividend = NewIndex;
+				float Divisor = SlotsPerRow;
+				float Reminder = 0.f;
+				UKismetMathLibrary::FMod(Dividend, Divisor, Reminder);
+				int NewColumn = UKismetMathLibrary::FTrunc(Reminder);
+				// Adds children to grid with its corresponding row and column
+				InventoryGridPanel->AddChildToUniformGrid(InvSlot, NewRow, NewColumn);
+			}
+
+			//Sets reference to the player owner 
+			OwnerPlayerRef = Cast<AHGCharacter>(GetOwningPlayerPawn());
+			if (OwnerPlayerRef)
+			{
+				InvSlot->SetPlayerOwnerRef(OwnerPlayerRef);
+			}
+
+			// Sets reference to the InventoryMenu
+			if (!InventoryMenuReference)
+			{
+				InvSlot->SetInventoryMenuReference(InventoryMenuReference);
+			}
+
+			// Initialize slot, (i.e. amount text.)
+			InvSlot->UpdateSlot();
+		}
+	}
+}

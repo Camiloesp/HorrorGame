@@ -32,4 +32,6 @@ protected:
 public:
 
 	FORCEINLINE int GetInventorySlots() const { return InventorySlots; }
+
+	FORCEINLINE void SetInventorySlots(int NewInventorySlots) { InventorySlots = NewInventorySlots; }
 };

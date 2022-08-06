@@ -424,7 +424,28 @@ void UInventoryComponent::GetItemDataAtIndex(int Index, TSubclassOf<AInventoryIt
 	FInventoryItems InventoryItemInfo = InventorySlots[Index];
 	OutItem = InventoryItemInfo.Item;
 	OutAmount = InventoryItemInfo.Amount;
+}
 
-	UE_LOG(LogTemp, Error, TEXT("GetItemDataAtIndex: %d, and the amount in this index is: %d"), Index, OutAmount);
+void UInventoryComponent::AddMoreSlots(int Amount)
+{
+	if (!PlayerRef) return;
+	if (!InventoryMenuRef) return;
+
+	AHGPlayerController* PlayerController = Cast<AHGPlayerController>(PlayerRef->GetController());
+	if (PlayerController)
+	{
+		int TotalSlots = PlayerController->GetInventorySlots() + Amount;
+		PlayerController->SetInventorySlots(TotalSlots);
+
+		InventoryMenuRef->GetInventoryGrid()->AddMoreSlots(Amount);
+
+		TArray<UInventorySlot*> AllSlots = InventoryMenuRef->GetInventoryGrid()->GetSlotsArray();
+
+		for (UInventorySlot* CurrentSlot : AllSlots)
+		{
+			CurrentSlot->SetInventoryMenuReference(InventoryMenuRef);
+			CurrentSlot->Initialize();
+		}
+	}
 }
 

@@ -104,6 +104,12 @@ public:
 	*/
 	void GetItemDataAtIndex(int Index, TSubclassOf<AInventoryItemMaster>& OutItem, int& OutAmount);
 
+	/* 
+	* Adds more inventory slots to the inventory grid
+	* @param Amount The amount of slots to be added on top of our current slots.
+	*/
+	void AddMoreSlots(int Amount);
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<FInventoryItems> InventorySlots;
 
