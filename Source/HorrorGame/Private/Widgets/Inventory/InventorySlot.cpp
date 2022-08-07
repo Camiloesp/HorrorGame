@@ -35,6 +35,8 @@ bool UInventorySlot::Initialize()
 	SlotButton->OnHovered.AddDynamic(this, &UInventorySlot::SlotButtonHovered);
 	SlotButton->OnUnhovered.AddDynamic(this, &UInventorySlot::SlotButtonUnHovered);
 
+	//SlotButton->OnReleased.IsBound();
+
 	return bInit;
 }
 
@@ -83,6 +85,11 @@ void UInventorySlot::UpdateSlot()
 			
 		}
 	}
+}
+
+bool UInventorySlot::HasBeenInitialized()
+{
+	return SlotButton->OnReleased.IsBound();
 }
 
 void UInventorySlot::SlotButtonPressed()

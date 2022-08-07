@@ -89,4 +89,10 @@ public:
 
 	void UpdateSlot();
 
+	/* 
+	* When adding new inventory slots, when picking backpack, this will check if the old slots have been initialized.
+	* This will prevent re-adding SlotButton delegates in Initialize()
+	*/
+	bool HasBeenInitialized();
+
 };

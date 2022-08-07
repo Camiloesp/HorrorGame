@@ -17,6 +17,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Actors/Inventory/Examination.h"
 
+#include "Components/Button.h"
+
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
 {
@@ -431,20 +433,30 @@ void UInventoryComponent::AddMoreSlots(int Amount)
 	if (!PlayerRef) return;
 	if (!InventoryMenuRef) return;
 
+
 	AHGPlayerController* PlayerController = Cast<AHGPlayerController>(PlayerRef->GetController());
 	if (PlayerController)
 	{
+		// Sets new inventory slots amount
 		int TotalSlots = PlayerController->GetInventorySlots() + Amount;
 		PlayerController->SetInventorySlots(TotalSlots);
 
+		// Sets inventory number of slots to be the owner controller NEW inventory slot number 
+		InventorySlots.SetNum(PlayerController->GetInventorySlots());
+
 		InventoryMenuRef->GetInventoryGrid()->AddMoreSlots(Amount);
 
+		
 		TArray<UInventorySlot*> AllSlots = InventoryMenuRef->GetInventoryGrid()->GetSlotsArray();
-
 		for (UInventorySlot* CurrentSlot : AllSlots)
 		{
 			CurrentSlot->SetInventoryMenuReference(InventoryMenuRef);
-			CurrentSlot->Initialize();
+
+			// Check to see if slot has been initialized. Check to avoid adding already added delegates to the SlotButton to avoid that annoying break
+			if (!CurrentSlot->HasBeenInitialized())
+			{
+				CurrentSlot->Initialize();
+			}
 		}
 	}
 }

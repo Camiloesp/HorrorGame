@@ -86,7 +86,8 @@ void UInventoryGrid::AddMoreSlots(int Amount)
 	// inventory slots
 	int LocalAmountOfSlots = InventoryGridPanel->GetChildrenCount();
 
-	for (int i = 0; i < LocalAmountOfSlots; i++)
+	for (int i = 0; i <= (Amount-1); i++)
+	//for(int i=1; i<=Amount; i++)
 	{
 		UInventorySlot* InvSlot = CreateWidget<UInventorySlot>(this, InventorySlotsClass);
 		if (InvSlot)
@@ -96,6 +97,7 @@ void UInventoryGrid::AddMoreSlots(int Amount)
 
 			InvSlot->SetIndex(NewIndex);
 			SlotsArray.Add(InvSlot);
+			
 			if (InventoryGridPanel)
 			{
 				// Determine which Row
@@ -110,7 +112,7 @@ void UInventoryGrid::AddMoreSlots(int Amount)
 				// Adds children to grid with its corresponding row and column
 				InventoryGridPanel->AddChildToUniformGrid(InvSlot, NewRow, NewColumn);
 			}
-
+			
 			//Sets reference to the player owner 
 			OwnerPlayerRef = Cast<AHGCharacter>(GetOwningPlayerPawn());
 			if (OwnerPlayerRef)
@@ -125,7 +127,7 @@ void UInventoryGrid::AddMoreSlots(int Amount)
 			}
 
 			// Initialize slot, (i.e. amount text.)
-			InvSlot->UpdateSlot();
+			InvSlot->UpdateSlot(); //Crashes when adding new slots
 		}
 	}
 }

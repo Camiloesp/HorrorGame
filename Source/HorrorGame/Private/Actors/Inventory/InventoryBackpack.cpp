@@ -112,6 +112,7 @@ void AInventoryBackpack::PickUp()
 {
 	if (!PickerCharacter) return;
 
+	// Adds more inventory slots to the player InventoryComponent and THEN gets destroyed.
 	PickerCharacter->GetInventory()->AddMoreSlots(AmountOfSlots);
 	Destroy();
 }
