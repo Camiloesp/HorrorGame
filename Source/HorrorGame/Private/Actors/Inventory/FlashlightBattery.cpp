@@ -18,7 +18,6 @@ AFlashlightBattery::AFlashlightBattery()
 	ItemData.MaxStackAmount = 8;
 	// ItemData.PickupActor will be assigned in the BP version of this actor.
 	// ItemData.ExaminationMesh will be assigned in the BP version of this actor.
-	ItemData.ExaminationMeshOffset;
 	ItemData.ExaminationMeshOffset = -5.f;
 }
 

@@ -121,7 +121,7 @@ void UExaminationWidget::UpdateWidget(int Index)
 
 				// Change name and description
 				ItemNameText->SetText(FText::FromName(SlotItemRef->ItemData.ItemName)); // ?
-				ItemDescriptionText->SetText(SlotItemRef->ItemData.Description);
+				ItemDescriptionText->SetText(SlotItemRef->ItemData.Description); // ?
 			}
 		}
 	}
