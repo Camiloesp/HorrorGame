@@ -110,6 +110,9 @@ void UExaminationWidget::UpdateWidget(int Index)
 			{
 				NewMesh->SetStaticMesh(SlotItemRef->ItemData.ExaminationMesh);
 
+				// Reset mesh relative rotation to 30,0,0 to avoid shrinking the mesh everytime we spam inspect. (Relative rotation starts at X:30)
+				NewMesh->SetRelativeLocation(FVector(30.f, 0.f, 0.f));
+
 				// Set distance from camera using ItemData offset.
 				FVector NewDistance = FVector();
 				NewDistance.X = (SlotItemRef->ItemData.ExaminationMeshOffset + NewMesh->GetRelativeLocation().X);
@@ -120,8 +123,11 @@ void UExaminationWidget::UpdateWidget(int Index)
 				NewMesh->SetRelativeRotation(SlotItemRef->ItemData.ExaminationMeshRotation);
 
 				// Change name and description
-				ItemNameText->SetText(FText::FromName(SlotItemRef->ItemData.ItemName)); // ?
-				ItemDescriptionText->SetText(SlotItemRef->ItemData.Description); // ?
+				if (ItemNameText && ItemDescriptionText)
+				{
+					ItemNameText->SetText(FText::FromName(SlotItemRef->ItemData.ItemName)); // ?
+					ItemDescriptionText->SetText(SlotItemRef->ItemData.Description); // ?
+				}
 			}
 		}
 	}

@@ -25,10 +25,12 @@ public:
 
 private:
 
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), meta = (BindWidget))
 	UTextBlock* ItemNameText;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), meta = (BindWidget))
 	UTextBlock* ItemDescriptionText;
+	
 
 	/* Image used to detect the user mouse input to rotate the examination actor */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), meta = (BindWidget))

@@ -99,6 +99,7 @@ private:
 
 	AHGPlayerController* ControllerRef;
 
+	UPROPERTY()
 	UExaminationWidget* ExaminationWidget;
 protected:
 
