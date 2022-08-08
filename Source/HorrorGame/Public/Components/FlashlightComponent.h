@@ -30,6 +30,7 @@ public:
 private:
 
 	/* Flashlight reference */
+	UPROPERTY()
 	USpotLightComponent* FlashlightLight;
 
 	/* Player that owns this component */
@@ -54,6 +55,9 @@ protected:
 	* Depleats flashlight life over time
 	*/
 	void DepleatBatteryLife();
+
+	/* Changes battery life when life is being depleated or life is being added */
+	void SetIntensity();
 
 public:
 
