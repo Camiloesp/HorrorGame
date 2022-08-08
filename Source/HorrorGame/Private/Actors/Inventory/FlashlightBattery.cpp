@@ -3,6 +3,8 @@
 
 #include "Actors/Inventory/FlashlightBattery.h"
 #include "ItemData.h" // ?
+#include "Characters/HGCharacter.h"
+#include "Components/FlashlightComponent.h"
 
 
 // Sets default values
@@ -19,6 +21,9 @@ AFlashlightBattery::AFlashlightBattery()
 	// ItemData.PickupActor will be assigned in the BP version of this actor.
 	// ItemData.ExaminationMesh will be assigned in the BP version of this actor.
 	ItemData.ExaminationMeshOffset = -5.f;
+
+
+	BatteryAmount = 100.f;
 }
 
 // Called when the game starts or when spawned
@@ -37,6 +42,23 @@ void AFlashlightBattery::Tick(float DeltaTime)
 
 void AFlashlightBattery::UseItem()
 {
-	// Super::UseItem();
-	UE_LOG(LogTemp, Warning, TEXT("Using battery"));
+	if (!PlayerRef) return;
+	
+	UFlashlightComponent* PlayerFlashlightComp = PlayerRef->GetFlashlightComponent();
+
+	if (PlayerFlashlightComp)
+	{
+		float CurrentBatteryLevel = PlayerFlashlightComp->GetCurrentBatteryLevel();
+		float MaxBatteryLevel = PlayerFlashlightComp->GetMaxBatteryLevel();
+
+		if (CurrentBatteryLevel < MaxBatteryLevel)
+		{
+			PlayerFlashlightComp->AddBatteryLife(BatteryAmount);
+			bUseItemSuccess = true;
+		}
+		else
+		{
+			bUseItemSuccess = false;
+		}
+	}
 }

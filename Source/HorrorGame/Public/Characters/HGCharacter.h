@@ -18,6 +18,7 @@ class UInventoryComponent;
 //class UHeadBobWalk;
 //class UHeadBobRun;
 class UExaminationWidget;
+class UFlashlightComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPressedReturn);
 
@@ -53,6 +54,9 @@ private:
 	/* Flashlight */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	USpotLightComponent* Flashlight;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UFlashlightComponent* FlashlightComponent;
 
 	/* Our personal inventory */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -164,7 +168,10 @@ public:
 	FORCEINLINE UInventoryMenu* GetInventoryMenu() const { return InventoryMenuRef; }
 	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 	FORCEINLINE UExaminationWidget* GetExaminationWidget() const { return ExaminationWidget; }
+	FORCEINLINE USpotLightComponent* GetFlashlight() const { return Flashlight; }
+	FORCEINLINE UFlashlightComponent* GetFlashlightComponent() const { return FlashlightComponent; }
 
 	FORCEINLINE void SetExaminationWidget(UExaminationWidget* NewExaminationWidget) { ExaminationWidget = NewExaminationWidget; }
-
+	FORCEINLINE void SetFlashlight(USpotLightComponent* NewFlashlight) { Flashlight = NewFlashlight; }
+	FORCEINLINE void SetFlashlightComponent(UFlashlightComponent* NewFlashlightComponent) { FlashlightComponent = NewFlashlightComponent; }
 };

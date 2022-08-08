@@ -7,6 +7,8 @@
 #include "ItemData.h"
 #include "InventoryItemMaster.generated.h"
 
+class AHGCharacter;
+
 UCLASS()
 class HORRORGAME_API AInventoryItemMaster : public AActor
 {
@@ -29,10 +31,20 @@ private:
 
 protected:
 
+	/* Player that holds the item */
+	AHGCharacter* PlayerRef;
+
 public:
+
+	bool bUseItemSuccess;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item Data")
 	FItemData ItemData;
 
 	virtual void UseItem();
+
+
+	FORCEINLINE AHGCharacter* GetPlayerRef() const { return PlayerRef; }
+
+	FORCEINLINE void SetPlayerRef(AHGCharacter* NewPlayerRef) { PlayerRef = NewPlayerRef; }
 };

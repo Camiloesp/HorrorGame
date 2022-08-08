@@ -98,6 +98,15 @@ void UInventoryComponent::UpdateInventorySlot(int IndexSlot)
 	}
 }
 
+void UInventoryComponent::SetItemAddedPlayerRef(TSubclassOf<AInventoryItemMaster> ItemAdded)
+{
+	AInventoryItemMaster* NewAddedItem = Cast<AInventoryItemMaster>(ItemAdded.GetDefaultObject());
+	if (NewAddedItem)
+	{
+		NewAddedItem->SetPlayerRef(Cast<AHGCharacter>(GetOwner()));
+	}
+}
+
 bool UInventoryComponent::AddItem(TSubclassOf<AInventoryItemMaster> NewItem, int Amount, int& Remainder)
 {
 	// Set local variables
@@ -125,6 +134,9 @@ bool UInventoryComponent::AddItem(TSubclassOf<AInventoryItemMaster> NewItem, int
 				ItemToAdd.Amount = LocalMaxStackAmount;
 				InventorySlots[NewIndex] = ItemToAdd; //InventorySlots.Insert(ItemToAdd, NewIndex);
 
+				// Sets player reference to the item added.
+				SetItemAddedPlayerRef(NewItem);
+
 				// update inventory widget amount text
 				UpdateInventorySlot(NewIndex);
 
@@ -143,6 +155,9 @@ bool UInventoryComponent::AddItem(TSubclassOf<AInventoryItemMaster> NewItem, int
 				ItemToAdd.Amount = CurrentAmountInSlot + LocalAmount;
 				//InventorySlots.Insert(ItemToAdd, NewIndex);
 				InventorySlots[NewIndex] = ItemToAdd;
+
+				// Sets player reference to the item added.
+				SetItemAddedPlayerRef(NewItem);
 
 				UpdateInventorySlot(NewIndex);
 
@@ -164,6 +179,9 @@ bool UInventoryComponent::AddItem(TSubclassOf<AInventoryItemMaster> NewItem, int
 					ItemToAdd.Amount = LocalMaxStackAmount;
 					InventorySlots[NewIndex] = ItemToAdd;
 
+					// Sets player reference to the item added.
+					SetItemAddedPlayerRef(NewItem);
+
 					UpdateInventorySlot(NewIndex);
 
 					// If there are still things leftover to add, recursively call this function.
@@ -181,6 +199,9 @@ bool UInventoryComponent::AddItem(TSubclassOf<AInventoryItemMaster> NewItem, int
 					ItemToAdd.Amount = LocalAmount;
 					//InventorySlots.Insert(ItemToAdd, NewIndex);
 					InventorySlots[NewIndex] = ItemToAdd;
+
+					// Sets player reference to the item added.
+					SetItemAddedPlayerRef(NewItem);
 
 					UpdateInventorySlot(NewIndex);
 
@@ -208,6 +229,9 @@ bool UInventoryComponent::AddItem(TSubclassOf<AInventoryItemMaster> NewItem, int
 
 			//InventorySlots.Insert(ItemToAdd, NewIndex);
 			InventorySlots[NewIndex] = ItemToAdd;
+
+			// Sets player reference to the item added.
+			SetItemAddedPlayerRef(NewItem);
 
 			// Updates inventory widget
 			UpdateInventorySlot(NewIndex);
@@ -332,8 +356,16 @@ void UInventoryComponent::UseItem(int SlotIndex)
 				ItemRef->UseItem();
 			}
 		}
-		// Remove item after use.
-		RemoveItem(SlotIndex);
+
+
+		// Remove item after use. (Only if item was used succesfully). An example would be, trying to use a battery when our flashlight battery is already full.
+		if (ItemRef)
+		{
+			if (ItemRef->bUseItemSuccess)
+			{
+				RemoveItem(SlotIndex);
+			}
+		}
 
 		// Close dropdown menu after use.
 		InventoryMenuRef->CloseDropDownMenu();
@@ -413,10 +445,6 @@ void UInventoryComponent::DropItem(int SlotIndex)
 				ItemSpawned->GetMesh()->SetSimulatePhysics(true);
 			}
 		}
-	}
-	else
-	{
-
 	}
 }
 

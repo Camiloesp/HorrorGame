@@ -18,6 +18,7 @@
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Actors/Inventory/Pickups/PickupActorMaster.h"
 #include "Widgets/Inventory/ExaminationWidget.h"
+#include "Components/FlashlightComponent.h"
 
 // Sets default values
 AHGCharacter::AHGCharacter()
@@ -40,10 +41,12 @@ AHGCharacter::AHGCharacter()
 	Flashlight = CreateDefaultSubobject<USpotLightComponent>(TEXT("Flashlight"));
 	Flashlight->SetupAttachment(SpringArm);
 	Flashlight->AttenuationRadius = 1200.f;
+	Flashlight->SetVisibility(false);
 	//Flashlight transform to 0.f
 
 	HGMovementComp = CreateDefaultSubobject<UMovement>(TEXT("MovementComp"));
 	Inventory = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory"));
+	FlashlightComponent = CreateDefaultSubobject<UFlashlightComponent>(TEXT("Flashlight Component"));
 
 	GetCharacterMovement()->MaxWalkSpeed = 400.f;
 	GetCharacterMovement()->JumpZVelocity = 400.f;
@@ -88,7 +91,7 @@ void AHGCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	PlayerInputComponent->BindAction(TEXT("LeftMouseButton"), EInputEvent::IE_Pressed, this, &AHGCharacter::LeftMouseButtonPressed);
 	PlayerInputComponent->BindAction(TEXT("LeftMouseButton"), EInputEvent::IE_Released, this, &AHGCharacter::LeftMouseButtonReleased);
 
-	PlayerInputComponent->BindAction(TEXT("FlashlightToggle"), EInputEvent::IE_Pressed, this, &AHGCharacter::ToggleFlashlight);
+	PlayerInputComponent->BindAction(TEXT("FlashlightToggle"), EInputEvent::IE_Released, this, &AHGCharacter::ToggleFlashlight);
 
 	PlayerInputComponent->BindAction(TEXT("Sprint"), EInputEvent::IE_Pressed, this, &AHGCharacter::Sprint);
 	PlayerInputComponent->BindAction(TEXT("Sprint"), EInputEvent::IE_Released, this, &AHGCharacter::StopSprint);
@@ -178,6 +181,11 @@ void AHGCharacter::Initialize()
 	ControllerRef = Cast<AHGPlayerController>(GetController());
 
 
+	//FlashlightComponent->SetFlashlightLight(Flashlight);
+	FlashlightComponent->Initialize(this);
+
+
+
 	//Create HUD widget, and add it to viewport.
 	if (PlayerHUDClass)
 	{
@@ -213,8 +221,7 @@ void AHGCharacter::Initialize()
 
 void AHGCharacter::ToggleFlashlight()
 {
-	bool bIsFlashlightOn = !( Flashlight->IsVisible() );
-	Flashlight->SetVisibility(bIsFlashlightOn);
+	FlashlightComponent->ToggleFlashlight();
 }
 
 void AHGCharacter::Sprint()

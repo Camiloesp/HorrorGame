@@ -44,6 +44,9 @@ private:
 	UInventoryMenu* InventoryMenuRef;
 
 	AHGCharacter* PlayerRef;
+
+	void SetItemAddedPlayerRef(TSubclassOf<AInventoryItemMaster> ItemAdded);
+
 protected:
 
 	/* 

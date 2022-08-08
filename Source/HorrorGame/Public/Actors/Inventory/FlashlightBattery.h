@@ -26,6 +26,15 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+private:
+protected:
+
+	/* Amount to replenish battery life */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	float BatteryAmount;
+
+public:
+
 	virtual void UseItem() override;
 
 };
