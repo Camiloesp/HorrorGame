@@ -28,6 +28,11 @@ public:
 
 private:
 protected:
+
+	/* Amount to replenish health */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	float HealthAmountToAdd;
+
 public:
 
 	virtual void UseItem() override;

@@ -2,6 +2,8 @@
 
 
 #include "Actors/Inventory/Bandage_Inventory.h"
+#include "Components/HealthComponent.h"
+#include "Characters/HGCharacter.h"
 
 ABandage_Inventory::ABandage_Inventory()
 {
@@ -16,6 +18,9 @@ ABandage_Inventory::ABandage_Inventory()
 	// ItemData.ExaminationMesh will be assigned in the BP version of this actor.
 	ItemData.ExaminationMeshOffset = 10.f;
 	ItemData.ExaminationMeshRotation = FRotator(0.f, 90.f, 0.f);
+
+
+	HealthAmountToAdd = 30.f;
 }
 
 void ABandage_Inventory::BeginPlay()
@@ -30,5 +35,21 @@ void ABandage_Inventory::Tick(float DeltaTime)
 
 void ABandage_Inventory::UseItem()
 {
+	if (!PlayerRef) return;
 
+	UHealthComponent* PlayerHealthComponent = PlayerRef->GetHealthComponent();
+	if (PlayerHealthComponent)
+	{
+		float MaxHealth = PlayerHealthComponent->GetMaxHealth();
+		float CurrentHealth = PlayerHealthComponent->GetCurrentHealth();
+		if (CurrentHealth < MaxHealth)
+		{
+			PlayerHealthComponent->AddHealth(HealthAmountToAdd);
+			bUseItemSuccess = true;
+		}
+		else
+		{
+			bUseItemSuccess = false;
+		}
+	}
 }

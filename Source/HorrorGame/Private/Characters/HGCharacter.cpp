@@ -19,6 +19,7 @@
 #include "Actors/Inventory/Pickups/PickupActorMaster.h"
 #include "Widgets/Inventory/ExaminationWidget.h"
 #include "Components/FlashlightComponent.h"
+#include "Components/HealthComponent.h"
 
 // Sets default values
 AHGCharacter::AHGCharacter()
@@ -44,9 +45,10 @@ AHGCharacter::AHGCharacter()
 	Flashlight->SetVisibility(false);
 	//Flashlight transform to 0.f
 
-	HGMovementComp = CreateDefaultSubobject<UMovement>(TEXT("MovementComp"));
-	Inventory = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory"));
+	HGMovementComponent = CreateDefaultSubobject<UMovement>(TEXT("Movement Comp"));
+	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory Component"));
 	FlashlightComponent = CreateDefaultSubobject<UFlashlightComponent>(TEXT("Flashlight Component"));
+	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("Health Component"));
 
 	GetCharacterMovement()->MaxWalkSpeed = 400.f;
 	GetCharacterMovement()->JumpZVelocity = 400.f;
@@ -206,16 +208,16 @@ void AHGCharacter::Initialize()
 			InventoryMenuRef->AddToViewport();
 
 
-			if (Inventory)
+			if (InventoryComponent)
 			{
-				Inventory->SetInventoryMenuRef(InventoryMenuRef);
+				InventoryComponent->SetInventoryMenuRef(InventoryMenuRef);
 			}
 		}
 	}
 
 
 	// Initialize our custom movement component
-	HGMovementComp->Initialize(this);
+	HGMovementComponent->Initialize(this);
 	
 }
 
@@ -226,22 +228,22 @@ void AHGCharacter::ToggleFlashlight()
 
 void AHGCharacter::Sprint()
 {
-	HGMovementComp->StartSprint();
+	HGMovementComponent->StartSprint();
 }
 
 void AHGCharacter::StopSprint()
 {
-	HGMovementComp->StopSprint();
+	HGMovementComponent->StopSprint();
 }
 
 void AHGCharacter::CrouchButtonPressed()
 {
-	HGMovementComp->StartCrouch();
+	HGMovementComponent->StartCrouch();
 }
 
 void AHGCharacter::CrouchButtonReleased()
 {
-	HGMovementComp->EndCrouch();
+	HGMovementComponent->EndCrouch();
 }
 
 void AHGCharacter::HeadBob()
@@ -249,7 +251,7 @@ void AHGCharacter::HeadBob()
 	// If our velocity is greater than our walk speed (sprint), and if we are NOT falling.
 	float PlayerVelocity = GetVelocity().Length();
 
-	if ( (PlayerVelocity >= HGMovementComp->GetWalkSpeed()) && !(GetCharacterMovement()->IsFalling()) )
+	if ( (PlayerVelocity >= HGMovementComponent->GetWalkSpeed()) && !(GetCharacterMovement()->IsFalling()) )
 	{
 		APlayerController* MyController = Cast<APlayerController>(GetController());
 
@@ -262,7 +264,7 @@ void AHGCharacter::HeadBob()
 		float Scale = UKismetMathLibrary::MapRangeClamped(Value, InRangeA, InRangeB, OutRangeA, OutRangeB);
 
 		// If our velocity is greater than our sprint speed, and if we are NOT falling.
-		if (PlayerVelocity >= HGMovementComp->GetSprintSpeed() && !(GetCharacterMovement()->IsFalling()))
+		if (PlayerVelocity >= HGMovementComponent->GetSprintSpeed() && !(GetCharacterMovement()->IsFalling()))
 		{
 			if (MyController)
 			{

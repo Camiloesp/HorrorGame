@@ -19,6 +19,7 @@ class UInventoryComponent;
 //class UHeadBobRun;
 class UExaminationWidget;
 class UFlashlightComponent;
+class UHealthComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPressedReturn);
 
@@ -60,11 +61,14 @@ private:
 
 	/* Our personal inventory */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	UInventoryComponent* Inventory;
+	UInventoryComponent* InventoryComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UHealthComponent* HealthComponent;
 
 	/* Our First person movement component: Handles sprint */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	UMovement* HGMovementComp;
+	UMovement* HGMovementComponent;
 
 	/* Rate speed when we turn using the mouse */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -163,14 +167,15 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void LengthenPlayerCapsule();
 
-	//UExaminationWidget* ExaminationWidget;
+	//UHealthComponent* HealthComponent;
 
-	FORCEINLINE UInventoryComponent* GetInventory() const { return Inventory; }
+	FORCEINLINE UInventoryComponent* GetInventory() const { return InventoryComponent; }
 	FORCEINLINE UInventoryMenu* GetInventoryMenu() const { return InventoryMenuRef; }
 	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 	FORCEINLINE UExaminationWidget* GetExaminationWidget() const { return ExaminationWidget; }
 	FORCEINLINE USpotLightComponent* GetFlashlight() const { return Flashlight; }
 	FORCEINLINE UFlashlightComponent* GetFlashlightComponent() const { return FlashlightComponent; }
+	FORCEINLINE UHealthComponent* GetHealthComponent() const { return HealthComponent; }
 
 	FORCEINLINE void SetExaminationWidget(UExaminationWidget* NewExaminationWidget) { ExaminationWidget = NewExaminationWidget; }
 	FORCEINLINE void SetFlashlight(USpotLightComponent* NewFlashlight) { Flashlight = NewFlashlight; }
