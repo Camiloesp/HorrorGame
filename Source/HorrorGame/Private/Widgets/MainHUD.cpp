@@ -17,11 +17,11 @@ bool UMainHUD::Initialize()
 
 	/*
 	PlayerOwner = Cast<AHGCharacter>(GetOwningPlayerPawn());
-	*/
-	if (PlayerOwner && ProgressBars)
+	if (PlayerOwner)
 	{
 		ProgressBars->SetPlayerOwner(PlayerOwner);
 	}
+	*/
 
 	return bSuccess;
 }

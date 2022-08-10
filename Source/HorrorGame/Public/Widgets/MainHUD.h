@@ -44,4 +44,5 @@ public:
 	FORCEINLINE void SetPlayerOwner(AHGCharacter* NewPlayerOwner) { PlayerOwner = NewPlayerOwner; }
 
 	FORCEINLINE AHGCharacter* GetPlayerOwner() const { return PlayerOwner; }
+	FORCEINLINE UProgressBars* GetProgressBars() const { return ProgressBars; }
 };

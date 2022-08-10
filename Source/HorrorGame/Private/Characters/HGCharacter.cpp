@@ -20,6 +20,7 @@
 #include "Widgets/Inventory/ExaminationWidget.h"
 #include "Components/FlashlightComponent.h"
 #include "Components/HealthComponent.h"
+#include "Widgets/ProgressBars.h"
 
 // Sets default values
 AHGCharacter::AHGCharacter()
@@ -194,8 +195,9 @@ void AHGCharacter::Initialize()
 		MainHUDRef = CreateWidget<UMainHUD>(GetWorld(), PlayerHUDClass);
 		if (MainHUDRef)
 		{
-			MainHUDRef->SetPlayerOwner(this);
 			MainHUDRef->AddToViewport();
+			MainHUDRef->SetPlayerOwner(this);
+			MainHUDRef->GetProgressBars()->SetPlayerOwner(this);
 		}
 	}
 
