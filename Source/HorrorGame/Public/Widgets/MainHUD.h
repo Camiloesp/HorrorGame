@@ -6,7 +6,10 @@
 #include "Blueprint/UserWidget.h"
 #include "MainHUD.generated.h"
 
+class UProgressBars;
 class UInventoryGrid;
+class AHGCharacter;
+
 /**
  * 
  */
@@ -20,10 +23,25 @@ public:
 
 	virtual void NativeConstruct() override;
 
-protected:
+	virtual bool Initialize() override;
+
 
 private:
 	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	AHGCharacter* PlayerOwner;
+
 	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), meta = (BindWidget))
 	UInventoryGrid* InventoryGrid;
+
+	/* The health, stamina, and flashlight battery progress bars widget*/
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), meta = (BindWidget))
+	UProgressBars* ProgressBars;
+
+protected:
+public:
+
+	FORCEINLINE void SetPlayerOwner(AHGCharacter* NewPlayerOwner) { PlayerOwner = NewPlayerOwner; }
+
+	FORCEINLINE AHGCharacter* GetPlayerOwner() const { return PlayerOwner; }
 };

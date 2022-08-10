@@ -194,6 +194,7 @@ void AHGCharacter::Initialize()
 		MainHUDRef = CreateWidget<UMainHUD>(GetWorld(), PlayerHUDClass);
 		if (MainHUDRef)
 		{
+			MainHUDRef->SetPlayerOwner(this);
 			MainHUDRef->AddToViewport();
 		}
 	}
