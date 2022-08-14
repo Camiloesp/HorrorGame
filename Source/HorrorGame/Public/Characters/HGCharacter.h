@@ -105,6 +105,9 @@ private:
 
 	UPROPERTY()
 	UExaminationWidget* ExaminationWidget;
+
+	bool bIsHiding;
+
 protected:
 
 	/* look around */
@@ -176,8 +179,10 @@ public:
 	FORCEINLINE USpotLightComponent* GetFlashlight() const { return Flashlight; }
 	FORCEINLINE UFlashlightComponent* GetFlashlightComponent() const { return FlashlightComponent; }
 	FORCEINLINE UHealthComponent* GetHealthComponent() const { return HealthComponent; }
+	FORCEINLINE bool IsHiding() const { return bIsHiding; }
 
 	FORCEINLINE void SetExaminationWidget(UExaminationWidget* NewExaminationWidget) { ExaminationWidget = NewExaminationWidget; }
 	FORCEINLINE void SetFlashlight(USpotLightComponent* NewFlashlight) { Flashlight = NewFlashlight; }
 	FORCEINLINE void SetFlashlightComponent(UFlashlightComponent* NewFlashlightComponent) { FlashlightComponent = NewFlashlightComponent; }
+	FORCEINLINE void SetIsHiding(bool bHide) { bIsHiding = bHide; }
 };

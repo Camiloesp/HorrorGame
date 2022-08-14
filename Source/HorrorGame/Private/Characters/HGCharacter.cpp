@@ -58,6 +58,7 @@ AHGCharacter::AHGCharacter()
 	TurnRate = 0.4;
 	DistanceToInteract = 350.f;
 	bIsInventoryOpen = false;
+	bIsHiding = false;
 }
 
 // Called when the game starts or when spawned
