@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "HealthComponent.generated.h"
 
+class UMaterialParameterCollectionInstance;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class HORRORGAME_API UHealthComponent : public UActorComponent
@@ -34,6 +35,10 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	float CurrentHealth;
 
+	/* Material parameter collection that holds the values that handle params for the ScreenBlood material. Set in the character BP */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UMaterialParameterCollection* MaterialParameter;
+
 protected:
 public:
 
@@ -50,6 +55,8 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable)
 	void AddHealth(float Amount);
+
+	void UpdateBloodScreen();
 
 	FORCEINLINE float GetMinHealth() const { return MinHealth; }
 	FORCEINLINE float GetMaxHealth() const { return MaxHealth; }

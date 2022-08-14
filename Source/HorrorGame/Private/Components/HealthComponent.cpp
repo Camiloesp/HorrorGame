@@ -3,6 +3,8 @@
 
 #include "Components/HealthComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/KismetMaterialLibrary.h"
+#include "Materials/MaterialParameterCollectionInstance.h"
 
 // Sets default values for this component's properties
 UHealthComponent::UHealthComponent()
@@ -23,8 +25,8 @@ void UHealthComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
-	
+	// Just in case we want to start with low health
+	UpdateBloodScreen();
 }
 
 
@@ -40,12 +42,25 @@ void UHealthComponent::RemoveHealth(float Amount)
 {
 	CurrentHealth -= Amount;
 	CurrentHealth = UKismetMathLibrary::FClamp(CurrentHealth, MinHealth, MaxHealth);
+	UpdateBloodScreen();
 }
 
 void UHealthComponent::AddHealth(float Amount)
 {
 	CurrentHealth += Amount;
 	CurrentHealth = UKismetMathLibrary::FClamp(CurrentHealth, MinHealth, MaxHealth);
+	UpdateBloodScreen();
+}
+
+void UHealthComponent::UpdateBloodScreen()
+{
+	if (!MaterialParameter) return;// do not forget to assign the MPC_BloodScreen to the HealthComponent from our BP_HGCharacter.
+
+	// Display blood at 70% of health
+	float PercentToShowHealth = (MaxHealth - MinHealth) * 0.7f;
+
+	float NewParamValue = UKismetMathLibrary::MapRangeClamped(CurrentHealth, MinHealth, PercentToShowHealth, 0.5f, 1.f);
+	UKismetMaterialLibrary::SetScalarParameterValue(this, MaterialParameter, FName(TEXT("Amount")), NewParamValue);
 }
 
 
