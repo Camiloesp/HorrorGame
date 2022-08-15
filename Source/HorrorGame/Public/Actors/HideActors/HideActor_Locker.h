@@ -40,11 +40,22 @@ private:
 	UPROPERTY(EditAnywhere)
 	UCurveFloat* CurveFloat;
 
+	/* The delay for when we close the locker door, after the player is inside */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	float CloseDoorDelay = 1.f;
+	
+
 protected:
+
+	UFUNCTION()
+	void StartClosingDoor();
 
 	/* Opens locker door by adding Value as rotation */
 	UFUNCTION()
 	void OpenLockerDoor(float Value);
+
+	UFUNCTION()
+	void CallInteractParent();
 
 public:
 

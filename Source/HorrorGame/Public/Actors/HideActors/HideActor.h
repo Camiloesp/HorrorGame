@@ -47,6 +47,8 @@ private:
 
 protected:
 
+	bool bCanInteract;
+
 	/* Moves our character to PlayerPosition component location */
 	void MoveCharacter();
 	/* Called once we finish moving to our target locations (Hiding location, or exit location) */
@@ -63,5 +65,8 @@ public:
 	FORCEINLINE UStaticMeshComponent* GetMesh() const { return Mesh; }
 	FORCEINLINE UArrowComponent* GetHidingPosition() const { return HidingPosition; }
 	FORCEINLINE UArrowComponent* GetExitPosition() const { return ExitPosition; }
+	FORCEINLINE bool CanInteract() const { return bCanInteract; }
+
+	FORCEINLINE void SetCanInteract(bool bNewInteract) { bCanInteract = bNewInteract; }
 
 };

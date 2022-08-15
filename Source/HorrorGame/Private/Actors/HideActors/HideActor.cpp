@@ -26,6 +26,8 @@ AHideActor::AHideActor()
 
 	ExitPosition = CreateDefaultSubobject<UArrowComponent>(TEXT("PlayerExitPositionArrow"));
 	ExitPosition->SetupAttachment(RootComp);
+
+	bCanInteract = true;
 }
 
 // Called when the game starts or when spawned
@@ -52,15 +54,21 @@ void AHideActor::MoveCharacter()
 	float CurrentDeltaTime = GetWorld()->DeltaTimeSeconds;
 	FVector NewPlayerLocation = UKismetMathLibrary::VInterpTo_Constant(CurrentPlayerLocation, PlayerTargetLocation, CurrentDeltaTime, 1'000.f);
 
-	// Interpolates player rotation to inside the locker.
-	//TODO
-
 	// Sets new location
 	NewPlayerTransform.SetLocation(NewPlayerLocation);
 	InteractingPlayer->SetActorTransform(NewPlayerTransform);
 
+	/*
+	// Interpolates player rotation to inside the locker.
+	FRotator CurrentPlayerRotation = InteractingPlayer->GetActorRotation();
+	FRotator PlayerTargetRotation = GetHidingPosition()->GetComponentRotation();
+	FRotator NewPlayerRotationYaw = UKismetMathLibrary::RInterpTo_Constant(CurrentPlayerRotation, PlayerTargetRotation, CurrentDeltaTime, 1'000.f);
+	NewPlayerTransform.SetRotation(NewPlayerRotationYaw.Quaternion());
+	*/
 	// if we arrive to the location, stop timer.
 	bool bIsInDestination = UKismetMathLibrary::EqualEqual_VectorVector(CurrentPlayerLocation, PlayerTargetLocation, 0.01);
+		//&& UKismetMathLibrary::EqualEqual_RotatorRotator(CurrentPlayerRotation, PlayerTargetRotation, 0.01);
+
 	if (bIsInDestination)
 	{
 		GetWorld()->GetTimerManager().ClearTimer(HidingMovementTimer);
@@ -81,6 +89,9 @@ void AHideActor::FinishMoving()
 
 		// Enable player movement when exiting the locker.
 		InteractingPlayer->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+
+		// Allow player to open inventory once outside the locker
+		InteractingPlayer->SetCanOpenInventory(true);
 	}
 	else
 	{
@@ -104,6 +115,9 @@ void AHideActor::Interact()
 
 		// Disable player movement when inside the locker.
 		InteractingPlayer->GetCharacterMovement()->DisableMovement();
+
+		// Cannot open inventory and close it while inside locker. (Closing inventory enables movement again)
+		InteractingPlayer->SetCanOpenInventory(false);
 
 		// Set timer to move character to interpolate movement
 		GetWorld()->GetTimerManager().SetTimer(HidingMovementTimer, this, &AHideActor::MoveCharacter, GetWorld()->DeltaTimeSeconds, true);

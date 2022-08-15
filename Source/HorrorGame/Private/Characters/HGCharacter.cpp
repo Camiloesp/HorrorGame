@@ -59,6 +59,7 @@ AHGCharacter::AHGCharacter()
 	DistanceToInteract = 350.f;
 	bIsInventoryOpen = false;
 	bIsHiding = false;
+	bCanOpenInventory = true;
 }
 
 // Called when the game starts or when spawned
@@ -293,7 +294,7 @@ void AHGCharacter::InventoryButtonPressed()
 void AHGCharacter::ToggleInventory()
 {
 	if (!ControllerRef) return;
-
+	if (!bCanOpenInventory) return;
 
 	if (bIsInventoryOpen)
 	{

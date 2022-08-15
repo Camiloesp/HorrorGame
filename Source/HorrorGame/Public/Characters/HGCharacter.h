@@ -108,6 +108,8 @@ private:
 
 	bool bIsHiding;
 
+	bool bCanOpenInventory;
+
 protected:
 
 	/* look around */
@@ -180,9 +182,11 @@ public:
 	FORCEINLINE UFlashlightComponent* GetFlashlightComponent() const { return FlashlightComponent; }
 	FORCEINLINE UHealthComponent* GetHealthComponent() const { return HealthComponent; }
 	FORCEINLINE bool IsHiding() const { return bIsHiding; }
+	FORCEINLINE bool CanOpenInventory() const { return bCanOpenInventory; }
 
 	FORCEINLINE void SetExaminationWidget(UExaminationWidget* NewExaminationWidget) { ExaminationWidget = NewExaminationWidget; }
 	FORCEINLINE void SetFlashlight(USpotLightComponent* NewFlashlight) { Flashlight = NewFlashlight; }
 	FORCEINLINE void SetFlashlightComponent(UFlashlightComponent* NewFlashlightComponent) { FlashlightComponent = NewFlashlightComponent; }
 	FORCEINLINE void SetIsHiding(bool bHide) { bIsHiding = bHide; }
+	FORCEINLINE void SetCanOpenInventory(bool OpenInv) { bCanOpenInventory = OpenInv; }
 };

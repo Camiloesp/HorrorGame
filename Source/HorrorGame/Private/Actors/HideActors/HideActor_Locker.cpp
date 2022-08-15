@@ -4,6 +4,7 @@
 #include "Actors/HideActors/HideActor_Locker.h"
 #include "Components/ArrowComponent.h"
 #include "Characters/HGCharacter.h"
+#include "Kismet/KismetMathLibrary.h"
 
 AHideActor_Locker::AHideActor_Locker()
 {
@@ -24,6 +25,8 @@ void AHideActor_Locker::BeginPlay()
 {
 	Super::BeginPlay();
 
+	FinishMovingDelegate.AddDynamic(this, &AHideActor_Locker::StartClosingDoor);
+
 	if (CurveFloat)
 	{
 		FOnTimelineFloat TimelineProgress;
@@ -40,6 +43,11 @@ void AHideActor_Locker::Tick(float DeltaTime)
 	Timeline.TickTimeline(DeltaTime);
 }
 
+void AHideActor_Locker::StartClosingDoor()
+{
+	Timeline.Reverse();
+}
+
 void AHideActor_Locker::OpenLockerDoor(float Value)
 {
 	// Locker door opens 90 degrees
@@ -48,25 +56,31 @@ void AHideActor_Locker::OpenLockerDoor(float Value)
 	// Sets new rotation
 	FRotator NewDoorRotation = FRotator(0.f, Angle * Value, 0.f);
 	LockerDoorMesh->SetRelativeRotation(NewDoorRotation);
+
+	if (Timeline.GetTimelineLength() == Timeline.GetPlaybackPosition())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Timeline finished playing"));
+		bCanInteract = true;
+	}
+}
+
+void AHideActor_Locker::CallInteractParent()
+{
+	AHideActor::Interact();
+	//Super::Interact();
 }
 
 void AHideActor_Locker::Interact()
 {
 	if (!InteractingPlayer) return;
-	// Open door before calling parent functionality.
+	if (!bCanInteract) return;
+	
+	bCanInteract = false;
 
-	// 0.25f time to open door
-	if (InteractingPlayer->IsHiding())
-	{
-		//Exit locker, play in reverse.
-		Timeline.Reverse();
-	}
-	else
-	{
-		//Enter locker, play from beginning.
-		Timeline.Play();
-	}
+	// Open the locker door
+	Timeline.Play();
 
-
-	Super::Interact();
+	FTimerHandle DelayToEnterLocker;
+	GetWorld()->GetTimerManager().SetTimer(DelayToEnterLocker, this, &AHideActor_Locker::CallInteractParent, Timeline.GetTimelineLength(), false);
+	//Super::Interact();
 }
