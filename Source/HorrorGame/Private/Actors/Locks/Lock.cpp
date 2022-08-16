@@ -16,6 +16,13 @@ ALock::ALock()
 	LockMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("LockerMesh"));
 	LockMesh->SetupAttachment(RootComp);
 	LockMesh->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
+
+	bIsUnlocked = false;
+
+	LockCombination.Add(9);
+	LockCombination.Add(5);
+	LockCombination.Add(1);
+	LockCombination.Add(6);
 }
 
 // Called when the game starts or when spawned
@@ -23,8 +30,20 @@ void ALock::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	SpawnDials();
+}
+
+// Called every frame
+void ALock::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+}
+
+void ALock::SpawnDials()
+{
 	//Spawns dials
-	for (int i=0; i<=3; i++)
+	for (int i = 0; i <= 3; i++) // <=3
 	{
 		if (LockDialClass)
 		{
@@ -47,7 +66,7 @@ void ALock::BeginPlay()
 
 			// Attach spawned actors to this actor mesh
 			EAttachmentRule LocationRule = EAttachmentRule::SnapToTarget;
-			EAttachmentRule RotationRule = EAttachmentRule::KeepWorld;
+			EAttachmentRule RotationRule = EAttachmentRule::KeepWorld; //KeepWorld
 			EAttachmentRule ScaleRule = EAttachmentRule::KeepWorld;
 			FAttachmentTransformRules AttachmentRules = FAttachmentTransformRules::FAttachmentTransformRules(LocationRule, RotationRule, ScaleRule, true);
 			Dials[i]->AttachToComponent(LockMesh, AttachmentRules, SocketNameToAttach);
@@ -55,10 +74,27 @@ void ALock::BeginPlay()
 	}
 }
 
-// Called every frame
-void ALock::Tick(float DeltaTime)
+bool ALock::CheckCode()
 {
-	Super::Tick(DeltaTime);
+	// if all of our 4 combinations are equal then bLocalSuccess is always true
+	bool bLocalSuccess = false;
 
+	for (int i=0; i<Dials.Num(); i++)
+	{
+		ALockDial* Dial = Dials[i];
+
+		int CurrentDialNumber = Dial->GetNumber();
+		if (LockCombination[i] == CurrentDialNumber)
+		{
+			bLocalSuccess = true;
+		}
+		else
+		{
+			bLocalSuccess = false;
+			break; // stop loop
+		}
+	}
+
+	return bLocalSuccess;
 }
 

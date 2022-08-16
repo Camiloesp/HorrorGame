@@ -37,8 +37,22 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<ALockDial> LockDialClass;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TArray<ALockDial*> Dials;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	bool bIsUnlocked;
+
+	/* The combination for this lock to be unlocked */
+	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	TArray<int> LockCombination;
+
 protected:
+
+	void SpawnDials();
+	UFUNCTION(BlueprintCallable)
+	bool CheckCode();
+
 public:
 };
+// TODO: Get reference to player (controller?)

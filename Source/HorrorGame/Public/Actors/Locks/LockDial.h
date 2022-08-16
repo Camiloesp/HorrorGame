@@ -65,18 +65,27 @@ private:
 	UPROPERTY(EditAnywhere)
 	UCurveFloat* CurveFloat;
 
+	UFUNCTION()
+	void TimelineFinished();
+
 protected:
+
+	/* Starts dial at random number */
+	void SetRandomNumber();
+
 public:
 
 	/* Sets the current Number to be the current selection */
 	void FindNumber();
 
+	UFUNCTION(BlueprintCallable) //debug
 	void RotateDial();
 	UFUNCTION()
 	void InterpDialRotation(float Value);
 
 
 	FORCEINLINE int GetIndex() const { return Index; }
+	FORCEINLINE int GetNumber() const { return Number; }
 
 	FORCEINLINE void SetIndex(int NewIndex) { Index = NewIndex; }
 

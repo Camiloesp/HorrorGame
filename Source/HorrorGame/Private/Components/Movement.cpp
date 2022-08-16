@@ -60,8 +60,6 @@ void UMovement::SprintTimer()
 		CurrentStamina -= 1.f;
 		CurrentStamina = FMath::Clamp(CurrentStamina, MinStamina, MaxStamina);
 
-		UE_LOG(LogTemp, Warning, TEXT("UMovement : Current Stamina is %f"), CurrentStamina);
-
 		if (CurrentStamina <= MinStamina)
 		{
 			StopSprint();
