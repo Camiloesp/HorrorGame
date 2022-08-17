@@ -59,8 +59,12 @@ void ALock::SpawnDials()
 			FActorSpawnParameters SpawnParams;
 			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
+			//LockMesh->GetSocketLocation(SocketNameToAttach);
+			//LockMesh->GetSocketRotation(SocketNameToAttach);
+
 			// Spawn dial and add it to array
 			ALockDial* SpawnedDial = GetWorld()->SpawnActor<ALockDial>(LockDialClass, SpawnLocation, SpawnRotation, SpawnParams);
+			SpawnedDial->SetActorRotation(GetActorRotation()); //test
 			SpawnedDial->SetIndex(i);
 			Dials.Add(SpawnedDial);
 
