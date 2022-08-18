@@ -3,6 +3,9 @@
 
 #include "Actors/Locks/Lock.h"
 #include "Actors/Locks/LockDial.h"
+#include "Camera/CameraComponent.h"
+#include "Components/BoxComponent.h"
+#include "Characters/HGCharacter.h"
 
 // Sets default values
 ALock::ALock()
@@ -17,8 +20,26 @@ ALock::ALock()
 	LockMesh->SetupAttachment(RootComp);
 	LockMesh->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
 
-	bIsUnlocked = false;
+	CameraView = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+	CameraView->SetupAttachment(RootComp);
+	CameraView->SetRelativeRotation(FRotator(0.f, 180.f, 0.f));
+	CameraView->SetRelativeLocation(FVector(15.f, 0.f, -5.f));
+	CameraView->FieldOfView = 45.f;
+	
+	BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
+	BoxCollision->SetupAttachment(RootComp);
+	
 
+	// Initialize variables
+	bIsUnlocked = false;
+	BoxPosition = FVector(0.f, 0.f, 0.f);
+	BoxExtent = FVector(32.f, 32.f, 32.f);
+
+	//Edit components post variables initialization
+	BoxCollision->SetBoxExtent(BoxExtent);
+	BoxCollision->SetRelativeLocation(BoxPosition);
+
+	// Add combination to unlock this lock
 	LockCombination.Add(9);
 	LockCombination.Add(5);
 	LockCombination.Add(1);
@@ -102,3 +123,13 @@ bool ALock::CheckCode()
 	return bLocalSuccess;
 }
 
+void ALock::Interact()
+{
+	if (!InteractingPlayer) return;
+	
+	// Look through the camera to mess with dials
+	APlayerController* PlayerController = Cast<APlayerController>(InteractingPlayer->GetController());
+	if (!PlayerController) return;
+	
+	//PlayerController->SetViewTargetWithBlend(); 
+}

@@ -4,12 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "../../Interfaces/Interaction.h"
 #include "Lock.generated.h"
 
 class ALockDial;
+class UCameraComponent;
+class UBoxComponent;
 
 UCLASS()
-class HORRORGAME_API ALock : public AActor
+class HORRORGAME_API ALock : public AActor, public IInteraction
 {
 	GENERATED_BODY()
 	
@@ -33,6 +36,13 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	USkeletalMeshComponent* LockMesh;
 
+	/* Camera the player will see through, when unlocking the lock */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UCameraComponent* CameraView;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UBoxComponent* BoxCollision;
+
 	// Class reference to the dial to spawn. BP_LockDial
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<ALockDial> LockDialClass;
@@ -48,11 +58,18 @@ private:
 	TArray<int> LockCombination;
 
 protected:
-
 	void SpawnDials();
 	UFUNCTION(BlueprintCallable)
 	bool CheckCode();
 
 public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	FVector BoxPosition;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	FVector BoxExtent;
+
+	virtual void Interact() override;
+
 };
 // TODO: Get reference to player (controller?)
