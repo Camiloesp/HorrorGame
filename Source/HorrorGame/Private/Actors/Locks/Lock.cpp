@@ -6,6 +6,9 @@
 #include "Camera/CameraComponent.h"
 #include "Components/BoxComponent.h"
 #include "Characters/HGCharacter.h"
+#include "GameFramework/CharacterMovementComponent.h"
+
+#include "Components/InputComponent.h"
 
 // Sets default values
 ALock::ALock()
@@ -61,6 +64,23 @@ void ALock::Tick(float DeltaTime)
 
 }
 
+void ALock::EnablePlayerInput()
+{
+	EnableInput(Cast<APlayerController>(InteractingPlayer->GetController()));
+
+	// Bind functions if they haven't been binded. (Avoids check break)
+	bool ReturnButtonFunctionBinded = InteractingPlayer->OnReturnButtonPressed.Contains(this, FName(TEXT("ExitLockView")));
+	bool InteractButtonFunctionBinded = InteractingPlayer->OnInteractButtonPressed.Contains(this, FName(TEXT("ExitLockView")));
+	if (!ReturnButtonFunctionBinded)
+	{
+		InteractingPlayer->OnReturnButtonPressed.AddDynamic(this, &ALock::ExitLockView);
+	}
+	if (!InteractButtonFunctionBinded)
+	{
+		InteractingPlayer->OnInteractButtonPressed.AddDynamic(this, &ALock::ExitLockView);
+	}
+}
+
 void ALock::SpawnDials()
 {
 	//Spawns dials
@@ -79,9 +99,6 @@ void ALock::SpawnDials()
 			FRotator SpawnRotation = FRotator::ZeroRotator;
 			FActorSpawnParameters SpawnParams;
 			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-			//LockMesh->GetSocketLocation(SocketNameToAttach);
-			//LockMesh->GetSocketRotation(SocketNameToAttach);
 
 			// Spawn dial and add it to array
 			ALockDial* SpawnedDial = GetWorld()->SpawnActor<ALockDial>(LockDialClass, SpawnLocation, SpawnRotation, SpawnParams);
@@ -123,13 +140,61 @@ bool ALock::CheckCode()
 	return bLocalSuccess;
 }
 
+void ALock::ExitLockView()
+{
+	if (!InteractingPlayer) return;
+
+	// Look through the camera to mess with dials
+	APlayerController* PlayerController = Cast<APlayerController>(InteractingPlayer->GetController());
+	if (!PlayerController) return;
+
+	InteractingPlayer->OnReturnButtonPressed.RemoveDynamic(this, &ALock::ExitLockView);
+	InteractingPlayer->OnInteractButtonPressed.RemoveDynamic(this, &ALock::ExitLockView);
+
+
+	float BlendTime = 1.f;
+
+	// Slowly blend back to our player camera.
+	PlayerController->SetViewTargetWithBlend(InteractingPlayer, BlendTime);
+
+	// enable look input
+	PlayerController->ResetIgnoreLookInput();
+
+	// enable inventory
+	InteractingPlayer->SetCanOpenInventory(true);
+
+	// Enable movement
+	InteractingPlayer->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+
+	// no longer interacting.
+	//InteractingPlayer = nullptr;
+}
+
 void ALock::Interact()
 {
 	if (!InteractingPlayer) return;
-	
+
 	// Look through the camera to mess with dials
 	APlayerController* PlayerController = Cast<APlayerController>(InteractingPlayer->GetController());
 	if (!PlayerController) return;
 	
-	//PlayerController->SetViewTargetWithBlend(); 
+
+	float BlendTime = 1.f;
+
+	// Slowly blend to this actor camera.
+	PlayerController->SetViewTargetWithBlend(this, BlendTime);
+
+	// Disable movement
+	InteractingPlayer->GetCharacterMovement()->DisableMovement();
+
+	//Disable look input
+	PlayerController->SetIgnoreLookInput(false);
+
+	// Cannot open inventory
+	InteractingPlayer->SetCanOpenInventory(false);
+
+	//Enable input
+	FTimerHandle EnableInputTimer;
+	GetWorld()->GetTimerManager().SetTimer(EnableInputTimer, this, &ALock::EnablePlayerInput, BlendTime, false);
+
 }

@@ -81,6 +81,8 @@ void AHGCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	PlayerInputComp = PlayerInputComponent;
+
 	/* BIND AXIS */
 	PlayerInputComponent->BindAxis(TEXT("LookUp"), this, &AHGCharacter::LookUp);
 	PlayerInputComponent->BindAxis(TEXT("LookRight"), this, &AHGCharacter::LookRight);
@@ -142,6 +144,8 @@ void AHGCharacter::ActionButtonPressed()
 		InteractingActor->InteractingPlayer = this;
 		InteractingActor->Interact();
 	}
+
+	OnInteractButtonPressed.Broadcast();
 }
 
 void AHGCharacter::LeftMouseButtonPressed()

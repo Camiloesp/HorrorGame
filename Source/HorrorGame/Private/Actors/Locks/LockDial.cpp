@@ -27,10 +27,6 @@ ALockDial::ALockDial()
 void ALockDial::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	//FindNumber(); // uncomment this if removing the SetRandomNumber() call below (There is a FindNumber() call in that function)
-	SetRandomNumber();
-
 
 	// Setup timeline function calls
 	if (CurveFloat)
@@ -51,6 +47,9 @@ void ALockDial::BeginPlay()
 	FTimerHandle DebugTimer;
 	GetWorld()->GetTimerManager().SetTimer(DebugTimer, this, &ALockDial::RotateDial, 2.f, true, 10.f);
 	*/
+
+	//FindNumber(); // uncomment this if removing the SetRandomNumber() call below (There is a FindNumber() call in that function)
+	SetRandomNumber();
 }
 
 // Called every frame
@@ -63,35 +62,21 @@ void ALockDial::Tick(float DeltaTime)
 
 void ALockDial::TimelineFinished()
 {
-
-	// Checks if Roll rotation 
-	//DialRotation = LockDialMesh->GetComponentRotation().Roll;
-	//FRotator NewDialRotation = LockDialMesh->GetComponentRotation();
-	//NewDialRotation.Roll = DialRotation;
-
-	/*
-	if (DialRotation >= 360.f)
-	{
-		DialRotation = 0.f;
-		NewDialRotation.Roll = DialRotation;
-		LockDialMesh->SetRelativeRotation(FRotator(NewDialRotation));
-	}
-	*/
-
-	DialRotation = LockDialMesh->GetComponentRotation().Roll;
-	if (DialRotation < 0.f) // Correcting gimbal lock
+	// Correcting gimbal lock
+	DialRotation = LockDialMesh->GetRelativeRotation().Roll;
+	if (DialRotation < 0.f) 
 	{
 		DialRotation = 180 + (180 - FMath::Abs(DialRotation));
 	}
 
+	// Set angle to 0 if >= 360
 	if (DialRotation >= 360.f)
 	{
-		FRotator NewDialRotation = LockDialMesh->GetComponentRotation();
+		FRotator NewDialRotation = LockDialMesh->GetRelativeRotation();
 		NewDialRotation.Roll = 0.f;
 		DialRotation = 0.f;
-		LockDialMesh->SetRelativeRotation(FRotator(NewDialRotation));
+		LockDialMesh->SetRelativeRotation(NewDialRotation);
 	}
-
 
 	FindNumber();
 	bCanRotate = true;
@@ -99,25 +84,29 @@ void ALockDial::TimelineFinished()
 
 void ALockDial::SetRandomNumber()
 {
-	float LocalRotation = UKismetMathLibrary::RandomIntegerInRange(0, 9) * 36.f;
-	FRotator NewRotation = FRotator(LockDialMesh->GetComponentRotation().Pitch, LockDialMesh->GetComponentRotation().Yaw, LocalRotation);
+	float NewRoll = UKismetMathLibrary::RandomIntegerInRange(0, 9) * 36.f;
+	FRotator NewRotation = LockDialMesh->GetRelativeRotation();
+	NewRotation.Roll = NewRoll;
 
 	LockDialMesh->SetRelativeRotation(NewRotation);
-	DialRotation = LocalRotation;
+	DialRotation = NewRoll;
+
 	FindNumber();
+}
+
+void ALockDial::HandleDialRotation()
+{
 }
 
 void ALockDial::FindNumber()
 {
 	Number = DialRotation / 36.f;
-	UE_LOG(LogTemp, Error, TEXT("ALockDial::FindNumber %d And rotation is %f"), Number, DialRotation);
 }
 
 void ALockDial::RotateDial()
 {
 	if (bCanRotate)
 	{
-		UE_LOG(LogTemp, Error, TEXT("ALockDial::RotateDial ROTATING DIAL"));
 		bCanRotate = false;
 		RotateDialTL.PlayFromStart();
 	}
@@ -125,20 +114,12 @@ void ALockDial::RotateDial()
 
 void ALockDial::InterpDialRotation(float Value)
 {
-	/*
-	float NewRollRotation = DialRotation + UKismetMathLibrary::Lerp(0.f, 36.f, Value); // 180 
-	FRotator NewDialRotation = LockDialMesh->GetComponentRotation();
-	NewDialRotation.Roll = NewRollRotation;
-	
-	LockDialMesh->SetRelativeRotation(FRotator(NewDialRotation));
-	*/
-
-	
 	float Angle = 36.f;
 	float NewRollRotation = DialRotation + (Angle * Value);
+	FRotator NewDialRotation = LockDialMesh->GetRelativeRotation();
+	NewDialRotation.Roll = NewRollRotation;
 
 	// Sets new rotation
-	FRotator NewDialRotation = FRotator(LockDialMesh->GetComponentRotation().Pitch, LockDialMesh->GetComponentRotation().Yaw, NewRollRotation);
 	LockDialMesh->SetRelativeRotation(NewDialRotation);
 }
 

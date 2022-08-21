@@ -73,6 +73,9 @@ protected:
 	/* Starts dial at random number */
 	void SetRandomNumber();
 
+	/* Handles the rotation of the dial, and corrects rotation error when dial angle is >= 360 and gimbal lock */
+	void HandleDialRotation();
+
 public:
 
 	/* Sets the current Number to be the current selection */

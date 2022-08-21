@@ -57,10 +57,14 @@ private:
 	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TArray<int> LockCombination;
 
+	void EnablePlayerInput();
+
 protected:
 	void SpawnDials();
 	UFUNCTION(BlueprintCallable)
 	bool CheckCode();
+	UFUNCTION()
+	void ExitLockView();
 
 public:
 

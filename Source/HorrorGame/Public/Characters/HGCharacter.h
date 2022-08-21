@@ -22,6 +22,7 @@ class UFlashlightComponent;
 class UHealthComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPressedReturn);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInteractButtonPressed);
 
 UCLASS()
 class HORRORGAME_API AHGCharacter : public ACharacter
@@ -156,14 +157,20 @@ protected:
 	void HandleInventoryVisibilityAndInput();
 
 public:
+
+	UInputComponent* PlayerInputComp;
+
 	void ToggleInventory();
 
 	/*  */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	bool bIsInventoryOpen;
 
+	/* Delegates */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FPressedReturn OnReturnButtonPressed;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FInteractButtonPressed OnInteractButtonPressed;
 
 	/* Called when crouching. */
 	UFUNCTION(BlueprintImplementableEvent)
