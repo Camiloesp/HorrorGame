@@ -57,7 +57,15 @@ private:
 	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TArray<int> LockCombination;
 
+	/* Binds input delegates to interact with this lock's dials */
 	void EnablePlayerInput();
+
+	/* Time it takes to blend between cameras */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	float CameraBlendTime;
+
+	/* True if the player is inside our camera, false otherwise. */
+	bool bPlayerLockView;
 
 protected:
 	void SpawnDials();

@@ -35,8 +35,10 @@ ALock::ALock()
 
 	// Initialize variables
 	bIsUnlocked = false;
+	bPlayerLockView = false;
 	BoxPosition = FVector(0.f, 0.f, 0.f);
 	BoxExtent = FVector(32.f, 32.f, 32.f);
+	CameraBlendTime = 1.f;
 
 	//Edit components post variables initialization
 	BoxCollision->SetBoxExtent(BoxExtent);
@@ -68,7 +70,7 @@ void ALock::EnablePlayerInput()
 {
 	EnableInput(Cast<APlayerController>(InteractingPlayer->GetController()));
 
-	// Bind functions if they haven't been binded. (Avoids check break)
+	// Bind functions if they haven't been binded. (Avoids check break in editor)
 	bool ReturnButtonFunctionBinded = InteractingPlayer->OnReturnButtonPressed.Contains(this, FName(TEXT("ExitLockView")));
 	bool InteractButtonFunctionBinded = InteractingPlayer->OnInteractButtonPressed.Contains(this, FName(TEXT("ExitLockView")));
 	if (!ReturnButtonFunctionBinded)
@@ -79,6 +81,8 @@ void ALock::EnablePlayerInput()
 	{
 		InteractingPlayer->OnInteractButtonPressed.AddDynamic(this, &ALock::ExitLockView);
 	}
+
+	UE_LOG(LogTemp, Warning, TEXT("EnablePlayerInput"));
 }
 
 void ALock::SpawnDials()
@@ -152,10 +156,9 @@ void ALock::ExitLockView()
 	InteractingPlayer->OnInteractButtonPressed.RemoveDynamic(this, &ALock::ExitLockView);
 
 
-	float BlendTime = 1.f;
-
 	// Slowly blend back to our player camera.
-	PlayerController->SetViewTargetWithBlend(InteractingPlayer, BlendTime);
+	PlayerController->SetViewTargetWithBlend(InteractingPlayer, CameraBlendTime);
+	bPlayerLockView = false;
 
 	// enable look input
 	PlayerController->ResetIgnoreLookInput();
@@ -168,21 +171,22 @@ void ALock::ExitLockView()
 
 	// no longer interacting.
 	//InteractingPlayer = nullptr;
+
+	UE_LOG(LogTemp, Warning, TEXT("Exit Lock view"));
 }
 
 void ALock::Interact()
 {
+	if (bPlayerLockView) return; // Player in camera view, don't execute Interact functionality, let delegate handle the input instead.
 	if (!InteractingPlayer) return;
 
 	// Look through the camera to mess with dials
 	APlayerController* PlayerController = Cast<APlayerController>(InteractingPlayer->GetController());
 	if (!PlayerController) return;
-	
-
-	float BlendTime = 1.f;
 
 	// Slowly blend to this actor camera.
-	PlayerController->SetViewTargetWithBlend(this, BlendTime);
+	PlayerController->SetViewTargetWithBlend(this, CameraBlendTime);
+	bPlayerLockView = true;
 
 	// Disable movement
 	InteractingPlayer->GetCharacterMovement()->DisableMovement();
@@ -195,6 +199,8 @@ void ALock::Interact()
 
 	//Enable input
 	FTimerHandle EnableInputTimer;
-	GetWorld()->GetTimerManager().SetTimer(EnableInputTimer, this, &ALock::EnablePlayerInput, BlendTime, false);
+	GetWorld()->GetTimerManager().SetTimer(EnableInputTimer, this, &ALock::EnablePlayerInput, CameraBlendTime, false);
+
+	UE_LOG(LogTemp, Warning, TEXT("Interacting with Lock"));
 
 }
