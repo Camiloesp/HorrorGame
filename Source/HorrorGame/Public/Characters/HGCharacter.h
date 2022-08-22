@@ -23,6 +23,8 @@ class UHealthComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPressedReturn);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInteractButtonPressed);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FLeftMouseButtonPressed);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FLeftMouseButtonReleased);
 
 UCLASS()
 class HORRORGAME_API AHGCharacter : public ACharacter
@@ -171,6 +173,10 @@ public:
 	FPressedReturn OnReturnButtonPressed;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FInteractButtonPressed OnInteractButtonPressed;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FLeftMouseButtonPressed OnLeftMouseButtonPressed;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FLeftMouseButtonReleased OnLeftMouseButtonReleased;
 
 	/* Called when crouching. */
 	UFUNCTION(BlueprintImplementableEvent)

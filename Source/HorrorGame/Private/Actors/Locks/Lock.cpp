@@ -8,7 +8,8 @@
 #include "Characters/HGCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
-#include "Components/InputComponent.h"
+#include "Components/WidgetInteractionComponent.h"
+#include "Components/WidgetComponent.h"
 
 // Sets default values
 ALock::ALock()
@@ -32,6 +33,11 @@ ALock::ALock()
 	BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
 	BoxCollision->SetupAttachment(RootComp);
 	
+	WidgetInteraction = CreateDefaultSubobject<UWidgetInteractionComponent>(TEXT("InteractionWidget"));
+	WidgetInteraction->SetupAttachment(RootComp);
+	WidgetInteraction->InteractionSource = EWidgetInteractionSource::Mouse; //EWidgetInteractionSource::CenterScreen
+
+	//UWidgetInteractionComponent* WidgetInteraction
 
 	// Initialize variables
 	bIsUnlocked = false;
@@ -39,6 +45,7 @@ ALock::ALock()
 	BoxPosition = FVector(0.f, 0.f, 0.f);
 	BoxExtent = FVector(32.f, 32.f, 32.f);
 	CameraBlendTime = 1.f;
+	NumberOfDials = 4;
 
 	//Edit components post variables initialization
 	BoxCollision->SetBoxExtent(BoxExtent);
@@ -68,7 +75,11 @@ void ALock::Tick(float DeltaTime)
 
 void ALock::EnablePlayerInput()
 {
-	EnableInput(Cast<APlayerController>(InteractingPlayer->GetController()));
+	APlayerController* PlayerController = Cast<APlayerController>(InteractingPlayer->GetController());
+	if (!PlayerController) return;
+	EnableInput(PlayerController);
+	PlayerController->bShowMouseCursor = true;
+
 
 	// Bind functions if they haven't been binded. (Avoids check break in editor)
 	bool ReturnButtonFunctionBinded = InteractingPlayer->OnReturnButtonPressed.Contains(this, FName(TEXT("ExitLockView")));
@@ -82,13 +93,33 @@ void ALock::EnablePlayerInput()
 		InteractingPlayer->OnInteractButtonPressed.AddDynamic(this, &ALock::ExitLockView);
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("EnablePlayerInput"));
+	//Displays UI arrows
+	ToggleLockDialsArrowsUI();
+}
+
+void ALock::ToggleLockDialsArrowsUI()
+{
+	for (ALockDial* CurrentDial : Dials)
+	{
+		bool bNewVisibility = !CurrentDial->GetUpArrow()->IsVisible();
+		CurrentDial->GetUpArrow()->SetVisibility(bNewVisibility);
+		CurrentDial->GetDownArrow()->SetVisibility(bNewVisibility);
+	}
+}
+
+void ALock::DestroyLock()
+{
+	for (ALockDial* CurrentDial : Dials)
+	{
+		CurrentDial->Destroy();
+	}
+	Destroy();
 }
 
 void ALock::SpawnDials()
 {
 	//Spawns dials
-	for (int i = 0; i <= 3; i++) // <=3
+	for (int i = 0; i < NumberOfDials; i++) // <=3
 	{
 		if (LockDialClass)
 		{
@@ -108,6 +139,7 @@ void ALock::SpawnDials()
 			ALockDial* SpawnedDial = GetWorld()->SpawnActor<ALockDial>(LockDialClass, SpawnLocation, SpawnRotation, SpawnParams);
 			SpawnedDial->SetActorRotation(GetActorRotation()); //test
 			SpawnedDial->SetIndex(i);
+			SpawnedDial->SetLockRef(this);
 			Dials.Add(SpawnedDial);
 
 			// Attach spawned actors to this actor mesh
@@ -151,10 +183,14 @@ void ALock::ExitLockView()
 	// Look through the camera to mess with dials
 	APlayerController* PlayerController = Cast<APlayerController>(InteractingPlayer->GetController());
 	if (!PlayerController) return;
+	DisableInput(PlayerController);
+	PlayerController->bShowMouseCursor = false;
+
 
 	InteractingPlayer->OnReturnButtonPressed.RemoveDynamic(this, &ALock::ExitLockView);
 	InteractingPlayer->OnInteractButtonPressed.RemoveDynamic(this, &ALock::ExitLockView);
-
+	InteractingPlayer->OnLeftMouseButtonPressed.RemoveDynamic(this, &ALock::LeftMouseButtonPressed);
+	InteractingPlayer->OnLeftMouseButtonReleased.RemoveDynamic(this, &ALock::LeftMouseButtonReleased);
 
 	// Slowly blend back to our player camera.
 	PlayerController->SetViewTargetWithBlend(InteractingPlayer, CameraBlendTime);
@@ -169,10 +205,41 @@ void ALock::ExitLockView()
 	// Enable movement
 	InteractingPlayer->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 
-	// no longer interacting.
-	//InteractingPlayer = nullptr;
+	//Hides UI arrows
+	ToggleLockDialsArrowsUI();
 
-	UE_LOG(LogTemp, Warning, TEXT("Exit Lock view"));
+	// no longer interacting.
+	InteractingPlayer = nullptr;
+}
+
+void ALock::LeftMouseButtonPressed()
+{
+	WidgetInteraction->PressPointerKey(EKeys::LeftMouseButton);
+}
+
+void ALock::LeftMouseButtonReleased()
+{
+	WidgetInteraction->ReleasePointerKey(EKeys::LeftMouseButton);
+}
+
+void ALock::CheckEveryTurn()
+{
+	if (!UnlockAnimation) return;
+
+	bool bCorrectCombination = CheckCode();
+	if (bCorrectCombination)
+	{
+		LockMesh->PlayAnimation(UnlockAnimation, false);
+
+		float Delay = UnlockAnimation->GetMaxCurrentTime();
+		
+		FTimerHandle ExitHandle;
+		GetWorld()->GetTimerManager().SetTimer(ExitHandle, this, &ALock::ExitLockView, Delay, false);
+
+		// Destroy this lock and its dials
+		FTimerHandle DestroyHandle;
+		GetWorld()->GetTimerManager().SetTimer(DestroyHandle, this, &ALock::DestroyLock, Delay+1.f, false);
+	}
 }
 
 void ALock::Interact()
@@ -197,10 +264,11 @@ void ALock::Interact()
 	// Cannot open inventory
 	InteractingPlayer->SetCanOpenInventory(false);
 
+	//Bind left mouse button pressed/released delegate
+	InteractingPlayer->OnLeftMouseButtonPressed.AddDynamic(this, &ALock::LeftMouseButtonPressed);
+	InteractingPlayer->OnLeftMouseButtonReleased.AddDynamic(this, &ALock::LeftMouseButtonReleased);
+
 	//Enable input
 	FTimerHandle EnableInputTimer;
 	GetWorld()->GetTimerManager().SetTimer(EnableInputTimer, this, &ALock::EnablePlayerInput, CameraBlendTime, false);
-
-	UE_LOG(LogTemp, Warning, TEXT("Interacting with Lock"));
-
 }

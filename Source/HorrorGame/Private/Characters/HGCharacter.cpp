@@ -109,6 +109,7 @@ void AHGCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	PlayerInputComponent->BindAction(TEXT("InventoryToggle"), EInputEvent::IE_Pressed, this, &AHGCharacter::InventoryButtonPressed);
 
 	PlayerInputComponent->BindAction(TEXT("Return"), EInputEvent::IE_Pressed, this, &AHGCharacter::ReturnButtonPressed);
+
 }
 
 void AHGCharacter::LookUp(float Value)
@@ -156,6 +157,8 @@ void AHGCharacter::LeftMouseButtonPressed()
 		GrabbedActor->GrabberPlayer = this;
 		GrabbedActor->GrabObject();
 	}
+
+	OnLeftMouseButtonPressed.Broadcast();
 }
 
 void AHGCharacter::LeftMouseButtonReleased()
@@ -166,6 +169,8 @@ void AHGCharacter::LeftMouseButtonReleased()
 		GrabbedActor->GrabberPlayer = nullptr;
 		GrabbedActor = nullptr;
 	}
+
+	OnLeftMouseButtonReleased.Broadcast();
 }
 
 void AHGCharacter::ReturnButtonPressed()

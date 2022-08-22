@@ -7,6 +7,9 @@
 #include "Components/TimelineComponent.h"
 #include "LockDial.generated.h"
 
+class UWidgetComponent;
+class ALock;
+
 UCLASS()
 class HORRORGAME_API ALockDial : public AActor
 {
@@ -32,6 +35,11 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* LockDialMesh;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UWidgetComponent* UpArrow;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UWidgetComponent* DownArrow;
 
 	/* Position of the dial in our lock */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -68,13 +76,12 @@ private:
 	UFUNCTION()
 	void TimelineFinished();
 
+	ALock* LockRef;
+
 protected:
 
 	/* Starts dial at random number */
 	void SetRandomNumber();
-
-	/* Handles the rotation of the dial, and corrects rotation error when dial angle is >= 360 and gimbal lock */
-	void HandleDialRotation();
 
 public:
 
@@ -83,13 +90,20 @@ public:
 
 	UFUNCTION(BlueprintCallable) //debug
 	void RotateDial();
+	UFUNCTION(BlueprintCallable) //debug
+	void RotateDialBackwards();
 	UFUNCTION()
 	void InterpDialRotation(float Value);
 
 
 	FORCEINLINE int GetIndex() const { return Index; }
 	FORCEINLINE int GetNumber() const { return Number; }
+	FORCEINLINE UWidgetComponent* GetDownArrow() const { return DownArrow; }
+	FORCEINLINE UWidgetComponent* GetUpArrow() const { return UpArrow; }
 
 	FORCEINLINE void SetIndex(int NewIndex) { Index = NewIndex; }
+	FORCEINLINE void SetLockRef(ALock* NewLockRef) { LockRef = NewLockRef; }
+
+	bool bAddRotation = true;
 
 };

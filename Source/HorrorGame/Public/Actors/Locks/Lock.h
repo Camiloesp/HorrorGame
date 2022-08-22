@@ -10,6 +10,7 @@
 class ALockDial;
 class UCameraComponent;
 class UBoxComponent;
+class UWidgetInteractionComponent;
 
 UCLASS()
 class HORRORGAME_API ALock : public AActor, public IInteraction
@@ -43,6 +44,9 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UBoxComponent* BoxCollision;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UWidgetInteractionComponent* WidgetInteraction;
+
 	// Class reference to the dial to spawn. BP_LockDial
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<ALockDial> LockDialClass;
@@ -50,8 +54,14 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TArray<ALockDial*> Dials;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UAnimationAsset* UnlockAnimation;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	bool bIsUnlocked;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	int NumberOfDials;
 
 	/* The combination for this lock to be unlocked */
 	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -67,6 +77,11 @@ private:
 	/* True if the player is inside our camera, false otherwise. */
 	bool bPlayerLockView;
 
+	/* Displays/hides dials arrows when interacting in lock view */
+	void ToggleLockDialsArrowsUI();
+
+	void DestroyLock();
+
 protected:
 	void SpawnDials();
 	UFUNCTION(BlueprintCallable)
@@ -74,7 +89,14 @@ protected:
 	UFUNCTION()
 	void ExitLockView();
 
+	UFUNCTION()
+	void LeftMouseButtonPressed();
+	UFUNCTION()
+	void LeftMouseButtonReleased();
+
 public:
+	/* Check every single time we change a number, if the code is correct. */
+	void CheckEveryTurn();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	FVector BoxPosition;
