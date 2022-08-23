@@ -60,6 +60,7 @@ AHGCharacter::AHGCharacter()
 	bIsInventoryOpen = false;
 	bIsHiding = false;
 	bCanOpenInventory = true;
+	bReadingNote = false;
 }
 
 // Called when the game starts or when spawned
@@ -297,7 +298,11 @@ void AHGCharacter::HeadBob()
 
 void AHGCharacter::InventoryButtonPressed()
 {
-	ToggleInventory();
+	if (!bReadingNote)
+	{
+		ToggleInventory();
+	}
+	OnInventoryButtonPressed.Broadcast();
 }
 
 void AHGCharacter::ToggleInventory()
@@ -308,21 +313,21 @@ void AHGCharacter::ToggleInventory()
 	if (bIsInventoryOpen)
 	{
 		bIsInventoryOpen = false;
-		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
-		ControllerRef->ResetIgnoreLookInput();
-		ControllerRef->bShowMouseCursor = false;
+		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking); //this
+		ControllerRef->ResetIgnoreLookInput();//this
+		ControllerRef->bShowMouseCursor = false;//this
 		if (InventoryMenuRef)
 		{
 			InventoryMenuRef->SetVisibility(ESlateVisibility::Collapsed);
-			UWidgetBlueprintLibrary::SetInputMode_GameOnly(ControllerRef);
+			UWidgetBlueprintLibrary::SetInputMode_GameOnly(ControllerRef);//this
 		}
 	}
 	else
 	{
 		bIsInventoryOpen = true;
-		GetCharacterMovement()->DisableMovement();
-		ControllerRef->SetIgnoreLookInput(true);
-		ControllerRef->bShowMouseCursor = true;
+		GetCharacterMovement()->DisableMovement();//this
+		ControllerRef->SetIgnoreLookInput(true); //this
+		ControllerRef->bShowMouseCursor = true;//this
 
 		// remove examine widget if open
 		if (ExaminationWidget && ExaminationWidget->IsInViewport())
@@ -333,7 +338,7 @@ void AHGCharacter::ToggleInventory()
 		if (InventoryMenuRef)
 		{
 			InventoryMenuRef->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-			UWidgetBlueprintLibrary::SetInputMode_GameAndUIEx(ControllerRef, InventoryMenuRef);
+			UWidgetBlueprintLibrary::SetInputMode_GameAndUIEx(ControllerRef, InventoryMenuRef);//this
 		}
 	}
 }

@@ -24,7 +24,8 @@ class UHealthComponent;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPressedReturn);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInteractButtonPressed);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FLeftMouseButtonPressed);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FLeftMouseButtonReleased);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FLeftMouseButtonReleased);//InventoryButtonPressed
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInventoryButtonPressed);
 
 UCLASS()
 class HORRORGAME_API AHGCharacter : public ACharacter
@@ -160,6 +161,8 @@ protected:
 
 public:
 
+	bool bReadingNote;
+
 	UInputComponent* PlayerInputComp;
 
 	void ToggleInventory();
@@ -177,6 +180,8 @@ public:
 	FLeftMouseButtonPressed OnLeftMouseButtonPressed;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FLeftMouseButtonReleased OnLeftMouseButtonReleased;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FInventoryButtonPressed OnInventoryButtonPressed;
 
 	/* Called when crouching. */
 	UFUNCTION(BlueprintImplementableEvent)
