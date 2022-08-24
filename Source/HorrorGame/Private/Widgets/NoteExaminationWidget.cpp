@@ -142,12 +142,18 @@ void UNoteExaminationWidget::UpdateWidget(ANoteMaster* NoteActor)
 
 void UNoteExaminationWidget::CloseExamination()
 {
+	if (!CurrentNoteActor) return;
+
 	//UnBind exit delegates
 	OwnerCharacter->OnInventoryButtonPressed.RemoveDynamic(this, &UNoteExaminationWidget::CloseExamination);
 	OwnerCharacter->OnReturnButtonPressed.RemoveDynamic(this, &UNoteExaminationWidget::CloseExamination);
 
 	OwnerCharacter->bReadingNote = false;
 
+	// removing reference so we can pick again
+	CurrentNoteActor->SetExaminationWidget(nullptr);
+
+	//ExaminationWidget
 	EnableReaderInput();
 	RemoveFromParent();
 }

@@ -47,10 +47,6 @@ ALock::ALock()
 	CameraBlendTime = 1.f;
 	NumberOfDials = 4;
 
-	//Edit components post variables initialization
-	BoxCollision->SetBoxExtent(BoxExtent);
-	BoxCollision->SetRelativeLocation(BoxPosition);
-
 	// Add combination to unlock this lock
 	LockCombination.Add(9);
 	LockCombination.Add(5);
@@ -64,6 +60,15 @@ void ALock::BeginPlay()
 	Super::BeginPlay();
 	
 	SpawnDials();
+}
+
+void ALock::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+
+	//Edit components post variables initialization
+	BoxCollision->SetBoxExtent(BoxExtent);
+	BoxCollision->SetRelativeLocation(BoxPosition);
 }
 
 // Called every frame

@@ -147,12 +147,15 @@ void ANoteMaster::Interact()
 {
 	if (!InteractingPlayer || !NoteExaminationWidgetClass) return;
 	if (!NoteExaminationRef) return;
+	if (ExaminationWidget) return; // if its already open return
 
 	InteractingPlayer->bReadingNote = true;
 
-	UNoteExaminationWidget* ExaminationWidget = CreateWidget<UNoteExaminationWidget>(GetWorld(), NoteExaminationWidgetClass);
+	ExaminationWidget = CreateWidget<UNoteExaminationWidget>(GetWorld(), NoteExaminationWidgetClass);
 	if (ExaminationWidget)
 	{
+
+
 		ExaminationWidget->SetNoteExamination(NoteExaminationRef);
 		ExaminationWidget->SetOwnerCharacter(InteractingPlayer);
 		ExaminationWidget->UpdateWidget(this);

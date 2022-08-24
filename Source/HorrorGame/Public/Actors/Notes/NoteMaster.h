@@ -74,6 +74,8 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	float WidgetDistanceAboveMesh;
 
+	UNoteExaminationWidget* ExaminationWidget;
+
 protected:
 public:
 
@@ -87,4 +89,6 @@ public:
 	FORCEINLINE FText GetTextNote() const { return TextNote; }
 	FORCEINLINE FText GetBackTextNote() const { return BackTextNote; }
 	FORCEINLINE UStaticMeshComponent* GetPaperMesh() const { return PaperMesh; }
+
+	FORCEINLINE void SetExaminationWidget(UNoteExaminationWidget* NewExaminationWidget) { ExaminationWidget = NewExaminationWidget; }
 };
