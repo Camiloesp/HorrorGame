@@ -21,6 +21,11 @@
 #include "Components/FlashlightComponent.h"
 #include "Components/HealthComponent.h"
 #include "Widgets/ProgressBars.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "PhysicalMaterials/PhysicalMaterial.h"
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
+
 
 // Sets default values
 AHGCharacter::AHGCharacter()
@@ -57,6 +62,9 @@ AHGCharacter::AHGCharacter()
 	// Variables Initialization
 	TurnRate = 0.4;
 	DistanceToInteract = 350.f;
+	CrouchSoundStepsSpeed = 1.f;
+	WalkingSoundStepsSpeed = 0.5f;
+	SprintSoundStepsSpeed = 0.3f;
 	bIsInventoryOpen = false;
 	bIsHiding = false;
 	bCanOpenInventory = true;
@@ -69,6 +77,17 @@ void AHGCharacter::BeginPlay()
 	Super::BeginPlay();
 	
 	Initialize();
+
+
+	if (CurveFloat)
+	{
+		//FOnTimelineFloat TimelineProgress;
+		//TimelineProgress.BindDynamic(this, &AHGCharacter::PlayFootstep);
+		//FootstepTimeline.AddInterpFloat(CurveFloat, TimelineProgress);
+	}
+
+	//PlayFootstep
+	GetWorld()->GetTimerManager().SetTimer(WalkingSoundTimer, this, &AHGCharacter::PlayFootstep, WalkingSoundStepsSpeed,true);
 }
 
 // Called every frame
@@ -244,21 +263,38 @@ void AHGCharacter::ToggleFlashlight()
 void AHGCharacter::Sprint()
 {
 	HGMovementComponent->StartSprint();
+	
+	// Increment timer call
+	GetWorld()->GetTimerManager().ClearTimer(WalkingSoundTimer);
+	GetWorld()->GetTimerManager().SetTimer(WalkingSoundTimer, this, &AHGCharacter::PlayFootstep, SprintSoundStepsSpeed, true);
 }
 
 void AHGCharacter::StopSprint()
 {
 	HGMovementComponent->StopSprint();
+
+	// Decrement timer call
+	GetWorld()->GetTimerManager().ClearTimer(WalkingSoundTimer);
+	GetWorld()->GetTimerManager().SetTimer(WalkingSoundTimer, this, &AHGCharacter::PlayFootstep, WalkingSoundStepsSpeed, true);
 }
 
 void AHGCharacter::CrouchButtonPressed()
 {
 	HGMovementComponent->StartCrouch();
+
+	//CrouchSoundStepsSpeed
+	// Increment timer call
+	GetWorld()->GetTimerManager().ClearTimer(WalkingSoundTimer);
+	GetWorld()->GetTimerManager().SetTimer(WalkingSoundTimer, this, &AHGCharacter::PlayFootstep, CrouchSoundStepsSpeed, true);
 }
 
 void AHGCharacter::CrouchButtonReleased()
 {
 	HGMovementComponent->EndCrouch();
+
+	// Decrement timer call
+	GetWorld()->GetTimerManager().ClearTimer(WalkingSoundTimer);
+	GetWorld()->GetTimerManager().SetTimer(WalkingSoundTimer, this, &AHGCharacter::PlayFootstep, WalkingSoundStepsSpeed, true);
 }
 
 void AHGCharacter::HeadBob()
@@ -304,6 +340,64 @@ void AHGCharacter::InventoryButtonPressed()
 	}
 	OnInventoryButtonPressed.Broadcast();
 }
+
+void AHGCharacter::PlayFootstep()
+{
+	float CurrentVelocityLength = GetCharacterMovement()->Velocity.Length();
+	if(CurrentVelocityLength > 0.f && !GetCharacterMovement()->IsFalling())
+	{
+		// linetrace to see physical material under player
+		FHitResult OutHitResult;
+		FVector StartLocation = GetActorLocation();
+		FVector EndLocation = StartLocation + FVector(0.f, 0.f, -100.f); // below us
+		FCollisionQueryParams QueryParams; //test
+		QueryParams.bReturnPhysicalMaterial = true;//test
+
+		GetWorld()->LineTraceSingleByChannel(OutHitResult, StartLocation, EndLocation, ECollisionChannel::ECC_Visibility, QueryParams);
+		if (OutHitResult.bBlockingHit && OutHitResult.PhysMaterial.Get())
+		{
+			// Select material to play
+			//UPhysicalMaterial* PhysicalMaterialHit = UPhysicalMaterial::DetermineSurfaceType(OutHitResult.PhysMaterial.Get()); //OutHitResult.PhysMaterial.Get();
+			//if (PhysicalMaterialHit)
+			{
+				USoundBase* FootstepSoundToPlay;
+				// EPhysicalSurface SurfaceType = PhysicalMaterialHit->SurfaceType;
+				//EPhysicalSurface SurfaceType = OutHitResult.PhysMaterial->SurfaceType;
+				EPhysicalSurface SurfaceType = UPhysicalMaterial::DetermineSurfaceType(OutHitResult.PhysMaterial.Get());
+
+				switch (SurfaceType)
+				{
+					case SurfaceType1: // tile
+						FootstepSoundToPlay = TileFootstep;
+						break;
+					case SurfaceType2: // grass
+						FootstepSoundToPlay = GrassFootstep;
+						break;
+					default:
+						FootstepSoundToPlay = TileFootstep;
+				}
+				
+				float NewVolume = 0.f;
+				UKismetMathLibrary::MapRangeUnclamped(GetVelocity().Length(), CrouchSoundStepsSpeed, WalkingSoundStepsSpeed, 0.5f, 1.f);
+				UGameplayStatics::PlaySoundAtLocation(GetWorld(), FootstepSoundToPlay, OutHitResult.ImpactPoint);
+			}
+		}
+	}
+}
+/*
+EPhysicalSurface AShooterCharacter::GetSurfaceType()
+{
+	FHitResult HitResult; // To check what surface we are standing on
+	const FVector Start = GetActorLocation();
+	const FVector End = Start + FVector(0.f, 0.f, -400.f);
+	FCollisionQueryParams QueryParams;
+	QueryParams.bReturnPhysicalMaterial = true;
+
+	GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECollisionChannel::ECC_Visibility, QueryParams);
+
+	return UPhysicalMaterial::DetermineSurfaceType(HitResult.PhysMaterial.Get());
+}
+*/
 
 void AHGCharacter::ToggleInventory()
 {

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Components/TimelineComponent.h"
 #include "HGCharacter.generated.h"
 
 class UMovement;
@@ -20,6 +21,7 @@ class UInventoryComponent;
 class UExaminationWidget;
 class UFlashlightComponent;
 class UHealthComponent;
+class USoundCue;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPressedReturn);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInteractButtonPressed);
@@ -114,6 +116,25 @@ private:
 
 	bool bCanOpenInventory;
 
+	// Walking sounds
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	USoundCue* GrassFootstep;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	USoundCue* TileFootstep;
+	FTimerHandle WalkingSoundTimer;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	float CrouchSoundStepsSpeed;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	float WalkingSoundStepsSpeed;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	float SprintSoundStepsSpeed;
+
+	/* Timeline for opening the locker door */
+	FTimeline FootstepTimeline; // OpenLockerDoorTimeline
+	/* Keeps track of where we are in our timeline */
+	UPROPERTY(EditAnywhere)
+	UCurveFloat* CurveFloat;
+
 protected:
 
 	/* look around */
@@ -132,7 +153,6 @@ protected:
 	void LeftMouseButtonReleased();
 
 	void ReturnButtonPressed();
-
 
 	/**
 	* Tracing a line from center of camera to the world.
@@ -157,7 +177,9 @@ protected:
 
 	void InventoryButtonPressed();
 
-	void HandleInventoryVisibilityAndInput();
+	//void HandleInventoryVisibilityAndInput();
+
+	void PlayFootstep();
 
 public:
 
