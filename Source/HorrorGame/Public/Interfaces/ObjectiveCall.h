@@ -25,4 +25,7 @@ public:
 
 	UFUNCTION()
 	virtual void CompleteObjectiveCall(FName ObjectiveID, bool SetNextObjectiveImmediately) = 0;
+
+	UFUNCTION()
+	virtual void SetNextObjective(FName ObjectiveID) = 0;
 };

@@ -53,5 +53,7 @@ public:
 
 	void Initialize(UMainHUD* PlayerHUD);
 
+	virtual void SetNextObjective(FName ObjectiveID) override;
+
 	virtual void CompleteObjectiveCall(FName ObjectiveID, bool SetNextObjectiveImmediately) override;
 };

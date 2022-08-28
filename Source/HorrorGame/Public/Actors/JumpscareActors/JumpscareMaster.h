@@ -51,6 +51,10 @@ protected:
 
 	virtual void TriggerJumpscare(AActor* OverlappingActor);
 
+	/* Populates the ID from our GameState in case the child classes are objectives */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	FName QuestID;
+
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))

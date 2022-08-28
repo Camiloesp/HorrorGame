@@ -28,6 +28,14 @@ void AL1GameState::Initialize(UMainHUD* PlayerHUD)
 	SetObjective(); // todo: if this game was multiplayer, this will be called N times. Have it on beginplay in gamemode?
 }
 
+void AL1GameState::SetNextObjective(FName ObjectiveID)
+{
+	if (ObjectiveID.IsEqual(FindCurrentObjective().IDName))
+	{
+		SetObjective();
+	}
+}
+
 void AL1GameState::CompleteObjectiveCall(FName ObjectiveID, bool SetNextObjectiveImmediately)
 {
 	FName CurrentObjectiveID = FindCurrentObjective().IDName;

@@ -5,6 +5,8 @@
 //#include "Animation/AnimationAsset.h"
 #include "Components/ArrowComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Interfaces/ObjectiveCall.h"
+#include "GameStates/L1GameState.h"
 
 ADoorwayJumpscare::ADoorwayJumpscare()
 {
@@ -69,5 +71,22 @@ void ADoorwayJumpscare::TriggerJumpscare(AActor* OverlappingActor)
 
 void ADoorwayJumpscare::DestroyJumpscare()
 {
+	// Let GameState know this jumpscare was triggered to see if it activates an objective
+	IObjectiveCall* GameState = Cast<IObjectiveCall>(GetWorld()->GetGameState());
+	if (GameState)
+	{
+		QuestID = FName("InvestigateNoise");
+		GameState->SetNextObjective(QuestID); //InvestigateNoise
+	}
+
+
 	Destroy();
+}
+
+void ADoorwayJumpscare::CompleteObjectiveCall(FName ObjectiveID, bool SetNextObjectiveImmediately)
+{
+}
+
+void ADoorwayJumpscare::SetNextObjective(FName ObjectiveID)
+{
 }

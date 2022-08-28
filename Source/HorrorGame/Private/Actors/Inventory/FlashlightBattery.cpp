@@ -59,10 +59,10 @@ void AFlashlightBattery::UseItem()
 			bUseItemSuccess = true;
 
 			/* Check if we completed and objective */
-			//IObjectiveCall* GameState = Cast<IObjectiveCall>(GetWorld()->GetGameState());
-			//AL1GameState* GameState = Cast<AL1GameState>(GetWorld()->GetGameState());  //crash?
-			//if (!GameState) return;
-			//GameState->CompleteObjectiveCall(QuestID, false);
+			IObjectiveCall* GameState = Cast<IObjectiveCall>(PlayerRef->GetWorld()->GetGameState());
+			if (!GameState) return;
+			QuestID = FName("UseBattery");
+			GameState->CompleteObjectiveCall(QuestID, false);
 		}
 		else
 		{

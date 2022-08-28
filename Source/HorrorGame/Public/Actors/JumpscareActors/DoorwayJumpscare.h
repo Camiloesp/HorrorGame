@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Actors/JumpscareActors/JumpscareMaster.h"
+#include "../../Interfaces/ObjectiveCall.h"
 #include "DoorwayJumpscare.generated.h"
 
 class UArrowComponent;
@@ -13,7 +14,7 @@ class UArrowComponent;
  * 
  */
 UCLASS()
-class HORRORGAME_API ADoorwayJumpscare : public AJumpscareMaster
+class HORRORGAME_API ADoorwayJumpscare : public AJumpscareMaster, public IObjectiveCall
 {
 	GENERATED_BODY()
 
@@ -63,4 +64,7 @@ protected:
 	UFUNCTION()
 	void DestroyJumpscare();
 	
+
+	virtual void CompleteObjectiveCall(FName ObjectiveID, bool SetNextObjectiveImmediately);
+	virtual void SetNextObjective(FName ObjectiveID);
 };

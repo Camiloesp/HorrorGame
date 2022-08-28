@@ -154,14 +154,18 @@ void AHGCharacter::ActionButtonPressed()
 	AActor* Actionee = LineTrace(DistanceToInteract);
 	// Interacts with the actor, if is a child of the IInteraction.
 	IInteraction* InteractingActor = Cast<IInteraction>(Actionee);
-	if (InteractingActor)
+	if (InteractingActor) // Interact
 	{
 		// Sets reference to the player interacting with the interactable and then executing Interaction logic.
 		InteractingActor->InteractingPlayer = this;
 		InteractingActor->Interact();
+
+		OnInteractButtonPressed.Broadcast();
+	}
+	else //Lean to the right
+	{
 	}
 
-	OnInteractButtonPressed.Broadcast();
 }
 
 void AHGCharacter::LeftMouseButtonPressed()

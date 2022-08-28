@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 
 #include "Sound/SoundCue.h"
+#include "GameStates/L1GameState.h"
 
 // Sets default values
 AJumpscareMaster::AJumpscareMaster()
@@ -30,6 +31,13 @@ void AJumpscareMaster::BeginPlay()
 	
 	DetectionBox->OnComponentBeginOverlap.AddDynamic(this, &AJumpscareMaster::OnOverlapBegin);
 	DetectionBox->OnComponentEndOverlap.AddDynamic(this, &AJumpscareMaster::OnOverlapEnd);
+
+	AL1GameState* GameState = Cast<AL1GameState>(GetWorld()->GetGameState());
+	if (GameState)
+	{
+		FObjectiveData CurrentObjective = GameState->FindCurrentObjective();
+		QuestID = CurrentObjective.IDName;
+	}
 }
 
 void AJumpscareMaster::OnConstruction(const FTransform& Transform)
