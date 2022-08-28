@@ -9,6 +9,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Camera/CameraComponent.h"
 #include "Widgets/Inventory/PickupPrompt.h"
+#include "GameStates/L1GameState.h"
 
 // Sets default values
 APickupActorMaster::APickupActorMaster()
@@ -49,6 +50,13 @@ void APickupActorMaster::BeginPlay()
 
 	SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &APickupActorMaster::ShowPromptWidget);
 	SphereCollision->OnComponentEndOverlap.AddDynamic(this, &APickupActorMaster::HidePromptWidget);
+
+	AL1GameState* GameState = Cast<AL1GameState>(GetWorld()->GetGameState());
+	if (GameState)
+	{
+		FObjectiveData CurrentObjective = GameState->FindCurrentObjective();
+		QuestID = CurrentObjective.IDName;
+	}
 }
 
 // Called every frame
@@ -144,8 +152,10 @@ void APickupActorMaster::HidePromptWidget(UPrimitiveComponent* OverlappedCompone
 	}
 }
 
-void APickupActorMaster::PickUp()
+bool APickupActorMaster::PickUp()
 {
+	bool bSuccess = false;
+
 	if (PickerCharacter)
 	{
 		UInventoryComponent* PickerInventory = PickerCharacter->GetInventory();
@@ -158,20 +168,27 @@ void APickupActorMaster::PickUp()
 				// If we have some amount left after pickup
 				if (RemainderItems > 0)
 				{
-					Amount = RemainderItems;
+					//Amount = RemainderItems;
+					bSuccess = true;
 				}
 				else
 				{
+					//bSuccess = true;
 					Destroy();
 				}
+
+				bSuccess = true;
 			}
 			else
 			{
 				// didnt have the room to pick up actor. Leave actor in the world
 				UE_LOG(LogTemp, Warning, TEXT("APickupActorMaster - Item NOT added."));
+				bSuccess = false;
 			}
 		}
 	}
+
+	return bSuccess;
 }
 
 void APickupActorMaster::Interact()

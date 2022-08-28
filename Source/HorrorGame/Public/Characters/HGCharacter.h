@@ -130,10 +130,10 @@ private:
 	float SprintSoundStepsSpeed;
 
 	/* Timeline for opening the locker door */
-	FTimeline FootstepTimeline; // OpenLockerDoorTimeline
+	//FTimeline FootstepTimeline; // OpenLockerDoorTimeline
 	/* Keeps track of where we are in our timeline */
-	UPROPERTY(EditAnywhere)
-	UCurveFloat* CurveFloat;
+	//UPROPERTY(EditAnywhere)
+	//UCurveFloat* CurveFloat;
 
 protected:
 
@@ -212,7 +212,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void LengthenPlayerCapsule();
 
-	//UHealthComponent* HealthComponent;
+	//UMainHUD* MainHUDRef;
 
 	FORCEINLINE UInventoryComponent* GetInventory() const { return InventoryComponent; }
 	FORCEINLINE UInventoryMenu* GetInventoryMenu() const { return InventoryMenuRef; }
@@ -223,6 +223,7 @@ public:
 	FORCEINLINE UHealthComponent* GetHealthComponent() const { return HealthComponent; }
 	FORCEINLINE bool IsHiding() const { return bIsHiding; }
 	FORCEINLINE bool CanOpenInventory() const { return bCanOpenInventory; }
+	FORCEINLINE UMainHUD* GetMainHUDRef() const { return MainHUDRef; }
 
 	FORCEINLINE void SetExaminationWidget(UExaminationWidget* NewExaminationWidget) { ExaminationWidget = NewExaminationWidget; }
 	FORCEINLINE void SetFlashlight(USpotLightComponent* NewFlashlight) { Flashlight = NewFlashlight; }

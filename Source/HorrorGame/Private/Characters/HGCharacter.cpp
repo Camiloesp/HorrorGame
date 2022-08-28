@@ -26,6 +26,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
 
+#include "GameStates/L1GameState.h"
+
 
 // Sets default values
 AHGCharacter::AHGCharacter()
@@ -78,13 +80,6 @@ void AHGCharacter::BeginPlay()
 	
 	Initialize();
 
-
-	if (CurveFloat)
-	{
-		//FOnTimelineFloat TimelineProgress;
-		//TimelineProgress.BindDynamic(this, &AHGCharacter::PlayFootstep);
-		//FootstepTimeline.AddInterpFloat(CurveFloat, TimelineProgress);
-	}
 
 	//PlayFootstep
 	GetWorld()->GetTimerManager().SetTimer(WalkingSoundTimer, this, &AHGCharacter::PlayFootstep, WalkingSoundStepsSpeed,true);
@@ -214,11 +209,8 @@ void AHGCharacter::Initialize()
 	// Get reference to our controller
 	ControllerRef = Cast<AHGPlayerController>(GetController());
 
-
 	//FlashlightComponent->SetFlashlightLight(Flashlight);
 	FlashlightComponent->Initialize(this);
-
-
 
 	//Create HUD widget, and add it to viewport.
 	if (PlayerHUDClass)
@@ -249,6 +241,12 @@ void AHGCharacter::Initialize()
 		}
 	}
 
+	// Tell the GameState we are ready to update our first objective in our HUD.
+	AL1GameState* GameState = Cast<AL1GameState>(GetWorld()->GetGameState());
+	if (GameState && MainHUDRef)
+	{
+		GameState->Initialize(MainHUDRef);
+	}
 
 	// Initialize our custom movement component
 	HGMovementComponent->Initialize(this);

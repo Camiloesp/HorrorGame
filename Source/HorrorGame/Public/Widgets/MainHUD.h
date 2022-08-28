@@ -9,6 +9,7 @@
 class UProgressBars;
 class UInventoryGrid;
 class AHGCharacter;
+class UObjectivesWidget;
 
 /**
  * 
@@ -38,6 +39,10 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), meta = (BindWidget))
 	UProgressBars* ProgressBars;
 
+	/* Objectives title, description */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), meta = (BindWidget))
+	UObjectivesWidget* ObjectivesWidget;
+
 protected:
 public:
 
@@ -45,4 +50,5 @@ public:
 
 	FORCEINLINE AHGCharacter* GetPlayerOwner() const { return PlayerOwner; }
 	FORCEINLINE UProgressBars* GetProgressBars() const { return ProgressBars; }
+	FORCEINLINE UObjectivesWidget* GetObjectivesWidget() const { return ObjectivesWidget; }
 };

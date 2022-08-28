@@ -36,6 +36,10 @@ protected:
 
 public:
 
+	/* Populates the ID from our GameState in case the child classes are objectives */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	FName QuestID;
+
 	bool bUseItemSuccess;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item Data")

@@ -54,8 +54,12 @@ private:
 	/* Distance between the pickup mesh and the pickup widget */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	float WidgetDistanceAboveMesh;
+
 protected:
 
+	/* Populates the ID from our GameState in case the child classes are objectives */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	FName QuestID;
 
 public:
 
@@ -72,7 +76,7 @@ public:
 	void HidePromptWidget(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	// Pick this item up.
-	void PickUp();
+	virtual bool PickUp();
 	virtual void Interact() override;
 
 	FORCEINLINE UStaticMeshComponent* GetMesh() const { return Mesh; }

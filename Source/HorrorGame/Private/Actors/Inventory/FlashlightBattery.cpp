@@ -6,6 +6,8 @@
 #include "Characters/HGCharacter.h"
 #include "Components/FlashlightComponent.h"
 
+#include "GameStates/L1GameState.h"
+#include "Interfaces/ObjectiveCall.h"
 
 // Sets default values
 AFlashlightBattery::AFlashlightBattery()
@@ -55,6 +57,12 @@ void AFlashlightBattery::UseItem()
 		{
 			PlayerFlashlightComp->AddBatteryLife(BatteryAmount);
 			bUseItemSuccess = true;
+
+			/* Check if we completed and objective */
+			//IObjectiveCall* GameState = Cast<IObjectiveCall>(GetWorld()->GetGameState());
+			//AL1GameState* GameState = Cast<AL1GameState>(GetWorld()->GetGameState());  //crash?
+			//if (!GameState) return;
+			//GameState->CompleteObjectiveCall(QuestID, false);
 		}
 		else
 		{

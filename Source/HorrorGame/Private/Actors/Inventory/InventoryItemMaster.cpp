@@ -3,6 +3,7 @@
 
 #include "Actors/Inventory/InventoryItemMaster.h"
 #include "Characters/HGCharacter.h"
+#include "GameStates/L1GameState.h"
 
 // Sets default values
 AInventoryItemMaster::AInventoryItemMaster()
@@ -18,6 +19,12 @@ void AInventoryItemMaster::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	AL1GameState* GameState = Cast<AL1GameState>(GetWorld()->GetGameState());
+	if (GameState)
+	{
+		FObjectiveData CurrentObjective = GameState->FindCurrentObjective();
+		QuestID = CurrentObjective.IDName;
+	}
 }
 
 // Called every frame
