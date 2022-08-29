@@ -26,6 +26,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
 
+#include "Widgets/CameraWidget.h"
+
 #include "GameStates/L1GameState.h"
 
 
@@ -67,10 +69,13 @@ AHGCharacter::AHGCharacter()
 	CrouchSoundStepsSpeed = 1.f;
 	WalkingSoundStepsSpeed = 0.5f;
 	SprintSoundStepsSpeed = 0.3f;
+	MinFOV = 30.f;
+	MaxFOV = 0.f; //Set again in Initialize()
 	bIsInventoryOpen = false;
 	bIsHiding = false;
 	bCanOpenInventory = true;
 	bReadingNote = false;
+	bCameraWidgetOpen = false;
 }
 
 // Called when the game starts or when spawned
@@ -126,6 +131,11 @@ void AHGCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	PlayerInputComponent->BindAction(TEXT("InventoryToggle"), EInputEvent::IE_Pressed, this, &AHGCharacter::InventoryButtonPressed);
 
 	PlayerInputComponent->BindAction(TEXT("Return"), EInputEvent::IE_Pressed, this, &AHGCharacter::ReturnButtonPressed);
+
+	PlayerInputComponent->BindAction(TEXT("Camera"), EInputEvent::IE_Pressed, this, &AHGCharacter::CameraButtonPressed);
+
+	PlayerInputComponent->BindAction(TEXT("ZoomIn"), EInputEvent::IE_Pressed, this, &AHGCharacter::ZoomInPressed);
+	PlayerInputComponent->BindAction(TEXT("ZoomOut"), EInputEvent::IE_Pressed, this, &AHGCharacter::ZoomOutPressed);
 
 }
 
@@ -244,6 +254,13 @@ void AHGCharacter::Initialize()
 			{
 				InventoryComponent->SetInventoryMenuRef(InventoryMenuRef);
 			}
+
+			// Create Camera widget
+			CameraWidget = CreateWidget<UCameraWidget>(GetWorld(), CameraWidgetClass);
+			if (CameraWidget)
+			{
+				// Do not add to viewport. only when we press the R key
+			}
 		}
 	}
 
@@ -253,6 +270,9 @@ void AHGCharacter::Initialize()
 	{
 		GameState->Initialize(MainHUDRef);
 	}
+
+	MaxFOV = FollowCamera->FieldOfView;
+
 
 	// Initialize our custom movement component
 	HGMovementComponent->Initialize(this);
@@ -343,6 +363,47 @@ void AHGCharacter::InventoryButtonPressed()
 		ToggleInventory();
 	}
 	OnInventoryButtonPressed.Broadcast();
+}
+
+void AHGCharacter::CameraButtonPressed()
+{
+	if (!CameraWidget) return;
+	
+	if (bCameraWidgetOpen)
+	{
+		CameraWidget->RemoveFromParent();
+		MainHUDRef->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		FollowCamera->SetFieldOfView(MaxFOV);
+		OnCameraButtonPressed.Broadcast(false);
+	}
+	else
+	{
+		CameraWidget->AddToViewport();
+		MainHUDRef->SetVisibility(ESlateVisibility::Hidden);
+		OnCameraButtonPressed.Broadcast(true);
+	}
+
+	bCameraWidgetOpen = !bCameraWidgetOpen;
+}
+
+void AHGCharacter::ZoomInPressed()
+{
+	if (!bCameraWidgetOpen) return;
+
+	float NewFOV = FollowCamera->FieldOfView + (-5.f);
+	float FinalFOV = UKismetMathLibrary::FClamp(NewFOV, MinFOV, MaxFOV);
+
+	FollowCamera->SetFieldOfView(FinalFOV);
+}
+
+void AHGCharacter::ZoomOutPressed()
+{
+	if (!bCameraWidgetOpen) return;
+
+	float NewFOV = FollowCamera->FieldOfView + (5.f);
+	float FinalFOV = UKismetMathLibrary::FClamp(NewFOV, MinFOV, MaxFOV);
+
+	FollowCamera->SetFieldOfView(FinalFOV);
 }
 
 void AHGCharacter::PlayFootstep()

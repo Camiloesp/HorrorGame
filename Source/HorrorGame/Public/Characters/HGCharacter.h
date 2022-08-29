@@ -21,6 +21,7 @@ class UInventoryComponent;
 class UExaminationWidget;
 class UFlashlightComponent;
 class UHealthComponent;
+class UCameraWidget;
 class USoundCue;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPressedReturn);
@@ -28,6 +29,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInteractButtonPressed);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FLeftMouseButtonPressed);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FLeftMouseButtonReleased);//InventoryButtonPressed
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInventoryButtonPressed);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCameraButtonPressed, bool, CameraBool);
 
 UCLASS()
 class HORRORGAME_API AHGCharacter : public ACharacter
@@ -101,11 +103,18 @@ private:
 	TSubclassOf<UCameraShakeBase> RunCameraShakeClass;
 
 	/* Class reference to the playerHUD */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UUserWidget> PlayerInventoryClass;
 	/* Widget for the player. Contains Corsshair. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UInventoryMenu* InventoryMenuRef;
+
+	/* Class and object reference to CameraWidget */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UUserWidget> CameraWidgetClass;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UCameraWidget* CameraWidget;
+	bool bCameraWidgetOpen;
 
 	AHGPlayerController* ControllerRef;
 
@@ -134,6 +143,12 @@ private:
 	/* Keeps track of where we are in our timeline */
 	//UPROPERTY(EditAnywhere)
 	//UCurveFloat* CurveFloat;
+
+	/* Zoom in-out variables when using the Camera recorder */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	float MinFOV;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	float MaxFOV;
 
 protected:
 
@@ -179,6 +194,11 @@ protected:
 
 	//void HandleInventoryVisibilityAndInput();
 
+	// R button pressed 
+	void CameraButtonPressed();
+	void ZoomInPressed();
+	void ZoomOutPressed();
+
 	void PlayFootstep();
 
 	/* When close to an object in front of us, blur the back of the object */
@@ -207,6 +227,8 @@ public:
 	FLeftMouseButtonReleased OnLeftMouseButtonReleased;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FInventoryButtonPressed OnInventoryButtonPressed;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FCameraButtonPressed OnCameraButtonPressed; // toggle post process
 
 	/* Called when crouching. */
 	UFUNCTION(BlueprintImplementableEvent)
