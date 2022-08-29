@@ -70,6 +70,7 @@ void UInventoryComponent::BeginPlay()
 	TArray<AActor*> OutActors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ExaminationActorClass, OutActors);
 	ExaminationActor = Cast<AExamination>(OutActors[0]);
+	
 }
 
 
