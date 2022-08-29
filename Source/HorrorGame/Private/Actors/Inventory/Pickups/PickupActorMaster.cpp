@@ -28,7 +28,7 @@ APickupActorMaster::APickupActorMaster()
 
 	SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere Collision"));
 	SphereCollision->SetupAttachment(Mesh);
-	SphereCollision->SetSphereRadius(500.f);
+	SphereCollision->SetSphereRadius(300.f);
 
 	PromptWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Propmt Widget"));
 	PromptWidget->SetRelativeScale3D(FVector(0.03f, 0.03f, 0.03f));

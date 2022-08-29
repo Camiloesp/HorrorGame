@@ -89,6 +89,8 @@ void AHGCharacter::BeginPlay()
 void AHGCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	UpdateDOF();
 }
 
 // Called to bind functionality to input
@@ -386,20 +388,26 @@ void AHGCharacter::PlayFootstep()
 		}
 	}
 }
-/*
-EPhysicalSurface AShooterCharacter::GetSurfaceType()
+void AHGCharacter::UpdateDOF()
 {
-	FHitResult HitResult; // To check what surface we are standing on
-	const FVector Start = GetActorLocation();
-	const FVector End = Start + FVector(0.f, 0.f, -400.f);
-	FCollisionQueryParams QueryParams;
-	QueryParams.bReturnPhysicalMaterial = true;
+	float LocalDOF = 0.f;
 
-	GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECollisionChannel::ECC_Visibility, QueryParams);
+	FHitResult HitResultDOF;
+	FVector TraceStart = FollowCamera->GetComponentLocation();
+	FVector TraceEnd = (FollowCamera->GetForwardVector() * 300.f) + TraceStart;
 
-	return UPhysicalMaterial::DetermineSurfaceType(HitResult.PhysMaterial.Get());
+	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResultDOF, TraceStart, TraceEnd, ECollisionChannel::ECC_Visibility);
+	if (bHit)
+	{
+		LocalDOF = (HitResultDOF.Location - TraceStart).Length();
+	}
+	
+	FPostProcessSettings NewPostProcessSettings;
+	NewPostProcessSettings.DepthOfFieldFocalDistance = LocalDOF;
+	NewPostProcessSettings.DepthOfFieldDepthBlurRadius = (LocalDOF == 0.f) ? 0.f : 500.f;
+
+	FollowCamera->PostProcessSettings = NewPostProcessSettings;
 }
-*/
 
 void AHGCharacter::ToggleInventory()
 {

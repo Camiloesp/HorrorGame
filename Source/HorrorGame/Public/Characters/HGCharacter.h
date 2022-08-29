@@ -181,6 +181,9 @@ protected:
 
 	void PlayFootstep();
 
+	/* When close to an object in front of us, blur the back of the object */
+	void UpdateDOF();
+
 public:
 
 	bool bReadingNote;
