@@ -112,7 +112,7 @@ void AHGCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &AHGCharacter::MoveRight);
 
 	/* BIND ACTIONS */
-	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &AHGCharacter::StartJump);
 	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Released, this, &ACharacter::StopJumping);
 
 	PlayerInputComponent->BindAction(TEXT("Action"), EInputEvent::IE_Pressed, this, &AHGCharacter::ActionButtonPressed);
@@ -319,6 +319,12 @@ void AHGCharacter::CrouchButtonReleased()
 	// Decrement timer call
 	GetWorld()->GetTimerManager().ClearTimer(WalkingSoundTimer);
 	GetWorld()->GetTimerManager().SetTimer(WalkingSoundTimer, this, &AHGCharacter::PlayFootstep, WalkingSoundStepsSpeed, true);
+}
+
+void AHGCharacter::StartJump()
+{
+	Jump();
+	OnJumpButtonPressed.Broadcast();
 }
 
 void AHGCharacter::HeadBob()

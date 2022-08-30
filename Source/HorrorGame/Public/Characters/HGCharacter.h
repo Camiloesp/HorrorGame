@@ -29,6 +29,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInteractButtonPressed);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FLeftMouseButtonPressed);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FLeftMouseButtonReleased);//InventoryButtonPressed
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInventoryButtonPressed);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FJumpButtonPressed);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCameraButtonPressed, bool, CameraBool);
 
 UCLASS()
@@ -188,6 +189,8 @@ protected:
 	void CrouchButtonPressed();
 	void CrouchButtonReleased();
 
+	void StartJump();
+
 	void HeadBob();
 
 	void InventoryButtonPressed();
@@ -227,6 +230,8 @@ public:
 	FLeftMouseButtonReleased OnLeftMouseButtonReleased;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FInventoryButtonPressed OnInventoryButtonPressed;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FJumpButtonPressed OnJumpButtonPressed;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FCameraButtonPressed OnCameraButtonPressed; // toggle post process
 
