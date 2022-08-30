@@ -66,7 +66,9 @@ void ASecurityCameraController::LeaveCameraController()
 	// Removing bindings
 	InteractingPlayer->OnJumpButtonPressed.RemoveDynamic(this, &ASecurityCameraController::ViewThroughCamera);
 	//InteractingPlayer->OnInteractButtonPressed.RemoveDynamic(this, &ASecurityCameraController::LeaveCameraController);
-	//InteractingPlayer->OnInventoryButtonPressed.RemoveDynamic(this, &ASecurityCameraController::LeaveCameraController);
+	InteractingPlayer->OnInventoryButtonPressed.RemoveDynamic(this, &ASecurityCameraController::LeaveCameraController);
+
+	InteractingPlayerController->SetViewTargetWithBlend(InteractingPlayer);
 
 	CurrentCameraIndex = 0;
 }
@@ -103,7 +105,7 @@ void ASecurityCameraController::Interact()
 			InteractingPlayer->OnJumpButtonPressed.AddDynamic(this, &ASecurityCameraController::ViewThroughCamera);
 			// Exit SecurityCameraController binding
 			//InteractingPlayer->OnInteractButtonPressed.AddDynamic(this, &ASecurityCameraController::LeaveCameraController);
-			//InteractingPlayer->OnInventoryButtonPressed.AddDynamic(this, &ASecurityCameraController::LeaveCameraController);
+			InteractingPlayer->OnInventoryButtonPressed.AddDynamic(this, &ASecurityCameraController::LeaveCameraController);
 
 			//InteractingPlayer->DisableInput(InteractingPlayerController); // ?
 			//InteractingPlayerController->SetIgnoreLookInput(true);
