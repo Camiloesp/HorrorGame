@@ -10,7 +10,8 @@ public class HorrorGame : ModuleRules
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG", 
 			"PhysicsCore", 
-			"LevelSequence", "MovieScene" });
+			"LevelSequence", "MovieScene",
+			"AIModule", "GameplayTasks", "NavigationSystem"});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
