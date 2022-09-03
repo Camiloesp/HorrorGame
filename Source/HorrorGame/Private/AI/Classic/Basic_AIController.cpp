@@ -25,6 +25,7 @@ ABasic_AIController::ABasic_AIController()
 	Perception->SetDominantSense(SightSense->GetSenseImplementation());
 
 	bCanSeePlayer = false;
+	bAlreadyPlayedJumpscareSound = false;
 }
 
 void ABasic_AIController::BeginPlay()

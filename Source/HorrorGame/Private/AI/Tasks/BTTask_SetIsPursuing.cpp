@@ -3,6 +3,7 @@
 
 #include "AI/Tasks/BTTask_SetIsPursuing.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "AI/Classic/Basic_AIController.h"
 
 UBTTask_SetIsPursuing::UBTTask_SetIsPursuing()
 {
@@ -13,8 +14,17 @@ UBTTask_SetIsPursuing::UBTTask_SetIsPursuing()
 
 EBTNodeResult::Type UBTTask_SetIsPursuing::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
+	ABasic_AIController* ControllerAI = Cast<ABasic_AIController>(OwnerComp.GetAIOwner());
+	if (!ControllerAI) return EBTNodeResult::Failed;
+
 	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
 	BlackboardComp->SetValueAsBool(FName("IsPursuingPlayer"), bNewIsPursuing);
+
+	// Change AlreadyPlayedJumpscareSound to false
+	if (ControllerAI->AlreadyPlayedJumpscareSound())
+	{
+		ControllerAI->SetAlreadyPlayedJumpscareSound(false);
+	}
 
 	return EBTNodeResult::Succeeded;
 }

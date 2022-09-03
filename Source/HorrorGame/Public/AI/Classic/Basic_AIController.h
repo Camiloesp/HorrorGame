@@ -38,6 +38,7 @@ private:
 	UAISenseConfig_Sight* SightSense;
 
 	bool bCanSeePlayer;
+	bool bAlreadyPlayedJumpscareSound;
 
 	AHGCharacter* PlayerTarget;
 protected:
@@ -47,4 +48,7 @@ public:
 	void OnPerception(AActor* Actor, FAIStimulus Stimulos);
 
 	FORCEINLINE AHGCharacter* GetPlayerTarget() const { return PlayerTarget; }
+	FORCEINLINE bool AlreadyPlayedJumpscareSound() const { return bAlreadyPlayedJumpscareSound; }
+
+	FORCEINLINE void SetAlreadyPlayedJumpscareSound(bool NewBool) { bAlreadyPlayedJumpscareSound = NewBool; }
 };
