@@ -4,18 +4,19 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
-#include "BTTask_FindRandomRoom.generated.h"
+#include "BTTask_LastPlayerLocation.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class HORRORGAME_API UBTTask_FindRandomRoom : public UBTTask_BlackboardBase
+class HORRORGAME_API UBTTask_LastPlayerLocation : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
 	
 public:
-	UBTTask_FindRandomRoom();
+
+	UBTTask_LastPlayerLocation();
 
 protected:
 

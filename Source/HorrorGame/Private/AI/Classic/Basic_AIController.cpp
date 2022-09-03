@@ -45,10 +45,13 @@ void ABasic_AIController::OnPerception(AActor* Actor, FAIStimulus Stimulos)
 	{
 		bCanSeePlayer = true;
 		Blackboard->SetValueAsBool(FName("CanSeePlayer"), bCanSeePlayer);
+
+		Blackboard->SetValueAsBool(FName("IsPursuingPlayer"), bCanSeePlayer);
 	}
 	else
 	{
 		bCanSeePlayer = false;
 		Blackboard->SetValueAsBool(FName("CanSeePlayer"), bCanSeePlayer);
+		//IsPursuingPlayer will stay true even after we lose player, so the AI can investigate.
 	}
 }

@@ -18,7 +18,6 @@ public:
 
 	UBTTask_FindPlayerLocation();
 
-
 protected:
 
 private:

@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
-#include "BTTask_FindRandomRoom.generated.h"
+#include "BTTask_SetIsPursuing.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class HORRORGAME_API UBTTask_FindRandomRoom : public UBTTask_BlackboardBase
+class HORRORGAME_API UBTTask_SetIsPursuing : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
 	
 public:
-	UBTTask_FindRandomRoom();
+	UBTTask_SetIsPursuing();
 
 protected:
 
@@ -26,5 +26,5 @@ private:
 	virtual FString GetStaticDescription()const override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
-	FVector TargetLocationKey;
+	bool bNewIsPursuing;
 };
