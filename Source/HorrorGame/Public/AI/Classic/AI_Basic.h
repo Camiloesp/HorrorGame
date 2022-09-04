@@ -35,6 +35,9 @@ private:
 	UAnimMontage* AttackAnimation;
 	//UAnimationAsset* AttackAnimation;
 
+	UFUNCTION()
+	void CreateGameOverWidget();
+
 protected:
 
 public:

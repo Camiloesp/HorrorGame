@@ -94,6 +94,7 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UUserWidget> PlayerHUDClass;
 
+
 	/* Current grabbed actor */
 	IGrabInterface* GrabbedActor;
 
@@ -209,6 +210,10 @@ protected:
 
 public:
 
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+		TSubclassOf<UUserWidget> GameOverWidgetClass;
+
 	APawn* EnemyAttacking;
 	FTimerHandle RotateToEnemyHandle;
 	/* 
@@ -264,6 +269,7 @@ public:
 	FORCEINLINE bool IsHiding() const { return bIsHiding; }
 	FORCEINLINE bool CanOpenInventory() const { return bCanOpenInventory; }
 	FORCEINLINE UMainHUD* GetMainHUDRef() const { return MainHUDRef; }
+	FORCEINLINE TSubclassOf<UUserWidget> GetGameOverWidgetClass() const { return GameOverWidgetClass; }
 
 	FORCEINLINE void SetExaminationWidget(UExaminationWidget* NewExaminationWidget) { ExaminationWidget = NewExaminationWidget; }
 	FORCEINLINE void SetFlashlight(USpotLightComponent* NewFlashlight) { Flashlight = NewFlashlight; }

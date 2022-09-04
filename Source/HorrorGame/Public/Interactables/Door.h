@@ -10,7 +10,7 @@
 
 //class UTimelineComponent;
 //class FTimeline;
-
+class UBoxComponent;
 /**
  * 
  */
@@ -40,6 +40,18 @@ private:
 	/* Door mesh */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* Door;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UBoxComponent* AIBoxCollision;
+
+	UFUNCTION()
+	void AIOpenDoor(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION()
+	void AICloseDoor(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	
+	bool bCanInteract;
+
+	void ActivateInteraction();
 
 protected:
 
@@ -73,5 +85,7 @@ public:
 	bool bTwoSidedDoor;
 
 	virtual void Interact() override;
+
+	FORCEINLINE void SetCanInteract(bool bNewInteract) { bCanInteract = bNewInteract; }
 
 };

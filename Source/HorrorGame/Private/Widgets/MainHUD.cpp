@@ -13,6 +13,11 @@ void UMainHUD::NativeConstruct()
 
 bool UMainHUD::Initialize()
 {
+	/*  
+				EVENT Construct IS THE BEGINPLAY FOR WIDGETS............
+	
+	*/
+
 	bool bSuccess = Super::Initialize();
 
 	/*

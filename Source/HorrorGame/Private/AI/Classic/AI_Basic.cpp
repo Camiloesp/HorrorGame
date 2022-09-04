@@ -4,6 +4,13 @@
 #include "AI/Classic/AI_Basic.h"
 #include "Animation/AnimationAsset.h"
 
+#include "AI/Classic/Basic_AIController.h"
+#include "Characters/HGCharacter.h"
+
+#include "Blueprint/UserWidget.h"
+#include "Widgets/GameOverWidget.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
+
 // Sets default values
 AAI_Basic::AAI_Basic()
 {
@@ -32,10 +39,34 @@ void AAI_Basic::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
+void AAI_Basic::CreateGameOverWidget()
+{
+	ABasic_AIController* ControllerAI = Cast<ABasic_AIController>(GetController());
+	if (!ControllerAI || !ControllerAI->GetPlayerTarget()) return;
+
+	//GetGameOverWidgetClass
+	AHGCharacter* PlayerTarget = ControllerAI->GetPlayerTarget();
+
+	UGameOverWidget* PlayerGameOverWidget = CreateWidget<UGameOverWidget>(GetWorld(), PlayerTarget->GameOverWidgetClass);
+	if (!PlayerGameOverWidget) return;
+
+	PlayerGameOverWidget->AddToViewport();
+
+	APlayerController* PlayerTargetController = Cast<APlayerController>(PlayerTarget->GetController());
+	if (!PlayerTargetController) return;
+
+	PlayerTargetController->SetShowMouseCursor(true);
+	UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(PlayerTargetController, PlayerGameOverWidget);
+}
+
 void AAI_Basic::KillPlayer()
 {
 	if (!AttackAnimation) return;
 
+	float MontageDuration = AttackAnimation->GetPlayLength();
 	GetMesh()->GetAnimInstance()->Montage_Play(AttackAnimation);
+
+	FTimerHandle GameOverHandle;
+	GetWorld()->GetTimerManager().SetTimer(GameOverHandle, this, &AAI_Basic::CreateGameOverWidget, MontageDuration+0.5f, false);
 }
 

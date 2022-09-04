@@ -33,6 +33,8 @@
 #include "AI/Classic/AI_Basic.h"
 
 
+
+
 // Sets default values
 AHGCharacter::AHGCharacter()
 {
@@ -278,7 +280,14 @@ void AHGCharacter::Initialize()
 
 	// Initialize our custom movement component
 	HGMovementComponent->Initialize(this);
-	
+
+
+	// Enable input. (When AI catches us we disable it and when we restart the level we cannot move)
+	if (!ControllerRef) return;
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+	ControllerRef->ResetIgnoreLookInput();
+	ControllerRef->bShowMouseCursor = false;
+	UWidgetBlueprintLibrary::SetInputMode_GameOnly(ControllerRef);
 }
 
 void AHGCharacter::ToggleFlashlight()

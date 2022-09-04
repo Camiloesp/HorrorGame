@@ -36,4 +36,6 @@ protected:
 public:
 
 	virtual void Interact() override;
+
+	FORCEINLINE UStaticMeshComponent* GetInteractableMesh() const { return InteractableMesh; }
 };
