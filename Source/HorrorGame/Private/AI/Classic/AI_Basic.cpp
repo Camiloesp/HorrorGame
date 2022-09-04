@@ -2,7 +2,7 @@
 
 
 #include "AI/Classic/AI_Basic.h"
-
+#include "Animation/AnimationAsset.h"
 
 // Sets default values
 AAI_Basic::AAI_Basic()
@@ -30,5 +30,12 @@ void AAI_Basic::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void AAI_Basic::KillPlayer()
+{
+	if (!AttackAnimation) return;
+
+	GetMesh()->GetAnimInstance()->Montage_Play(AttackAnimation);
 }
 

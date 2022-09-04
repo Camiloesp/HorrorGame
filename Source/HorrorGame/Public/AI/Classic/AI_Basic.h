@@ -7,6 +7,8 @@
 #include "AI_Basic.generated.h"
 
 class ARoomTarget;
+//class UAnimationAsset;
+class UAnimMontage;
 
 UCLASS()
 class HORRORGAME_API AAI_Basic : public ACharacter
@@ -29,8 +31,15 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
+	UAnimMontage* AttackAnimation;
+	//UAnimationAsset* AttackAnimation;
+
+protected:
 
 public:
+
+	void KillPlayer();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 	TSubclassOf<AActor> RoomTargetClass;

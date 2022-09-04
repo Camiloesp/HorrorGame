@@ -30,6 +30,8 @@
 
 #include "GameStates/L1GameState.h"
 
+#include "AI/Classic/AI_Basic.h"
+
 
 // Sets default values
 AHGCharacter::AHGCharacter()
@@ -474,6 +476,58 @@ void AHGCharacter::UpdateDOF()
 	NewPostProcessSettings.DepthOfFieldDepthBlurRadius = (LocalDOF == 0.f) ? 0.f : 500.f;
 
 	FollowCamera->PostProcessSettings = NewPostProcessSettings;
+}
+
+void AHGCharacter::CaughtByEnemy(APawn* Enemy)
+{
+	/*------------------------------------------*/
+	// Clasic health reduction approach
+	//float DamageTaken = 30.f;
+	//HealthComponent->RemoveHealth(DamageTaken);
+	/*------------------------------------------*/
+
+	/*------------------------------------------*/
+	/* Grab player approach */
+	EnemyAttacking = Enemy;
+	// Disable input
+	GetCharacterMovement()->DisableMovement();
+	APlayerController* OurController = Cast<APlayerController>(GetController());
+	if (!OurController) return;
+	DisableInput(OurController);
+	OurController->SetIgnoreLookInput(true);
+	
+	// Delat turning player
+	GetWorld()->GetTimerManager().SetTimer(RotateToEnemyHandle, this, &AHGCharacter::RotateToEnemy, 0.01f, true);
+}
+
+void AHGCharacter::RotateToEnemy()
+{
+	APlayerController* OurController = Cast<APlayerController>(GetController());
+	if (!OurController || !EnemyAttacking) return;
+
+	// Calculate new Controller rotation.
+	FVector CurrentLocation = GetActorLocation();
+	FVector TargetLocation = EnemyAttacking->GetActorLocation();
+	FRotator NewControllerRotation = UKismetMathLibrary::FindLookAtRotation(CurrentLocation, TargetLocation);
+
+	// Calculate New controller rotation interpolated.
+	FRotator ControlRotation = OurController->GetControlRotation();
+	float DeltaTime = GetWorld()->GetDeltaSeconds();
+	FRotator NewControllerRotationInterp = UKismetMathLibrary::RInterpTo(ControlRotation, NewControllerRotation, DeltaTime, 10.f);
+	OurController->SetControlRotation(NewControllerRotationInterp);
+
+	// if we are in our target rotation, stop timer!
+	if (UKismetMathLibrary::EqualEqual_RotatorRotator(ControlRotation, NewControllerRotation, 1.f))
+	{
+		GetWorld()->GetTimerManager().ClearTimer(RotateToEnemyHandle);
+
+		//Call attack animation from AI.
+		AAI_Basic* EnemyAttacker = Cast<AAI_Basic>(EnemyAttacking);
+		if (!EnemyAttacker) return;
+
+		// DoOnce here?
+		EnemyAttacker->KillPlayer();
+	}
 }
 
 void AHGCharacter::ToggleInventory()

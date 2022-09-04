@@ -209,6 +209,16 @@ protected:
 
 public:
 
+	APawn* EnemyAttacking;
+	FTimerHandle RotateToEnemyHandle;
+	/* 
+	* Function called when enemy attacks player. It can execute the removal of health, or insta death by playing a grab animation 
+	* @param Enemy The enemy that grabbed/attacked the player
+	*/
+	void CaughtByEnemy(APawn* Enemy);
+
+	void RotateToEnemy();
+
 	bool bReadingNote;
 
 	UInputComponent* PlayerInputComp;
