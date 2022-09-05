@@ -45,6 +45,10 @@ private:
 	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	FVector BoxExtent;
 
+	/* If true, at end overlap, it will give the player its camera back to the character. */
+	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	bool bExitingCameraView;
+
 protected:
 
 	AHGCharacter* OverlapingPlayer;

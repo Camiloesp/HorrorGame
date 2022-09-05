@@ -28,6 +28,7 @@ ARECamera::ARECamera()
 
 	BoxExtent = FVector(32.f, 32.f, 32.f);
 	BoxPosition = FVector(0.f, 0.f, 0.f);
+	bExitingCameraView = false;
 }
 
 // Called when the game starts or when spawned
@@ -76,6 +77,12 @@ void ARECamera::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherA
 {
 	if (!OverlapingPlayer || !PlayerController) return;
 
-	//PlayerController->SetViewTargetWithBlend(OverlapingPlayer);
+	/* Used in case camera boxes overlap each other */
+	bool bIsPlayerUsingThisCamera = (PlayerController->GetViewTarget() == this);
+	
+	if (bExitingCameraView && bIsPlayerUsingThisCamera)
+	{
+		PlayerController->SetViewTargetWithBlend(OverlapingPlayer);
+	}
 }
 

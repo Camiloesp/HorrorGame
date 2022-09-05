@@ -14,15 +14,35 @@ bool UMainMenu::Initialize()
 	PlayButton->OnPressed.AddDynamic(this, &UMainMenu::PlayButtonPressed);
 	QuitButton->OnPressed.AddDynamic(this, &UMainMenu::QuitButtonPressed);
 
+
+	//ResidentEvilButton->OnPressed.AddDynamic(this, &UMainMenu::QuitButtonPressed);
+	//FiveNightsAtFreddysButton->OnPressed.AddDynamic(this, &UMainMenu::QuitButtonPressed);
+	//HorrorGameButton->OnPressed.AddDynamic(this, &UMainMenu::QuitButtonPressed);
+
 	return bInit;
 }
 
 void UMainMenu::PlayButtonPressed()
 {
-	UGameplayStatics::OpenLevel(GetWorld(), FName("Level1"));
+	// Change to level selector
 }
 
 void UMainMenu::QuitButtonPressed()
 {
 	UKismetSystemLibrary::QuitGame(this, 0, EQuitPreference::Quit, false);
+}
+
+void UMainMenu::ResidentEvilButtonPressed()
+{
+	UGameplayStatics::OpenLevel(GetWorld(), FName("ResidentEvilLevel"));
+}
+
+void UMainMenu::FiveNightsAtFreddysButtonPressed()
+{
+	UGameplayStatics::OpenLevel(GetWorld(), FName("FiveNightsAtFreddys"));
+}
+
+void UMainMenu::HorrorGameButtonPressed()
+{
+	UGameplayStatics::OpenLevel(GetWorld(), FName("Level1"));
 }
