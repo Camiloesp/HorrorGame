@@ -5,7 +5,9 @@
 #include "Components/ArrowComponent.h"
 #include "Characters/HGCharacter.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/GameplayStatics.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "AI/Classic/Basic_AIController.h"
 
 // Sets default values
 AHideActor::AHideActor()
@@ -26,6 +28,9 @@ AHideActor::AHideActor()
 
 	ExitPosition = CreateDefaultSubobject<UArrowComponent>(TEXT("PlayerExitPositionArrow"));
 	ExitPosition->SetupAttachment(RootComp);
+
+	AILocation = CreateDefaultSubobject<UArrowComponent>(TEXT("AI Kill Location"));
+	AILocation->SetupAttachment(RootComp);
 
 	bCanInteract = true;
 }
@@ -58,16 +63,8 @@ void AHideActor::MoveCharacter()
 	NewPlayerTransform.SetLocation(NewPlayerLocation);
 	InteractingPlayer->SetActorTransform(NewPlayerTransform);
 
-	/*
-	// Interpolates player rotation to inside the locker.
-	FRotator CurrentPlayerRotation = InteractingPlayer->GetActorRotation();
-	FRotator PlayerTargetRotation = GetHidingPosition()->GetComponentRotation();
-	FRotator NewPlayerRotationYaw = UKismetMathLibrary::RInterpTo_Constant(CurrentPlayerRotation, PlayerTargetRotation, CurrentDeltaTime, 1'000.f);
-	NewPlayerTransform.SetRotation(NewPlayerRotationYaw.Quaternion());
-	*/
 	// if we arrive to the location, stop timer.
 	bool bIsInDestination = UKismetMathLibrary::EqualEqual_VectorVector(CurrentPlayerLocation, PlayerTargetLocation, 0.01);
-		//&& UKismetMathLibrary::EqualEqual_RotatorRotator(CurrentPlayerRotation, PlayerTargetRotation, 0.01);
 
 	if (bIsInDestination)
 	{
@@ -84,6 +81,14 @@ void AHideActor::FinishMoving()
 	{
 		InteractingPlayer->SetIsHiding(false);
 
+		AActor* EnemyController = UGameplayStatics::GetActorOfClass(GetWorld(), AIControllerClass);
+		ABasic_AIController* ControllerAI = Cast<ABasic_AIController>(EnemyController);
+		if (ControllerAI)
+		{
+			ControllerAI->LeftHidingSpot();
+		}
+
+
 		// Enable collision when exiting hidding spot.
 		InteractingPlayer->SetActorEnableCollision(true);
 
@@ -99,6 +104,10 @@ void AHideActor::FinishMoving()
 	}
 }
 
+void AHideActor::EnemyFound()
+{
+}
+
 void AHideActor::Interact()
 {
 	if (!InteractingPlayer) return;
@@ -110,6 +119,14 @@ void AHideActor::Interact()
 	}
 	else
 	{
+		// Did the enemy AI see the player hide in this actor?
+		AActor* EnemyController = UGameplayStatics::GetActorOfClass(GetWorld(), AIControllerClass);
+		ABasic_AIController* ControllerAI = Cast<ABasic_AIController>(EnemyController);
+		if (ControllerAI)
+		{
+			ControllerAI->DidEnemySee(this);
+		}
+
 		// disable collision when entering hidding spot.
 		InteractingPlayer->SetActorEnableCollision(false);
 

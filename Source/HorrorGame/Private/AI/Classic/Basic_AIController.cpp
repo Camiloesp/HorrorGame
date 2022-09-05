@@ -7,6 +7,8 @@
 #include "BehaviorTree/BlackboardComponent.h"
 
 #include "Characters/HGCharacter.h"
+#include "Actors/HideActors/HideActor.h"
+#include "Components/ArrowComponent.h"
 
 ABasic_AIController::ABasic_AIController()
 {
@@ -35,6 +37,47 @@ void ABasic_AIController::BeginPlay()
 	RunBehaviorTree(BT_BasicAI);
 
 	Perception->OnTargetPerceptionUpdated.AddDynamic(this, &ABasic_AIController::OnPerception);
+}
+
+void ABasic_AIController::DidEnemySee(AHideActor* HideActor)
+{
+	if (!HideActor) return;
+
+	PlayerTargetHidingSpot = HideActor;
+
+	UBlackboardComponent* BlackboardRef = GetBlackboardComponent();
+	if (!BlackboardRef) return;
+
+	bool bCanSeePlayerHiding = BlackboardRef->GetValueAsBool(FName("CanSeePlayer"));
+	if (bCanSeePlayerHiding)
+	{
+		// Move AI in front of hiding location, ready to kill player
+		BlackboardRef->SetValueAsBool(FName("KillHiddenPlayer"), true);
+		FVector AIKillLocation = HideActor->GetAILocation()->GetComponentLocation();
+		BlackboardRef->SetValueAsVector(FName("TargetLocation"), AIKillLocation);
+		FRotator NewTargetRotation = HideActor->GetAILocation()->GetComponentRotation();
+		BlackboardRef->SetValueAsRotator(FName("TargetRotation"), NewTargetRotation);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Can NOT see the player"));
+	}
+}
+
+void ABasic_AIController::PullOutOfHiding()
+{
+	if (!PlayerTargetHidingSpot) return;
+
+	PlayerTargetHidingSpot->EnemyFound();
+}
+
+void ABasic_AIController::LeftHidingSpot()
+{
+	UBlackboardComponent* BlackboardRef = GetBlackboardComponent();
+	if (!BlackboardRef) return;
+
+	// KillHiddenPlayer set to false if player leaves locker while AI knew he was hidding there.
+	BlackboardRef->SetValueAsBool(FName("KillHiddenPlayer"), false);
 }
 
 void ABasic_AIController::OnPerception(AActor* Actor, FAIStimulus Stimulos)

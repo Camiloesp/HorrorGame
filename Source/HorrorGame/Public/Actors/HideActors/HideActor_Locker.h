@@ -59,5 +59,7 @@ protected:
 
 public:
 
+	virtual void EnemyFound() override;
+
 	virtual void Interact() override;
 };

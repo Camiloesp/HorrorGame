@@ -19,6 +19,9 @@ AHideActor_Locker::AHideActor_Locker()
 	GetHidingPosition()->SetRelativeLocation(FVector(0.f, 0.f, 88.f)); // 88 is the height of the player capsule
 
 	GetExitPosition()->SetRelativeLocation(FVector(200.f, 0.f, 88.f)); // 88 is the height of the player capsule
+
+	GetAILocation()->SetRelativeLocation(FVector(150.f, 0.f, 88.f));
+	GetAILocation()->SetRelativeRotation(FRotator(0.f, 180.f, 0.f));
 }
 
 void AHideActor_Locker::BeginPlay()
@@ -68,6 +71,16 @@ void AHideActor_Locker::CallInteractParent()
 {
 	AHideActor::Interact();
 	//Super::Interact();
+}
+
+void AHideActor_Locker::EnemyFound()
+{
+	// disable LockerDoorMesh collision so it doesnt push the AI
+	LockerDoorMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	// AI opens door
+	bCanInteract = false;
+	Timeline.Play(); // Open door
 }
 
 void AHideActor_Locker::Interact()

@@ -5,17 +5,19 @@
 #include "CoreMinimal.h"
 #include "AIController.h"
 #include "Perception/AIPerceptionComponent.h" // Needs to be included here, else it won't compile
+#include "../../Interfaces/PlayerHiding.h"
 #include "Basic_AIController.generated.h"
 
 class UAIPerceptionComponent;
 class UAISenseConfig_Sight;
 struct FAIStimulus;
 class AHGCharacter;
+class AHideActor;
 /**
  * 
  */
 UCLASS()
-class HORRORGAME_API ABasic_AIController : public AAIController
+class HORRORGAME_API ABasic_AIController : public AAIController, public IPlayerHiding
 {
 	GENERATED_BODY()
 	
@@ -41,11 +43,19 @@ private:
 	bool bAlreadyPlayedJumpscareSound;
 
 	AHGCharacter* PlayerTarget;
+
+	AHideActor* PlayerTargetHidingSpot;
 protected:
 public:
 
+	virtual void DidEnemySee(AHideActor* HideActor) override;
+	virtual void LeftHidingSpot() override;
+
+	void PullOutOfHiding();
+
 	UFUNCTION()
 	void OnPerception(AActor* Actor, FAIStimulus Stimulos);
+
 
 	FORCEINLINE AHGCharacter* GetPlayerTarget() const { return PlayerTarget; }
 	FORCEINLINE bool AlreadyPlayedJumpscareSound() const { return bAlreadyPlayedJumpscareSound; }

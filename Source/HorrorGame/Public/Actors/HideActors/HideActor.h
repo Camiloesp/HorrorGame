@@ -8,6 +8,7 @@
 #include "HideActor.generated.h"
 
 class UArrowComponent;
+class ABasic_AIController;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FFinishMovingDelegate);
 
@@ -45,6 +46,13 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UArrowComponent* ExitPosition;
 
+	/* Location where the AI will be when killing the hidden player */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UArrowComponent* AILocation;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<ABasic_AIController> AIControllerClass;
+
 protected:
 
 	bool bCanInteract;
@@ -58,6 +66,9 @@ protected:
 
 public:
 
+	virtual void EnemyFound();
+	//virtual void LeftHidingSpot() override;
+
 	FFinishMovingDelegate FinishMovingDelegate;
 
 	virtual void Interact() override;
@@ -65,6 +76,7 @@ public:
 	FORCEINLINE UStaticMeshComponent* GetMesh() const { return Mesh; }
 	FORCEINLINE UArrowComponent* GetHidingPosition() const { return HidingPosition; }
 	FORCEINLINE UArrowComponent* GetExitPosition() const { return ExitPosition; }
+	FORCEINLINE UArrowComponent* GetAILocation() const { return AILocation; }
 	FORCEINLINE bool CanInteract() const { return bCanInteract; }
 
 	FORCEINLINE void SetCanInteract(bool bNewInteract) { bCanInteract = bNewInteract; }
