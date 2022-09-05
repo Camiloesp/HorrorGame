@@ -10,6 +10,7 @@
 class ULevelSequence;
 class ULevelSequencePlayer;
 class UMainHUD;
+class AAI_Basic;
 /**
  * 
  */
@@ -27,6 +28,16 @@ private:
 	ULevelSequencePlayer* LevelSequenceP;
 
 	UMainHUD* PlayerCharacterHUD;
+
+	float CutsceneDuration;
+
+	/* Deletes skeletalmesh actor after cutscene, before spawning real AI */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	AActor* ActorToDeleteAfterCutscene;
+
+	/* Class for the AI to be spawned */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<AAI_Basic> AIClass;
 protected:
 
 	/* Instead of triggering a jumpscare, it will trigger a cutscene */

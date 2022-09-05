@@ -67,6 +67,10 @@ void AEnemyRevealCutsceneEvent::StartDisplayingHUD()
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 		AAI_Basic* SpawnedAI = GetWorld()->SpawnActor<AAI_Basic>(AIClass, SpawnLocation, SpawnRotation, SpawnParams);
+		if (SpawnedAI)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("SPAWNED AI"));
+		}
 	}
 
 	// small delay to display HUD after LevelSequence is done
