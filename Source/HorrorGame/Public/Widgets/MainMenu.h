@@ -7,6 +7,7 @@
 #include "MainMenu.generated.h"
 
 class UButton;
+class UVerticalBox;
 /**
  * 
  */
@@ -32,6 +33,8 @@ protected:
 	void FiveNightsAtFreddysButtonPressed();
 	UFUNCTION()
 	void HorrorGameButtonPressed();
+	UFUNCTION()
+	void BackButtonPressed();
 private:
 
 	/* MainMenu options */
@@ -42,12 +45,18 @@ private:
 	UButton* QuitButton;
 
 	/* Level select options */
-	/*
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), meta = (BindWidget))
 	UButton* ResidentEvilButton;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), meta = (BindWidget))
 	UButton* FiveNightsAtFreddysButton;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), meta = (BindWidget))
 	UButton* HorrorGameButton;
-	*/
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), meta = (BindWidget))
+	UButton* BackButton;
+	
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), meta = (BindWidget))
+	UVerticalBox* MainMenuSelection;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), meta = (BindWidget))
+	UVerticalBox* LevelSelection;
 };

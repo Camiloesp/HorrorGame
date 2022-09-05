@@ -5,6 +5,7 @@
 #include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Components/VerticalBox.h"
 
 bool UMainMenu::Initialize()
 {
@@ -15,16 +16,22 @@ bool UMainMenu::Initialize()
 	QuitButton->OnPressed.AddDynamic(this, &UMainMenu::QuitButtonPressed);
 
 
-	//ResidentEvilButton->OnPressed.AddDynamic(this, &UMainMenu::QuitButtonPressed);
-	//FiveNightsAtFreddysButton->OnPressed.AddDynamic(this, &UMainMenu::QuitButtonPressed);
-	//HorrorGameButton->OnPressed.AddDynamic(this, &UMainMenu::QuitButtonPressed);
+	ResidentEvilButton->OnPressed.AddDynamic(this, &UMainMenu::ResidentEvilButtonPressed);
+	FiveNightsAtFreddysButton->OnPressed.AddDynamic(this, &UMainMenu::FiveNightsAtFreddysButtonPressed);
+	HorrorGameButton->OnPressed.AddDynamic(this, &UMainMenu::HorrorGameButtonPressed);
+	BackButton->OnPressed.AddDynamic(this, &UMainMenu::BackButtonPressed);
+
+
+	LevelSelection->SetVisibility(ESlateVisibility::Collapsed);
 
 	return bInit;
 }
 
 void UMainMenu::PlayButtonPressed()
 {
-	// Change to level selector
+	// Change to MainMenuSelection visibility and not able to click it to LevelSelection being visible.
+	MainMenuSelection->SetVisibility(ESlateVisibility::Collapsed);
+	LevelSelection->SetVisibility(ESlateVisibility::Visible);
 }
 
 void UMainMenu::QuitButtonPressed()
@@ -45,4 +52,11 @@ void UMainMenu::FiveNightsAtFreddysButtonPressed()
 void UMainMenu::HorrorGameButtonPressed()
 {
 	UGameplayStatics::OpenLevel(GetWorld(), FName("Level1"));
+}
+
+void UMainMenu::BackButtonPressed()
+{
+	// Change to LevelSelection visibility and not able to click it to MainMenuSelection being visible.
+	LevelSelection->SetVisibility(ESlateVisibility::Collapsed);
+	MainMenuSelection->SetVisibility(ESlateVisibility::Visible);
 }
