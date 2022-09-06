@@ -12,6 +12,7 @@ bool UGameOverWidget::Initialize()
 	PlayAnimation(GetFadeinAnimation());
 
 	RestartButton->OnReleased.AddDynamic(this, &UGameOverWidget::RestartButtonPressed);
+	MainMenuButton->OnReleased.AddDynamic(this, &UGameOverWidget::MainMenuButtonPressed);
 
 	return bSuccess;
 }
@@ -20,4 +21,9 @@ void UGameOverWidget::RestartButtonPressed()
 {
 	FName CurrentLevelName = FName( UGameplayStatics::GetCurrentLevelName(GetWorld()) );
 	UGameplayStatics::OpenLevel(GetWorld(), CurrentLevelName);
+}
+
+void UGameOverWidget::MainMenuButtonPressed()
+{
+	UGameplayStatics::OpenLevel(GetWorld(), FName("MainMenu"));
 }

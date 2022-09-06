@@ -27,6 +27,12 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), meta = (BindWidget))
 	UButton* RestartButton;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), meta = (BindWidget))
+	UButton* MainMenuButton;
+
 	UFUNCTION()
 	void RestartButtonPressed();
+
+	UFUNCTION()
+	void MainMenuButtonPressed();
 };
